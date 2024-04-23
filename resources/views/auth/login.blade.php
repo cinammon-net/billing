@@ -35,7 +35,7 @@
                         <div class="text-center">
                             <img src="https://i.ibb.co/9rMM2WB/cinammon-logo.png" style="width: 185px;" alt="logo">  
                         </div>
-                        <h3 class="mb-8 text-center">Cinammon Panel</h3>
+                        <h3 class="mb-8 text-center">Cinammon Billing</h3>
                     <div class="card-body">
                         <form method="POST" action="{{ route('login') }}">
                             @csrf 
