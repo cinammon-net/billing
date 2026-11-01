@@ -36,9 +36,21 @@
         <sub>Catálogo categorizado por juegos, bases de datos y bots con aprovisionamiento instantáneo.</sub>
       </td>
       <td width="50%" align="center">
-        <b>🔐 CYBER IDENTITY & 2FA FORTIFY</b><br /><br />
+        <b>⛏️ MINECRAFT & GAME TIERS</b><br /><br />
+        <img src="./docs/assets/store-minecraft.png" alt="Minecraft Hosting Plans" width="100%" style="border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.4);" /><br />
+        <sub>Planes con asignación garantizada de RAM DDR5, Ryzen 9 vCPU y almacenamiento NVMe Gen4.</sub>
+      </td>
+    </tr>
+    <tr>
+      <td width="50%" align="center">
+        <br /><b>🔐 CYBER IDENTITY & 2FA FORTIFY</b><br /><br />
         <img src="./docs/assets/cyber-security.png" alt="Cyber Security" width="100%" style="border-radius: 8px; border: 1px solid rgba(168, 85, 247, 0.4);" /><br />
         <sub>Seguridad de doble factor (TOTP), control de sesiones activas y facturación cifrada.</sub>
+      </td>
+      <td width="50%" align="center">
+        <br /><b>🔑 SEAMLESS SSO AUTHENTICATION</b><br /><br />
+        <img src="./docs/assets/billing-dashboard.png" alt="Seamless SSO" width="100%" style="border-radius: 8px; border: 1px solid rgba(255, 0, 127, 0.4);" /><br />
+        <sub>Traspaso de sesión firmado criptográficamente por HMAC SHA-256 desde el panel a facturación.</sub>
       </td>
     </tr>
   </table>
@@ -71,11 +83,12 @@ sequenceDiagram
 
 ## 🔮 // 03. CORE MODULES
 
-* **💎 Automated Storefront (`/store`)**: Tienda pública reactiva organizada por categorías de servidores (Minecraft, Bots, Juegos dedicados, Bases de datos).
+* **💎 Automated Storefront (`/store`)**: Tienda pública reactiva organizada por categorías de servidores (Minecraft, Bots, Juegos dedicados, Bases de datos) con badges de hardware Ryzen 9 y DDR5.
 * **🌐 API de Catálogo (`/api/plans`)**: Endpoint JSON de alta velocidad consumido por la landing principal de Cinammon para reflejar precios y cuotas de hardware al instante.
-* **🧾 Lifecycle de Facturación**: Estados automatizados (`active`, `pending`, `suspended`, `cancelled`, `paid`, `overdue`) con cálculo dinámico de fechas de expiración y cancelación asistida.
+* **🧾 Lifecycle de Facturación & Cancelación Asistida**: Estados automatizados (`active`, `pending`, `suspended`, `cancelled`, `paid`, `overdue`). Al cancelar un servicio, el daemon Wings **detiene inmediatamente** el contenedor Docker y se activa un periodo de gracia de 7 días antes de la purga permanente.
+* **🔑 Seamless Single Sign-On (SSO)**: Acceso directo sin re-login. Al navegar desde el Panel a `/billing/redirect`, se emite un payload firmado criptográficamente con HMAC-SHA256 (`PANEL_API_TOKEN`) que autentica al usuario en el portal de facturación en milisegundos.
 * **🔐 Ciberseguridad & 2FA**: Integración nativa con autenticación de dos factores (TOTP RFC 6238), códigos de recuperación y desconexión remota de sesiones concurrentes.
-* **🌉 Seamless Panel Bridge**: Sincronización transparente con [Cinammon Panel](https://github.com/cinammon-net/panel). El usuario adquiere el servicio y pasa directamente a administrar sus archivos y consola.
+* **🌉 Seamless Panel Bridge**: Sincronización bidireccional transparente con [Cinammon Panel](https://github.com/cinammon-net/panel). El usuario adquiere el servicio y pasa directamente a administrar sus archivos y consola.
 
 ---
 

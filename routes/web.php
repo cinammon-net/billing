@@ -82,3 +82,16 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/dev-autologin', function (\Illuminate\Http\Request $request) {
+    if (!app()->environment('local')) {
+        abort(403);
+    }
+    $user = \App\Models\User::first();
+    if ($user) {
+        \Illuminate\Support\Facades\Auth::login($user, true);
+        $request->session()->regenerate();
+    }
+    $to = $request->query('to', '/dashboard');
+    return redirect($to);
+});
