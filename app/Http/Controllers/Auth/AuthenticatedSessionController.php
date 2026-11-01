@@ -31,6 +31,18 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        $user = Auth::user();
+
+        // Si el usuario tiene 2FA activo, pedir el código antes de abrir sesión.
+        if ($user->two_factor_confirmed_at !== null) {
+            Auth::guard('web')->logout();
+
+            $request->session()->put('two_factor:user_id', $user->id);
+            $request->session()->put('two_factor:remember', $request->boolean('remember'));
+
+            return redirect()->route('two-factor.login');
+        }
+
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));
