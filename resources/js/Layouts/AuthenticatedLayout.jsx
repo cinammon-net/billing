@@ -1,139 +1,200 @@
 import { useState } from 'react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
+import { 
+    Layers, 
+    ShoppingCart, 
+    ArrowUpRight, 
+    ShieldCheck, 
+    User, 
+    LogOut, 
+    Menu, 
+    X,
+    Activity
+} from 'lucide-react';
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const { panelUrl } = usePage().props;
 
-    return (
-        <div className="relative min-h-screen bg-black font-sans text-white">
-            <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle,#ffffff_1px,transparent_1px)] bg-[length:22px_22px] opacity-10" />
-            <nav className="relative z-10 border-b border-pink-600 bg-black/70 backdrop-blur-md">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex">
-                            <div className="shrink-0 flex items-center">
-                                <a href={panelUrl} title="Volver a cinammon.net">
-                                    <ApplicationLogo className="block h-9 w-auto transition hover:opacity-80" />
-                                </a>
-                            </div>
+    const isDashboard = route().current('dashboard');
+    const isStore = route().current('store') || route().current('store.category');
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>
-                                    Mis servicios
-                                </NavLink>
-                                <NavLink href={route('store')} active={route().current('store') || route().current('store.category')}>
-                                    Tienda
-                                </NavLink>
-                                <a
-                                    href={panelUrl}
-                                    className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium leading-5 text-[#00f7ff] transition duration-150 ease-in-out hover:border-[#00f7ff]/50 focus:outline-none"
+    return (
+        <div className="relative min-h-screen bg-[#04060d] font-sans text-slate-100 antialiased selection:bg-pink-500 selection:text-white">
+            {/* Fondo ambiental Cyberpunk */}
+            <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+                <div className="absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-cyan-500/10 blur-[130px]" />
+                <div className="absolute top-1/3 -right-40 h-96 w-96 rounded-full bg-pink-500/10 blur-[130px]" />
+                <div className="absolute -bottom-40 left-1/3 h-96 w-96 rounded-full bg-purple-500/10 blur-[140px]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle,#ffffff_1px,transparent_1px)] bg-[length:24px_24px] opacity-[0.06]" />
+            </div>
+
+            {/* Navbar Cyber */}
+            <nav className="sticky top-0 z-50 border-b border-pink-500/25 bg-[#060914]/80 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="flex h-16 items-center justify-between">
+                        {/* Izquierda: Logo y Enlaces */}
+                        <div className="flex items-center gap-8">
+                            <a 
+                                href={panelUrl} 
+                                title="Volver a Cinammon.net"
+                                className="group flex items-center gap-2.5 transition"
+                            >
+                                <div className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-pink-500/40 bg-pink-500/10 shadow-[0_0_12px_rgba(255,0,128,0.3)] transition group-hover:border-cyan-400 group-hover:shadow-[0_0_15px_rgba(0,247,255,0.4)]">
+                                    <ApplicationLogo className="h-5 w-5" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="font-mono text-sm font-black tracking-widest text-white group-hover:text-pink-400 transition">
+                                        CINAMMON<span className="text-[#00f7ff]">.NET</span>
+                                    </span>
+                                    <span className="font-mono text-[9px] uppercase tracking-wider text-pink-400/80">
+                                        // Billing & Cloud
+                                    </span>
+                                </div>
+                            </a>
+
+                            <div className="hidden items-center gap-2 sm:flex">
+                                <Link
+                                    href={route('dashboard')}
+                                    className={`flex items-center gap-2 rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold tracking-wider transition ${
+                                        isDashboard
+                                            ? 'border border-[#00f7ff]/50 bg-[#00f7ff]/10 text-[#00f7ff] shadow-[0_0_12px_rgba(0,247,255,0.25)]'
+                                            : 'text-slate-400 hover:border hover:border-pink-500/30 hover:bg-pink-500/10 hover:text-pink-300'
+                                    }`}
                                 >
-                                    Web principal ↗
-                                </a>
+                                    <Layers size={14} />
+                                    <span>Mis Servicios</span>
+                                </Link>
+
+                                <Link
+                                    href={route('store')}
+                                    className={`flex items-center gap-2 rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold tracking-wider transition ${
+                                        isStore
+                                            ? 'border border-pink-500/50 bg-pink-500/10 text-pink-300 shadow-[0_0_12px_rgba(255,0,128,0.25)]'
+                                            : 'text-slate-400 hover:border hover:border-pink-500/30 hover:bg-pink-500/10 hover:text-pink-300'
+                                    }`}
+                                >
+                                    <ShoppingCart size={14} />
+                                    <span>Tienda de Planes</span>
+                                </Link>
                             </div>
                         </div>
 
-                        <div className="hidden sm:flex sm:items-center sm:ms-6">
-                            <div className="ms-3 relative">
+                        {/* Derecha: Telemetría, Acceso al Panel y Menú de Usuario */}
+                        <div className="hidden items-center gap-4 sm:flex">
+                            {/* Status badge */}
+                            <div className="flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/30 px-3 py-1 font-mono text-[11px] text-emerald-400">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                                </span>
+                                <span className="hidden md:inline">Core Conectado</span>
+                            </div>
+
+                            {/* Enlace directo al Panel */}
+                            <a
+                                href={panelUrl}
+                                className="group flex items-center gap-1.5 rounded-lg border border-[#00f7ff]/40 bg-[#00f7ff]/10 px-3 py-1.5 font-mono text-xs font-bold text-[#00f7ff] transition hover:border-[#00f7ff] hover:bg-[#00f7ff] hover:text-[#04060d] hover:shadow-[0_0_16px_rgba(0,247,255,0.4)]"
+                            >
+                                <span>Panel de Servidores</span>
+                                <ArrowUpRight size={13} className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                            </a>
+
+                            {/* Dropdown de Usuario */}
+                            <div className="relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center px-3 py-2 border border-pink-600/30 text-sm leading-4 font-medium rounded-md text-pink-300 bg-black/80 hover:text-pink-200 hover:border-pink-500 focus:outline-none transition ease-in-out duration-150"
-                                            >
-                                                {user.name}
-
-                                                <svg
-                                                    className="ms-2 -me-0.5 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
+                                        <button
+                                            type="button"
+                                            className="flex items-center gap-2.5 rounded-lg border border-pink-500/30 bg-[#090d1c] px-3 py-1.5 font-mono text-xs font-semibold text-slate-200 transition hover:border-pink-500 hover:text-white"
+                                        >
+                                            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-tr from-pink-500 to-fuchsia-600 font-mono text-[11px] font-bold text-white shadow-sm">
+                                                {user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'}
+                                            </div>
+                                            <span className="max-w-[120px] truncate">{user.name}</span>
+                                        </button>
                                     </Dropdown.Trigger>
 
-                                    <Dropdown.Content>
-                                        <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
-                                        <Dropdown.Link href={route('logout')} method="post" as="button">
-                                            Log Out
+                                    <Dropdown.Content contentClasses="py-1 bg-[#090e1f] border border-pink-500/40 rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.8)] backdrop-blur-md">
+                                        <div className="border-b border-pink-500/20 px-4 py-2 font-mono text-[11px] text-slate-400">
+                                            Conectado como <span className="text-pink-300 font-bold">{user.email}</span>
+                                        </div>
+                                        <Dropdown.Link href={route('profile.edit')} className="flex items-center gap-2 font-mono text-xs text-slate-200 hover:bg-pink-500/20 hover:text-pink-300">
+                                            <User size={13} />
+                                            <span>Mi Perfil & 2FA</span>
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href={route('logout')} method="post" as="button" className="flex items-center gap-2 font-mono text-xs text-rose-400 hover:bg-rose-500/20 hover:text-rose-300">
+                                            <LogOut size={13} />
+                                            <span>Cerrar Sesión</span>
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
                             </div>
                         </div>
 
-                        <div className="-me-2 flex items-center sm:hidden">
+                        {/* Botón Móvil */}
+                        <div className="flex sm:hidden">
                             <button
-                                onClick={() => setShowingNavigationDropdown((previousState) => !previousState)}
-                                className="inline-flex items-center justify-center p-2 rounded-md text-pink-400 hover:text-pink-300 hover:bg-pink-500/10 focus:outline-none focus:bg-pink-500/10 focus:text-pink-300 transition duration-150 ease-in-out"
+                                onClick={() => setShowingNavigationDropdown((prev) => !prev)}
+                                className="rounded-lg border border-pink-500/40 p-2 text-pink-400 transition hover:bg-pink-500/10"
                             >
-                                <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path
-                                        className={!showingNavigationDropdown ? 'inline-flex' : 'hidden'}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={showingNavigationDropdown ? 'inline-flex' : 'hidden'}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
+                                {showingNavigationDropdown ? <X size={20} /> : <Menu size={20} />}
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
-                    <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
-                            Mis servicios
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('store')} active={route().current('store') || route().current('store.category')}>
-                            Tienda
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink href={panelUrl}>Web principal ↗</ResponsiveNavLink>
-                    </div>
-
-                    <div className="pt-4 pb-1 border-t border-pink-600/30">
-                        <div className="px-4">
-                            <div className="font-medium text-base text-pink-300">{user.name}</div>
-                            <div className="font-medium text-sm text-gray-400">{user.email}</div>
+                {/* Menú Móvil desplegable */}
+                {showingNavigationDropdown && (
+                    <div className="border-b border-pink-500/30 bg-[#070b17] px-4 pt-2 pb-4 space-y-2 sm:hidden font-mono text-xs">
+                        <Link
+                            href={route('dashboard')}
+                            className={`flex items-center gap-2 rounded-lg px-3 py-2 ${
+                                isDashboard ? 'bg-[#00f7ff]/10 text-[#00f7ff] border border-[#00f7ff]/40' : 'text-slate-300'
+                            }`}
+                        >
+                            <Layers size={14} />
+                            <span>Mis Servicios</span>
+                        </Link>
+                        <Link
+                            href={route('store')}
+                            className={`flex items-center gap-2 rounded-lg px-3 py-2 ${
+                                isStore ? 'bg-pink-500/10 text-pink-300 border border-pink-500/40' : 'text-slate-300'
+                            }`}
+                        >
+                            <ShoppingCart size={14} />
+                            <span>Tienda de Planes</span>
+                        </Link>
+                        <a
+                            href={panelUrl}
+                            className="flex items-center justify-between rounded-lg border border-[#00f7ff]/40 bg-[#00f7ff]/10 px-3 py-2 text-[#00f7ff]"
+                        >
+                            <span>Panel de Servidores</span>
+                            <ArrowUpRight size={14} />
+                        </a>
+                        <div className="border-t border-neutral-800 pt-2">
+                            <div className="px-3 py-1 text-slate-400 font-bold">{user.name}</div>
+                            <Link href={route('profile.edit')} className="block px-3 py-1.5 text-slate-300 hover:text-white">
+                                Mi Perfil & 2FA
+                            </Link>
+                            <Link href={route('logout')} method="post" as="button" className="block w-full text-left px-3 py-1.5 text-rose-400">
+                                Cerrar Sesión
+                            </Link>
                         </div>
-
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
-                            <ResponsiveNavLink method="post" href={route('logout')} as="button">
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
                     </div>
-                </div>
+                )}
             </nav>
 
+            {/* Cabecera / Subtítulo */}
             {header && (
-                <header className="relative z-10 border-b border-pink-600/30 bg-black/60 shadow-[0_0_20px_rgba(255,0,150,0.15)] backdrop-blur-sm">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
+                <header className="relative z-10 border-b border-pink-500/15 bg-gradient-to-r from-[#060a15] via-[#090d1f] to-[#060a15] px-4 py-4 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl">{header}</div>
                 </header>
             )}
 
+            {/* Contenido principal */}
             <main className="relative z-10">{children}</main>
         </div>
     );

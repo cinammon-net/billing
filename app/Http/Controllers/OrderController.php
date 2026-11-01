@@ -81,7 +81,12 @@ class OrderController extends Controller
         $order->update(['status' => 'cancelled']);
         $this->panel->cancel($order);
 
+        $deletionDate = now()->addDays(7)->format('d/m/Y');
+
         return redirect()->route('dashboard')
-            ->with('success', "Servicio «{$order->server_name}» cancelado.");
+            ->with(
+                'warning',
+                "⚠️ Servicio «{$order->server_name}» cancelado. Los servidores han sido detenidos de inmediato. Tienes hasta el {$deletionDate} (7 días) para descargar tus respaldos antes de su eliminación permanente."
+            );
     }
 }
