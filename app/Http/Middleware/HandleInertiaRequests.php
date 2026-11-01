@@ -34,6 +34,10 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'panelUrl' => config('billing.panel_url'),
+            'flash' => [
+                'success' => $request->session()->get('success'),
+            ],
         ];
     }
 }
