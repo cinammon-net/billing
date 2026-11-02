@@ -6,8 +6,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StoreController;
 use Illuminate\Support\Facades\Route;
 
-// La web principal es el panel: billing solo es el área de clientes.
-Route::get('/', fn () => redirect()->away(config('billing.panel_url')));
+// Tienda principal de Cinammon Billing
+Route::get('/', [StoreController::class, 'index'])->name('home');
 
 // 🔐 Single Sign-On (SSO): Acceso directo y autenticado desde Cinammon Panel
 Route::get('/sso', function (\Illuminate\Http\Request $request) {
