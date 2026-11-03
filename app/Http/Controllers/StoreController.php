@@ -13,9 +13,25 @@ class StoreController extends Controller
             'title' => 'Minecraft Hosting',
             'tagline' => 'Java y Bedrock. Paper, Fabric, Forge, Purpur y más.',
         ],
-        'games' => [
-            'title' => 'Servidores de Juegos',
-            'tagline' => 'Palworld, Rust, CS2, ARK, Valheim y +50 juegos más.',
+        'survival' => [
+            'title' => 'Supervivencia',
+            'tagline' => 'Rust, ARK, Palworld, 7 Days to Die, Conan Exiles, DayZ, Project Zomboid y Enshrouded.',
+        ],
+        'shooters' => [
+            'title' => 'Shooters / FPS',
+            'tagline' => 'Counter-Strike 2, CS:GO, Team Fortress 2, Insurgency: Sandstorm, Left 4 Dead 2 y Killing Floor 2.',
+        ],
+        'sandbox' => [
+            'title' => 'Sandbox y Creativos',
+            'tagline' => "Garry's Mod, Factorio, Mindustry, Core Keeper, Don't Starve Together y Eco.",
+        ],
+        'simulation' => [
+            'title' => 'Simuladores',
+            'tagline' => 'Assetto Corsa, Euro Truck Simulator 2 y American Truck Simulator.',
+        ],
+        'voice' => [
+            'title' => 'Servidores de Voz',
+            'tagline' => 'TeamSpeak 3, TeaSpeak y Lavalink para tu comunidad.',
         ],
         'bots' => [
             'title' => 'Hosting de Bots',

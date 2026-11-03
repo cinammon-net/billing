@@ -3,6 +3,7 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import { 
     Box, 
     Gamepad2, 
+    Crosshair, 
     Bot, 
     Database, 
     Layers, 
@@ -17,7 +18,8 @@ import {
 
 const CATEGORIES = [
     { key: 'minecraft', label: 'Minecraft', icon: Box },
-    { key: 'games', label: 'Juegos', icon: Gamepad2 },
+    { key: 'survival', label: 'Supervivencia', icon: Gamepad2 },
+    { key: 'shooters', label: 'Shooters', icon: Crosshair },
     { key: 'bots', label: 'Bots & Apps', icon: Bot },
     { key: 'databases', label: 'Bases de Datos', icon: Database },
 ];
