@@ -74,6 +74,40 @@ class PlanSeeder extends Seeder
             'web'       => ['Certificado SSL gratuito', 'PHP 8.4 y MariaDB', 'Gestor de archivos y SFTP', 'Backups automáticos', 'Soporte 24/7'],
         ];
 
+        // Complementos incluidos en cada plan de hosting web (clave = nombre del plan).
+        $webAddons = [
+            'Web Start' => [
+                ['name' => 'Certificado SSL', 'desc' => "Let's Encrypt con renovación automática"],
+                ['name' => '1 base de datos MariaDB', 'desc' => 'Gestionada desde phpMyAdmin'],
+                ['name' => '1 cuenta de correo', 'desc' => 'Buzón @tudominio con webmail'],
+                ['name' => 'Backups semanales', 'desc' => 'Copia completa con restauración en 1 clic'],
+            ],
+            'Web Plus' => [
+                ['name' => 'Certificado SSL', 'desc' => "Let's Encrypt con renovación automática"],
+                ['name' => '3 bases de datos MariaDB', 'desc' => 'Gestionadas desde phpMyAdmin'],
+                ['name' => '5 cuentas de correo', 'desc' => 'Buzones @tudominio con webmail'],
+                ['name' => 'Subdominios ilimitados', 'desc' => 'Apunta tantos como necesites'],
+                ['name' => 'Backups diarios', 'desc' => 'Copia completa con restauración en 1 clic'],
+            ],
+            'Web Pro' => [
+                ['name' => 'Certificado SSL', 'desc' => "Let's Encrypt con renovación automática"],
+                ['name' => '10 bases de datos MariaDB', 'desc' => 'Gestionadas desde phpMyAdmin'],
+                ['name' => '20 cuentas de correo', 'desc' => 'Buzones @tudominio con webmail'],
+                ['name' => 'Subdominios ilimitados', 'desc' => 'Apunta tantos como necesites'],
+                ['name' => 'Backups diarios', 'desc' => 'Copia completa con restauración en 1 clic'],
+                ['name' => 'CDN con caché global', 'desc' => 'Entrega estática acelerada vía Cloudflare'],
+            ],
+            'Web Business' => [
+                ['name' => 'Certificado SSL', 'desc' => "Let's Encrypt con renovación automática"],
+                ['name' => 'Bases de datos ilimitadas', 'desc' => 'MariaDB gestionadas desde phpMyAdmin'],
+                ['name' => 'Correo ilimitado', 'desc' => 'Buzones @tudominio con webmail'],
+                ['name' => 'Subdominios ilimitados', 'desc' => 'Apunta tantos como necesites'],
+                ['name' => 'Backups diarios + bajo demanda', 'desc' => 'Restauración en 1 clic y retención 30 días'],
+                ['name' => 'CDN con caché global', 'desc' => 'Entrega estática acelerada vía Cloudflare'],
+                ['name' => 'IP dedicada', 'desc' => 'Reputación de envío y SSL propios'],
+            ],
+        ];
+
         foreach ($plans as $i => $plan) {
             Plan::updateOrCreate(
                 ['slug' => Str::slug($plan['category'] . '-' . $plan['name'])],
@@ -81,6 +115,7 @@ class PlanSeeder extends Seeder
                     ...$plan,
                     'cycle_prices' => Plan::defaultCyclePrices($plan['price']),
                     'features' => $features[$plan['category']],
+                    'addons' => $webAddons[$plan['name']] ?? null,
                     'sort' => $i,
                 ]
             );

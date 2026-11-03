@@ -23,11 +23,12 @@ class Plan extends Model
 
     protected $fillable = [
         'category', 'name', 'slug', 'ram_mb', 'cpu_pct', 'storage_gb',
-        'price', 'cycle_prices', 'popular', 'features', 'sort',
+        'price', 'cycle_prices', 'popular', 'features', 'addons', 'sort',
     ];
 
     protected $casts = [
         'features' => 'array',
+        'addons' => 'array',
         'cycle_prices' => 'array',
         'popular' => 'boolean',
         'price' => 'float',

@@ -53,6 +53,7 @@ const fmtRam = (mb) => (mb >= 1024 ? `${mb / 1024} GB` : `${mb} MB`);
 export default function StoreCategory({ category, plans }) {
     const { auth, billingCycles = [] } = usePage().props;
     const [selected, setSelected] = useState(null);
+    const [addonsPlan, setAddonsPlan] = useState(null);
     const availableCycles = billingCycles.filter((c) => plans.some((plan) => plan.prices?.[c.key] != null));
     const [cycle, setCycle] = useState(availableCycles.some((c) => c.key === 'monthly') ? 'monthly' : availableCycles[0]?.key ?? 'monthly');
     const unit = cycleUnit(billingCycles, cycle);
@@ -261,7 +262,17 @@ export default function StoreCategory({ category, plans }) {
                             </div>
 
                             {/* BOTÓN CONTRATAR */}
-                            <div className="mt-8 pt-2">
+                            <div className="mt-8 space-y-2.5 pt-2">
+                                {(plan.addons || []).length > 0 && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setAddonsPlan(plan)}
+                                        className="w-full flex items-center justify-center gap-2 rounded-xl border border-[#00f7ff]/40 bg-[#00f7ff]/5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-[#00f7ff] transition-all duration-200 hover:border-[#00f7ff] hover:bg-[#00f7ff]/15 hover:shadow-[0_0_20px_rgba(0,247,255,0.3)]"
+                                    >
+                                        <Layers size={14} />
+                                        <span>Ver complementos</span>
+                                    </button>
+                                )}
                                 <button
                                     onClick={() => openOrder(plan)}
                                     disabled={plan.prices?.[cycle] == null}
@@ -278,6 +289,70 @@ export default function StoreCategory({ category, plans }) {
                         </div>
                     ))}
                 </div>
+
+                {/* MODAL DE COMPLEMENTOS INCLUIDOS */}
+                <Modal show={addonsPlan !== null} onClose={() => setAddonsPlan(null)} maxWidth="md">
+                    {addonsPlan && (
+                        <div className="relative overflow-hidden bg-[#070b18] p-6 sm:p-8 font-sans text-white border border-[#00f7ff]/30">
+                            <div className="pointer-events-none absolute -top-12 -right-12 h-36 w-36 rounded-full bg-[#00f7ff]/10 blur-3xl" />
+
+                            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#00f7ff]/40 bg-[#00f7ff]/10 text-[#00f7ff]">
+                                        <Layers size={20} />
+                                    </div>
+                                    <div>
+                                        <span className="font-mono text-[10px] uppercase tracking-wider text-[#00f7ff]">
+                                            // COMPLEMENTOS INCLUIDOS
+                                        </span>
+                                        <h3 className="text-lg font-bold text-white">
+                                            {category.title} — {addonsPlan.name}
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <ul className="mt-5 space-y-3">
+                                {(addonsPlan.addons || []).map((addon, idx) => (
+                                    <li
+                                        key={idx}
+                                        className="flex items-start gap-3 rounded-xl border border-slate-800 bg-black/60 px-4 py-3"
+                                    >
+                                        <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-[#00f7ff]" />
+                                        <div>
+                                            <p className="text-sm font-bold text-white">{addon.name}</p>
+                                            {addon.desc && (
+                                                <p className="mt-0.5 text-xs text-slate-400">{addon.desc}</p>
+                                            )}
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+
+                            <div className="mt-6 flex items-center justify-end gap-3 border-t border-slate-800 pt-5">
+                                <SecondaryButton
+                                    type="button"
+                                    onClick={() => setAddonsPlan(null)}
+                                    className="border-slate-700 bg-neutral-900 text-slate-300 hover:border-slate-500"
+                                >
+                                    Cerrar
+                                </SecondaryButton>
+                                <PrimaryButton
+                                    type="button"
+                                    onClick={() => {
+                                        const plan = addonsPlan;
+                                        setAddonsPlan(null);
+                                        openOrder(plan);
+                                    }}
+                                    disabled={addonsPlan.prices?.[cycle] == null}
+                                    className="border border-[#00f7ff] bg-gradient-to-r from-pink-500 to-fuchsia-600 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-[0_0_20px_rgba(255,0,128,0.4)] hover:brightness-110"
+                                >
+                                    Desplegar Servidor
+                                </PrimaryButton>
+                            </div>
+                        </div>
+                    )}
+                </Modal>
 
                 {/* MODAL DE CONTRATACIÓN CYBERPUNK */}
                 <Modal show={selected !== null} onClose={close} maxWidth="md">
