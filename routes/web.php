@@ -57,7 +57,7 @@ Route::get('/api/plans', function () {
                 ...$meta,
                 'plans' => \App\Models\Plan::where('category', $key)->orderBy('sort')->get(),
             ];
-        })->values(),
+        })->filter(fn ($category) => $category['plans']->isNotEmpty())->values(),
     ]);
 })->name('api.plans');
 
@@ -67,6 +67,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::post('/invoices/{invoice}/pay', [OrderController::class, 'pay'])->name('invoices.pay');
+});
+
+// Administración de planes y precios
+Route::middleware(['auth', 'verified', 'billing.admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/plans', [\App\Http\Controllers\Admin\PlanController::class, 'index'])->name('plans.index');
+    Route::post('/plans', [\App\Http\Controllers\Admin\PlanController::class, 'store'])->name('plans.store');
+    Route::put('/plans/{plan}', [\App\Http\Controllers\Admin\PlanController::class, 'update'])->name('plans.update');
+    Route::patch('/plans/{plan}/price', [\App\Http\Controllers\Admin\PlanController::class, 'updatePrice'])->name('plans.price');
+    Route::delete('/plans/{plan}', [\App\Http\Controllers\Admin\PlanController::class, 'destroy'])->name('plans.destroy');
 });
 
 Route::middleware('auth')->group(function () {

@@ -21,6 +21,10 @@ class StoreController extends Controller
             'title' => 'Hosting de Bots',
             'tagline' => 'Bots de Discord, Twitch y TeamSpeak siempre online.',
         ],
+        'web' => [
+            'title' => 'Hosting Web',
+            'tagline' => 'Alojamiento para tu web, blog o tienda online con PHP y bases de datos.',
+        ],
         'databases' => [
             'title' => 'Bases de Datos',
             'tagline' => 'Redis, MariaDB, PostgreSQL y MongoDB gestionados.',
@@ -38,7 +42,7 @@ class StoreController extends Controller
                     ...$meta,
                     'from' => $cheapest?->price,
                 ];
-            })->values(),
+            })->filter(fn ($category) => $category['from'] !== null)->values(),
         ]);
     }
 

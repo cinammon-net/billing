@@ -5,6 +5,7 @@ import {
     Gamepad2,
     Bot,
     Database,
+    Globe,
     ArrowRight,
     Zap,
     Shield,
@@ -70,13 +71,25 @@ const CATEGORY_META = {
         specs: ['Acceso Remoto Seguro SSL', 'Backups Diarios Cifrados', 'NVMe SSD Gen4 Raid 10'],
         serversCount: '3 Planes Disponibles',
     },
+    web: {
+        icon: Globe,
+        code: 'CLUSTER-WEB',
+        color: 'from-amber-500/20 via-orange-500/10 to-transparent',
+        borderHover: 'group-hover:border-amber-400',
+        glowHover: 'group-hover:shadow-[0_0_30px_rgba(245,158,11,0.25)]',
+        accentText: 'text-amber-400',
+        badgeBg: 'bg-amber-500/15 border-amber-500/30 text-amber-300',
+        badge: 'PHP · WORDPRESS · NODE.JS · SSL',
+        specs: ['Certificado SSL incluido', 'Bases de datos MariaDB', 'NVMe SSD Gen4 Raid 10'],
+        serversCount: 'Planes Disponibles',
+    },
 };
 
 const STATS = [
     { label: 'Tiempo de Despliegue', value: '< 60s', icon: Zap, detail: 'Aprovisionamiento instantáneo Wings' },
     { label: 'Mitigación DDoS', value: '2.5 Tbps', icon: Shield, detail: 'Filtros Game L3/L4/L7 Always-On' },
     { label: 'Frecuencia CPU', value: '5.7 GHz', icon: Cpu, detail: 'AMD Ryzen 9 7950X / EPYC Milan' },
-    { label: 'Uptime Red SLA', value: '99.98%', icon: Gauge, detail: 'Backbone europeo de 10 Gbps' },
+    { label: 'Uptime Red SLA', value: '99.98%', icon: Gauge, detail: 'Backbone de 10 Gbps en Miami' },
 ];
 
 const FEATURES = [
@@ -116,7 +129,7 @@ export default function StoreIndex({ categories }) {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00f7ff] opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00f7ff]"></span>
                         </span>
-                        <span>CLUSTER REGION: EU-WEST (VALENCIA / MADRID) // STOCK DISPONIBLE</span>
+                        <span>CLUSTER REGION: US-EAST (MIAMI, FL) // STOCK DISPONIBLE</span>
                     </div>
 
                     {/* Título Principal */}
@@ -303,7 +316,7 @@ export default function StoreIndex({ categories }) {
                             <span className="text-[10px] text-[#00f7ff]">STATUS: READY</span>
                         </div>
                         <div className="pt-3 space-y-1 text-slate-300">
-                            <p><span className="text-pink-400">$</span> checkout --plan=&quot;diamond-8gb&quot; --datacenter=&quot;madrid-eu-01&quot;</p>
+                            <p><span className="text-pink-400">$</span> checkout --plan=&quot;diamond-8gb&quot; --datacenter=&quot;miami-us-01&quot;</p>
                             <p className="text-slate-500">→ [00.12s] Token HMAC validado contra clúster daemon Wings.</p>
                             <p className="text-slate-500">→ [00.35s] Contenedor Docker aislado creado en red puente de alta velocidad.</p>
                             <p className="text-slate-500">→ [00.58s] Reglas iptables y mitigación Anti-DDoS sincronizadas.</p>

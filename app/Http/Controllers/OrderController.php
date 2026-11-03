@@ -8,6 +8,7 @@ use App\Models\Plan;
 use App\Services\PanelService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
@@ -20,23 +21,31 @@ class OrderController extends Controller
         $validated = $request->validate([
             'plan_id' => ['required', 'exists:plans,id'],
             'server_name' => ['required', 'string', 'max:60'],
+            'billing_cycle' => ['nullable', Rule::in(array_keys(Plan::CYCLES))],
         ]);
 
         $plan = Plan::findOrFail($validated['plan_id']);
+        $cycle = $validated['billing_cycle'] ?? 'monthly';
+        $price = $plan->priceFor($cycle);
+
+        if ($price === null) {
+            return back()->withErrors(['billing_cycle' => 'Este plan no está disponible con ese período de facturación.']);
+        }
 
         $order = Order::create([
             'user_id' => $request->user()->id,
             'plan_id' => $plan->id,
             'server_name' => $validated['server_name'],
             'status' => 'pending',
-            'price' => $plan->price,
+            'price' => $price,
+            'billing_cycle' => $cycle,
         ]);
 
         Invoice::create([
             'user_id' => $request->user()->id,
             'order_id' => $order->id,
             'number' => sprintf('CIN-%s-%04d', now()->format('Ym'), $order->id),
-            'amount' => $plan->price,
+            'amount' => $price,
             'status' => 'pending',
             'due_at' => now()->addDays(7),
         ]);
@@ -62,7 +71,7 @@ class OrderController extends Controller
         $invoice->update(['status' => 'paid', 'due_at' => now()]);
 
         $order = $invoice->order;
-        $order->update(['status' => 'active', 'renews_at' => now()->addMonth()]);
+        $order->update(['status' => 'active', 'renews_at' => $order->nextRenewal()]);
 
         $provisioned = $this->panel->provision($order);
 

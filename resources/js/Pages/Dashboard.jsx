@@ -2,6 +2,7 @@ import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Modal from '@/Components/Modal';
 import { Head, Link, usePage, router } from '@inertiajs/react';
+import { fmtPrice, cycleUnit } from '@/lib/price';
 import { 
     Server, 
     Receipt, 
@@ -73,7 +74,7 @@ const StatusBadge = ({ status }) => {
 };
 
 export default function Dashboard({ auth, orders = [], invoices = [] }) {
-    const { panelUrl, flash } = usePage().props;
+    const { panelUrl, flash, billingCycles } = usePage().props;
     const [cancelModalOrder, setCancelModalOrder] = useState(null);
     const [copiedIp, setCopiedIp] = useState(null);
 
@@ -95,7 +96,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
     };
 
     const payInvoice = (invoice) => {
-        if (confirm(`¿Pagar la factura ${invoice.number} (${invoice.amount.toFixed(2)} €)?`)) {
+        if (confirm(`¿Pagar la factura ${invoice.number} (${fmtPrice(invoice.amount)} €)?`)) {
             router.post(route('invoices.pay', invoice.id));
         }
     };
@@ -295,7 +296,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                                                             </>
                                                         )}
                                                         <span className="rounded-md border border-neutral-800 bg-[#090d1f] px-2.5 py-1 text-white font-bold">
-                                                            {o.price.toFixed(2)} €/mes
+                                                            {fmtPrice(o.price)} €/{cycleUnit(billingCycles, o.billing_cycle)}
                                                         </span>
                                                     </div>
 
@@ -391,7 +392,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                                                     {inv.order?.server_name ?? `Pedido #${inv.order_id}`}
                                                 </td>
                                                 <td className="px-6 py-4 font-bold text-[#00f7ff]">
-                                                    {inv.amount.toFixed(2)} €
+                                                    {fmtPrice(inv.amount)} €
                                                 </td>
                                                 <td className="px-6 py-4 text-slate-400">
                                                     {fmtDate(inv.due_at)}

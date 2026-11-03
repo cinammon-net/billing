@@ -11,12 +11,15 @@ import {
     LogOut, 
     Menu, 
     X,
-    Activity
+    Activity,
+    Tags
 } from 'lucide-react';
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-    const { panelUrl } = usePage().props;
+    const { panelUrl, auth } = usePage().props;
+    const isAdmin = Boolean(auth?.user?.is_admin);
+    const isAdminPlans = route().current('admin.plans.index');
 
     const isDashboard = route().current('dashboard');
     const isStore = route().current('store') || route().current('store.category');
@@ -79,6 +82,20 @@ export default function Authenticated({ user, header, children }) {
                                     <ShoppingCart size={14} />
                                     <span>Tienda de Planes</span>
                                 </Link>
+
+                                {isAdmin && (
+                                    <Link
+                                        href={route('admin.plans.index')}
+                                        className={`flex items-center gap-2 rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold tracking-wider transition ${
+                                            isAdminPlans
+                                                ? 'border border-yellow-400/50 bg-yellow-400/10 text-yellow-300'
+                                                : 'text-slate-400 hover:border hover:border-yellow-400/30 hover:bg-yellow-400/10 hover:text-yellow-300'
+                                        }`}
+                                    >
+                                        <Tags size={14} />
+                                        <span>Precios</span>
+                                    </Link>
+                                )}
                             </div>
                         </div>
 
@@ -167,6 +184,17 @@ export default function Authenticated({ user, header, children }) {
                             <ShoppingCart size={14} />
                             <span>Tienda de Planes</span>
                         </Link>
+                        {isAdmin && (
+                            <Link
+                                href={route('admin.plans.index')}
+                                className={`flex items-center gap-2 rounded-lg px-3 py-2 ${
+                                    isAdminPlans ? 'bg-yellow-400/10 text-yellow-300 border border-yellow-400/40' : 'text-slate-300'
+                                }`}
+                            >
+                                <Tags size={14} />
+                                <span>Precios</span>
+                            </Link>
+                        )}
                         <a
                             href={panelUrl}
                             className="flex items-center justify-between rounded-lg border border-[#00f7ff]/40 bg-[#00f7ff]/10 px-3 py-2 text-[#00f7ff]"

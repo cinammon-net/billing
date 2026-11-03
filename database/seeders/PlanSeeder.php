@@ -34,6 +34,12 @@ class PlanSeeder extends Seeder
             ['category' => 'databases', 'name' => 'Basic', 'ram_mb' => 1024, 'cpu_pct' => 50,  'storage_gb' => 5,  'price' => 1.99, 'popular' => false],
             ['category' => 'databases', 'name' => 'Plus',  'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 10, 'price' => 2.99, 'popular' => true],
             ['category' => 'databases', 'name' => 'Ultra', 'ram_mb' => 4096, 'cpu_pct' => 150, 'storage_gb' => 20, 'price' => 4.99, 'popular' => false],
+
+            // ── Hosting web ───────────────────────────────────────────
+            ['category' => 'web', 'name' => 'Web Start',    'ram_mb' => 512,  'cpu_pct' => 50,  'storage_gb' => 5,  'price' => 1.99, 'popular' => false],
+            ['category' => 'web', 'name' => 'Web Plus',     'ram_mb' => 1024, 'cpu_pct' => 100, 'storage_gb' => 10, 'price' => 3.49, 'popular' => true],
+            ['category' => 'web', 'name' => 'Web Pro',      'ram_mb' => 2048, 'cpu_pct' => 150, 'storage_gb' => 25, 'price' => 5.99, 'popular' => false],
+            ['category' => 'web', 'name' => 'Web Business', 'ram_mb' => 4096, 'cpu_pct' => 250, 'storage_gb' => 50, 'price' => 9.99, 'popular' => false],
         ];
 
         $features = [
@@ -41,6 +47,7 @@ class PlanSeeder extends Seeder
             'games'     => ['Más de 55 juegos', 'Instalación instantánea', 'Backups automáticos', 'Protección DDoS', 'Soporte 24/7'],
             'bots'      => ['Discord, Twitch y TS3', 'Reinicio automático', 'Logs en tiempo real', 'Protección DDoS', 'Soporte 24/7'],
             'databases' => ['Redis, MariaDB, PostgreSQL y MongoDB', 'Backups automáticos', 'Acceso remoto seguro', 'Soporte 24/7'],
+            'web'       => ['Certificado SSL gratuito', 'PHP 8.4 y MariaDB', 'Gestor de archivos y SFTP', 'Backups automáticos', 'Soporte 24/7'],
         ];
 
         foreach ($plans as $i => $plan) {
@@ -48,6 +55,7 @@ class PlanSeeder extends Seeder
                 ['slug' => Str::slug($plan['category'] . '-' . $plan['name'])],
                 [
                     ...$plan,
+                    'cycle_prices' => Plan::defaultCyclePrices($plan['price']),
                     'features' => $features[$plan['category']],
                     'sort' => $i,
                 ]

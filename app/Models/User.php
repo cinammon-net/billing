@@ -45,6 +45,13 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+    protected $appends = ['is_admin'];
+
+    public function getIsAdminAttribute(): bool
+    {
+        return in_array(strtolower((string) $this->email), config('billing.admin_emails', []), true);
+    }
+
     protected function casts(): array
     {
         return [

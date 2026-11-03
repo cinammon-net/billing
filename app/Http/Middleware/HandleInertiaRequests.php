@@ -35,6 +35,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'panelUrl' => config('billing.panel_url'),
+            'billingCycles' => \App\Models\Plan::cycleMeta(),
             'flash' => [
                 'success' => $request->session()->get('success'),
             ],

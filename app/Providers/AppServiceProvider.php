@@ -22,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Contraseñas sencillas (4+ caracteres, sin exigir mayúsculas ni símbolos); siempre se guardan cifradas con bcrypt.
+        \Illuminate\Validation\Rules\Password::defaults(fn () => \Illuminate\Validation\Rules\Password::min(4));
+
         Event::listen(Login::class, RecordLogin::class);
     }
 }

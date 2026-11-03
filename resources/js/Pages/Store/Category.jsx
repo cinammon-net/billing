@@ -6,12 +6,14 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { fmtPrice, cycleUnit } from '@/lib/price';
 import { useState } from 'react';
 import {
     Box,
     Gamepad2,
     Bot,
     Database,
+    Globe,
     ArrowLeft,
     CheckCircle2,
     Zap,
@@ -34,16 +36,21 @@ const CATEGORY_ICONS = {
     games: Gamepad2,
     bots: Bot,
     databases: Database,
+    web: Globe,
 };
 
 const fmtRam = (mb) => (mb >= 1024 ? `${mb / 1024} GB` : `${mb} MB`);
 
 export default function StoreCategory({ category, plans }) {
-    const { auth } = usePage().props;
+    const { auth, billingCycles = [] } = usePage().props;
     const [selected, setSelected] = useState(null);
+    const availableCycles = billingCycles.filter((c) => plans.some((plan) => plan.prices?.[c.key] != null));
+    const [cycle, setCycle] = useState(availableCycles.some((c) => c.key === 'monthly') ? 'monthly' : availableCycles[0]?.key ?? 'monthly');
+    const unit = cycleUnit(billingCycles, cycle);
     const { data, setData, post, processing, errors, reset } = useForm({
         plan_id: null,
         server_name: '',
+        billing_cycle: 'monthly',
     });
 
     const CategoryIcon = CATEGORY_ICONS[category.key] || Server;
@@ -53,6 +60,7 @@ export default function StoreCategory({ category, plans }) {
         setData({
             plan_id: plan.id,
             server_name: '',
+            billing_cycle: cycle,
         });
     };
 
@@ -102,7 +110,7 @@ export default function StoreCategory({ category, plans }) {
                     <div className="mt-6 flex flex-wrap items-center justify-center gap-3 font-mono text-xs">
                         <div className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-[#070b18]/80 px-3 py-1 text-slate-300">
                             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                            <span>Nodo: Madrid / Valencia EU-West</span>
+                            <span>Nodo: Miami, FL (US-East)</span>
                         </div>
                         <div className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-[#070b18]/80 px-3 py-1 text-slate-300">
                             <Shield size={12} className="text-[#00f7ff]" />
@@ -115,8 +123,29 @@ export default function StoreCategory({ category, plans }) {
                     </div>
                 </header>
 
+                {/* SELECTOR DE PERÍODO DE FACTURACIÓN */}
+                {availableCycles.length > 1 && (
+                    <div className="mx-auto mt-10 flex max-w-6xl flex-wrap items-center justify-center gap-2 font-mono text-xs">
+                        <span className="mr-1 text-slate-400">Facturación:</span>
+                        {availableCycles.map((c) => (
+                            <button
+                                key={c.key}
+                                type="button"
+                                onClick={() => setCycle(c.key)}
+                                className={`rounded-lg border px-3.5 py-1.5 font-bold transition ${
+                                    cycle === c.key
+                                        ? 'border-[#00f7ff] bg-[#00f7ff]/10 text-[#00f7ff] shadow-[0_0_12px_rgba(0,247,255,0.3)]'
+                                        : 'border-slate-700 bg-black/40 text-slate-300 hover:border-pink-500/60 hover:text-pink-300'
+                                }`}
+                            >
+                                {c.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
+
                 {/* GRID DE PLANES */}
-                <div className="mx-auto mt-14 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="mx-auto mt-8 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {plans.map((plan) => (
                         <div
                             key={plan.id}
@@ -151,10 +180,16 @@ export default function StoreCategory({ category, plans }) {
 
                                 {/* Precio */}
                                 <div className="mt-5 flex items-baseline gap-1.5 border-b border-slate-800/80 pb-5">
-                                    <span className="font-mono text-4xl font-black tracking-tight text-white">
-                                        {plan.price.toFixed(2)} €
-                                    </span>
-                                    <span className="font-mono text-xs text-slate-400">/ mes</span>
+                                    {plan.prices?.[cycle] != null ? (
+                                        <>
+                                            <span className="font-mono text-4xl font-black tracking-tight text-white">
+                                                {fmtPrice(plan.prices[cycle])} €
+                                            </span>
+                                            <span className="font-mono text-xs text-slate-400">/ {unit}</span>
+                                        </>
+                                    ) : (
+                                        <span className="font-mono text-sm text-slate-400">No disponible por {unit}</span>
+                                    )}
                                 </div>
 
                                 {/* SPECS CHIPS (RAM / CPU / SSD) */}
@@ -220,7 +255,8 @@ export default function StoreCategory({ category, plans }) {
                             <div className="mt-8 pt-2">
                                 <button
                                     onClick={() => openOrder(plan)}
-                                    className={`w-full flex items-center justify-center gap-2 rounded-xl py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
+                                    disabled={plan.prices?.[cycle] == null}
+                                    className={`w-full flex disabled:cursor-not-allowed disabled:opacity-40 items-center justify-center gap-2 rounded-xl py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                                         plan.popular
                                             ? 'bg-gradient-to-r from-[#00f7ff] to-cyan-400 text-black shadow-[0_0_20px_rgba(0,247,255,0.4)] hover:brightness-110 hover:shadow-[0_0_30px_rgba(0,247,255,0.6)]'
                                             : 'border border-pink-500/40 bg-pink-500/10 text-pink-300 shadow-[0_0_15px_rgba(255,0,128,0.15)] hover:border-pink-500 hover:bg-pink-500 hover:text-white hover:shadow-[0_0_25px_rgba(255,0,128,0.4)]'
@@ -271,12 +307,12 @@ export default function StoreCategory({ category, plans }) {
                                 </div>
                                 <div className="mt-2 flex items-center justify-between text-slate-300">
                                     <span>Nodo Datacenter:</span>
-                                    <span className="text-[#00f7ff]">Madrid / Valencia EU-01</span>
+                                    <span className="text-[#00f7ff]">Miami, FL US-01</span>
                                 </div>
                                 <div className="mt-3 border-t border-slate-800 pt-2 flex items-center justify-between">
-                                    <span className="text-slate-400">Total Mensual:</span>
+                                    <span className="text-slate-400">Total por {cycleUnit(billingCycles, data.billing_cycle)}:</span>
                                     <span className="text-lg font-black text-[#00f7ff]">
-                                        {selected.price.toFixed(2)} €
+                                        {fmtPrice(selected.prices?.[data.billing_cycle] ?? selected.price)} €
                                     </span>
                                 </div>
                             </div>
@@ -303,6 +339,7 @@ export default function StoreCategory({ category, plans }) {
                                         </p>
                                         <InputError message={errors.server_name} className="mt-1" />
                                         <InputError message={errors.plan_id} className="mt-1" />
+                                        <InputError message={errors.billing_cycle} className="mt-1" />
                                     </div>
 
                                     <div className="flex items-center justify-end gap-3 border-t border-slate-800 pt-5">
