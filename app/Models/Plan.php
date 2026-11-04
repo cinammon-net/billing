@@ -22,7 +22,7 @@ class Plan extends Model
     ];
 
     protected $fillable = [
-        'category', 'name', 'slug', 'ram_mb', 'cpu_pct', 'storage_gb',
+        'category', 'egg', 'name', 'slug', 'ram_mb', 'cpu_pct', 'storage_gb',
         'price', 'cycle_prices', 'popular', 'features', 'addons', 'sort',
     ];
 

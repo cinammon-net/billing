@@ -195,10 +195,21 @@ export default function StoreCategory({ category, plans }) {
 
                             <div>
                                 {/* Header del Plan */}
-                                <div className="flex items-center justify-between">
-                                    <div>
+                                <div className="flex items-center gap-4">
+                                    {plan.icon && (
+                                        <img
+                                            src={plan.icon}
+                                            alt=""
+                                            width={56}
+                                            height={56}
+                                            loading="lazy"
+                                            className="h-14 w-14 shrink-0 rounded-xl border border-slate-700/80 bg-black/40 object-cover"
+                                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                        />
+                                    )}
+                                    <div className="min-w-0">
                                         <span className="font-mono text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                                            // PLAN TIER
+                                            {plan.egg ? '// SERVIDOR DE JUEGO' : '// PLAN TIER'}
                                         </span>
                                         <h2 className="text-2xl font-black text-white group-hover:text-pink-300 transition-colors">
                                             {plan.name}

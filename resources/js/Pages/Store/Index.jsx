@@ -19,7 +19,8 @@ import {
     Gauge,
     Layers,
     Activity,
-    Terminal
+    Terminal,
+    Car
 } from 'lucide-react';
 
 const CATEGORY_META = {
@@ -70,6 +71,17 @@ const CATEGORY_META = {
         badge: 'REDIS · MARIADB · POSTGRES · MONGO',
         specs: ['Acceso Remoto Seguro SSL', 'Backups Diarios Cifrados', 'NVMe SSD Gen4 Raid 10'],
         serversCount: '3 Planes Disponibles',
+    },
+    roleplay: {
+        icon: Car,
+        code: 'CLUSTER-RP',
+        color: 'from-orange-500/20 via-red-500/10 to-transparent',
+        borderHover: 'group-hover:border-orange-400',
+        glowHover: 'group-hover:shadow-[0_0_30px_rgba(249,115,22,0.25)]',
+        accentText: 'text-orange-400',
+        badgeBg: 'bg-orange-500/15 border-orange-500/30 text-orange-300',
+        badge: 'FIVEM · REDM · ALT:V · MTA · SA-MP',
+        specs: ['txAdmin incluido en FiveM/RedM', 'Recursos y scripts personalizados', 'Licencia Cfx.re gratuita (la pones tú)'],
     },
     web: {
         icon: Globe,
@@ -218,7 +230,7 @@ export default function StoreIndex({ categories }) {
                                                 </div>
                                             </div>
                                             <span className={`rounded-full border px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider ${meta.badgeBg}`}>
-                                                {meta.serversCount}
+                                                {c.plans_count} {c.plans_count === 1 ? 'Plan' : 'Planes'}
                                             </span>
                                         </div>
 

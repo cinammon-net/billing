@@ -69,6 +69,7 @@ class PanelService
                     'user_name' => $order->user->name,
                     'server_name' => $order->server_name,
                     'category' => $order->plan->category,
+                    'egg' => $order->plan->egg,
                     'memory_mb' => $order->plan->ram_mb,
                     'disk_mb' => $order->plan->storage_gb * 1024,
                     'cpu_pct' => $order->plan->cpu_pct,

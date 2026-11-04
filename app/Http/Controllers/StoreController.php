@@ -30,6 +30,10 @@ class StoreController extends Controller
             'title' => 'Simuladores',
             'tagline' => 'Assetto Corsa, Euro Truck Simulator 2 y American Truck Simulator.',
         ],
+        'roleplay' => [
+            'title' => 'Roleplay y GTA',
+            'tagline' => 'FiveM, RedM, alt:V, Multi Theft Auto y SA-MP para tu comunidad de rol.',
+        ],
         'voice' => [
             'title' => 'Servidores de Voz',
             'tagline' => 'TeamSpeak 3, TeaSpeak y Lavalink para tu comunidad.',
@@ -58,6 +62,7 @@ class StoreController extends Controller
         'shooters' => ['names' => ['Counter-Strike 2', 'Counter-Strike: Source', 'Team Fortress 2 Classic', 'Insurgency: Sandstorm', 'Left 4 Dead 2', 'Killing Floor 2', 'Squad', 'Arma 3']],
         'sandbox' => ['names' => ['Factorio', 'Mindustry', 'Core Keeper', "Don't Starve Together", 'Eco', 'Satisfactory', 'Space Engineers', 'tshock']],
         'simulation' => ['names' => ['Assetto Corsa', 'Euro Truck Simulator 2 Dedicated server', 'American Truck Simulator Dedicated Server', 'Stormworks: Build and Rescue']],
+        'roleplay' => ['names' => ['FiveM', 'RedM', 'alt:V', 'Multi Theft Auto', 'SA-MP']],
         'voice' => ['panel' => 'voice'],
         'bots' => ['panel' => 'bots'],
         'web' => ['panel' => 'web'],
@@ -80,6 +85,7 @@ class StoreController extends Controller
                     'key' => $key,
                     ...$meta,
                     'from' => $cheapest?->price,
+                    'plans_count' => Plan::where('category', $key)->count(),
                     'eggs' => $this->eggsFor($key, $catalog),
                 ];
             })->filter(fn ($category) => $category['from'] !== null)->values(),
@@ -90,13 +96,21 @@ class StoreController extends Controller
     {
         abort_unless(array_key_exists($category, self::CATEGORIES), 404);
 
+        $catalog = $this->panel->eggCatalog();
+        $icons = collect($catalog)->filter(fn ($egg) => !empty($egg['icon']))
+            ->mapWithKeys(fn ($egg) => [mb_strtolower($egg['name']) => $egg['icon']]);
+
+        $plans = Plan::where('category', $category)->orderBy('sort')->get()
+            ->each(fn (Plan $plan) => $plan->setAttribute('icon', $plan->egg ? $icons->get(mb_strtolower($plan->egg)) : null));
+
         return Inertia::render('Store/Category', [
             'category' => [
                 'key' => $category,
                 ...self::CATEGORIES[$category],
-                'eggs' => $this->eggsFor($category, $this->panel->eggCatalog(), 24),
+                // Con planes por juego cada tarjeta ya lleva su icono: no se repite la fila.
+                'eggs' => $plans->whereNotNull('egg')->isEmpty() ? $this->eggsFor($category, $catalog, 24) : [],
             ],
-            'plans' => Plan::where('category', $category)->orderBy('sort')->get(),
+            'plans' => $plans,
         ]);
     }
 

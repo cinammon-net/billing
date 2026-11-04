@@ -19,26 +19,64 @@ class PlanSeeder extends Seeder
             ['category' => 'minecraft', 'name' => 'Netherite', 'ram_mb' => 12288, 'cpu_pct' => 300, 'storage_gb' => 60,  'price' => 11.99, 'popular' => false],
             ['category' => 'minecraft', 'name' => 'Dragon',    'ram_mb' => 16384, 'cpu_pct' => 400, 'storage_gb' => 80,  'price' => 15.99, 'popular' => false],
 
-            // ── Supervivencia (Rust, ARK, Palworld, 7DTD, Conan, DayZ, Zomboid, Enshrouded) ──
-            ['category' => 'survival', 'name' => 'Explorer', 'ram_mb' => 6144,  'cpu_pct' => 200, 'storage_gb' => 30,  'price' => 7.99,  'popular' => false],
-            ['category' => 'survival', 'name' => 'Warlord',  'ram_mb' => 8192,  'cpu_pct' => 250, 'storage_gb' => 40,  'price' => 9.99,  'popular' => true],
-            ['category' => 'survival', 'name' => 'Apex',     'ram_mb' => 12288, 'cpu_pct' => 300, 'storage_gb' => 60,  'price' => 13.99, 'popular' => false],
-            ['category' => 'survival', 'name' => 'Legend',   'ram_mb' => 16384, 'cpu_pct' => 400, 'storage_gb' => 80,  'price' => 17.99, 'popular' => false],
+            // ── Supervivencia: un plan por juego (egg = nombre exacto en el panel) ──
+            ['category' => 'survival', 'egg' => 'Rust Autowipe', 'name' => 'Rust', 'ram_mb' => 8192, 'cpu_pct' => 250, 'storage_gb' => 40, 'price' => 7.99, 'popular' => true],
+            ['category' => 'survival', 'egg' => 'Ark: Survival Evolved', 'name' => 'ARK: Survival Evolved', 'ram_mb' => 8192, 'cpu_pct' => 250, 'storage_gb' => 40, 'price' => 7.99, 'popular' => false],
+            ['category' => 'survival', 'egg' => 'ARK: Survival Ascended', 'name' => 'ARK: Survival Ascended', 'ram_mb' => 12288, 'cpu_pct' => 300, 'storage_gb' => 60, 'price' => 11.99, 'popular' => false],
+            ['category' => 'survival', 'egg' => 'Palworld', 'name' => 'Palworld', 'ram_mb' => 8192, 'cpu_pct' => 250, 'storage_gb' => 40, 'price' => 7.49, 'popular' => false],
+            ['category' => 'survival', 'egg' => '7 Days To Die', 'name' => '7 Days to Die', 'ram_mb' => 6144, 'cpu_pct' => 200, 'storage_gb' => 30, 'price' => 5.99, 'popular' => false],
+            ['category' => 'survival', 'egg' => 'Conan Exiles', 'name' => 'Conan Exiles', 'ram_mb' => 6144, 'cpu_pct' => 200, 'storage_gb' => 30, 'price' => 5.99, 'popular' => false],
+            ['category' => 'survival', 'egg' => 'DayZ (Experimental)', 'name' => 'DayZ', 'ram_mb' => 4096, 'cpu_pct' => 150, 'storage_gb' => 25, 'price' => 4.49, 'popular' => false],
+            ['category' => 'survival', 'egg' => 'Project Zomboid', 'name' => 'Project Zomboid', 'ram_mb' => 4096, 'cpu_pct' => 150, 'storage_gb' => 20, 'price' => 3.99, 'popular' => false],
+            ['category' => 'survival', 'egg' => 'Enshrouded', 'name' => 'Enshrouded', 'ram_mb' => 6144, 'cpu_pct' => 200, 'storage_gb' => 30, 'price' => 5.99, 'popular' => false],
+            ['category' => 'survival', 'egg' => 'V Rising', 'name' => 'V Rising', 'ram_mb' => 4096, 'cpu_pct' => 150, 'storage_gb' => 20, 'price' => 4.49, 'popular' => false],
+            ['category' => 'survival', 'egg' => 'Sons Of The Forest', 'name' => 'Sons Of The Forest', 'ram_mb' => 6144, 'cpu_pct' => 200, 'storage_gb' => 30, 'price' => 5.99, 'popular' => false],
+            ['category' => 'survival', 'egg' => 'The Forest', 'name' => 'The Forest', 'ram_mb' => 3072, 'cpu_pct' => 100, 'storage_gb' => 15, 'price' => 2.99, 'popular' => false],
+            ['category' => 'survival', 'egg' => 'Unturned', 'name' => 'Unturned', 'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 10, 'price' => 1.99, 'popular' => false],
+            ['category' => 'survival', 'egg' => 'The Isle', 'name' => 'The Isle', 'ram_mb' => 6144, 'cpu_pct' => 200, 'storage_gb' => 30, 'price' => 5.99, 'popular' => false],
+            ['category' => 'survival', 'egg' => 'Craftopia', 'name' => 'Craftopia', 'ram_mb' => 4096, 'cpu_pct' => 150, 'storage_gb' => 20, 'price' => 3.99, 'popular' => false],
 
-            // ── Shooters / FPS (CS2, CS:GO, TF2, Insurgency, L4D2, KF2) ──
-            ['category' => 'shooters', 'name' => 'Squad',      'ram_mb' => 4096, 'cpu_pct' => 150, 'storage_gb' => 20, 'price' => 5.99,  'popular' => false],
-            ['category' => 'shooters', 'name' => 'Clan',       'ram_mb' => 6144, 'cpu_pct' => 200, 'storage_gb' => 30, 'price' => 7.99,  'popular' => true],
-            ['category' => 'shooters', 'name' => 'Pro League', 'ram_mb' => 8192, 'cpu_pct' => 300, 'storage_gb' => 40, 'price' => 10.99, 'popular' => false],
+            // ── Shooters / FPS: un plan por juego (egg = nombre exacto en el panel) ──
+            ['category' => 'shooters', 'egg' => 'Counter-Strike 2', 'name' => 'Counter-Strike 2', 'ram_mb' => 4096, 'cpu_pct' => 200, 'storage_gb' => 40, 'price' => 3.99, 'popular' => true],
+            ['category' => 'shooters', 'egg' => 'Counter-Strike: Source', 'name' => 'Counter-Strike: Source', 'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 10, 'price' => 1.99, 'popular' => false],
+            ['category' => 'shooters', 'egg' => 'Team Fortress 2 Classic', 'name' => 'Team Fortress 2 Classic', 'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 15, 'price' => 1.99, 'popular' => false],
+            ['category' => 'shooters', 'egg' => 'Insurgency: Sandstorm', 'name' => 'Insurgency: Sandstorm', 'ram_mb' => 3072, 'cpu_pct' => 150, 'storage_gb' => 20, 'price' => 2.99, 'popular' => false],
+            ['category' => 'shooters', 'egg' => 'Left 4 Dead 2', 'name' => 'Left 4 Dead 2', 'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 15, 'price' => 1.99, 'popular' => false],
+            ['category' => 'shooters', 'egg' => 'Left 4 Dead', 'name' => 'Left 4 Dead', 'ram_mb' => 1024, 'cpu_pct' => 75, 'storage_gb' => 10, 'price' => 1.49, 'popular' => false],
+            ['category' => 'shooters', 'egg' => 'Killing Floor 2', 'name' => 'Killing Floor 2', 'ram_mb' => 2048, 'cpu_pct' => 150, 'storage_gb' => 20, 'price' => 2.49, 'popular' => false],
+            ['category' => 'shooters', 'egg' => 'Squad', 'name' => 'Squad', 'ram_mb' => 6144, 'cpu_pct' => 250, 'storage_gb' => 40, 'price' => 6.99, 'popular' => false],
+            ['category' => 'shooters', 'egg' => 'Arma 3', 'name' => 'Arma 3', 'ram_mb' => 4096, 'cpu_pct' => 200, 'storage_gb' => 30, 'price' => 4.99, 'popular' => false],
+            ['category' => 'shooters', 'egg' => 'Arma Reforger', 'name' => 'Arma Reforger', 'ram_mb' => 6144, 'cpu_pct' => 250, 'storage_gb' => 40, 'price' => 6.49, 'popular' => false],
+            ['category' => 'shooters', 'egg' => 'Mordhau', 'name' => 'Mordhau', 'ram_mb' => 3072, 'cpu_pct' => 150, 'storage_gb' => 20, 'price' => 3.49, 'popular' => false],
+            ['category' => 'shooters', 'egg' => 'Post Scriptum', 'name' => 'Post Scriptum', 'ram_mb' => 6144, 'cpu_pct' => 250, 'storage_gb' => 40, 'price' => 6.49, 'popular' => false],
+            ['category' => 'shooters', 'egg' => 'Holdfast NaW', 'name' => 'Holdfast: NaW', 'ram_mb' => 2048, 'cpu_pct' => 150, 'storage_gb' => 15, 'price' => 2.49, 'popular' => false],
 
-            // ── Sandbox y creativos (GMod, Factorio, Mindustry, Core Keeper, DST, Eco) ──
-            ['category' => 'sandbox', 'name' => 'Builder',   'ram_mb' => 4096, 'cpu_pct' => 150, 'storage_gb' => 20, 'price' => 4.99, 'popular' => false],
-            ['category' => 'sandbox', 'name' => 'Engineer',  'ram_mb' => 6144, 'cpu_pct' => 200, 'storage_gb' => 30, 'price' => 6.99, 'popular' => true],
-            ['category' => 'sandbox', 'name' => 'Architect', 'ram_mb' => 8192, 'cpu_pct' => 250, 'storage_gb' => 40, 'price' => 8.99, 'popular' => false],
+            // ── Sandbox y creativos: un plan por juego (egg = nombre exacto en el panel) ──
+            ['category' => 'sandbox', 'egg' => 'Factorio', 'name' => 'Factorio', 'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 10, 'price' => 1.99, 'popular' => true],
+            ['category' => 'sandbox', 'egg' => 'Mindustry', 'name' => 'Mindustry', 'ram_mb' => 1024, 'cpu_pct' => 75, 'storage_gb' => 5, 'price' => 1.49, 'popular' => false],
+            ['category' => 'sandbox', 'egg' => 'Core Keeper', 'name' => 'Core Keeper', 'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 10, 'price' => 2.49, 'popular' => false],
+            ['category' => 'sandbox', 'egg' => "Don't Starve Together", 'name' => "Don't Starve Together", 'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 10, 'price' => 1.99, 'popular' => false],
+            ['category' => 'sandbox', 'egg' => 'Eco', 'name' => 'Eco', 'ram_mb' => 4096, 'cpu_pct' => 150, 'storage_gb' => 20, 'price' => 3.99, 'popular' => false],
+            ['category' => 'sandbox', 'egg' => 'Satisfactory', 'name' => 'Satisfactory', 'ram_mb' => 8192, 'cpu_pct' => 250, 'storage_gb' => 30, 'price' => 7.49, 'popular' => false],
+            ['category' => 'sandbox', 'egg' => 'Space Engineers', 'name' => 'Space Engineers', 'ram_mb' => 6144, 'cpu_pct' => 200, 'storage_gb' => 30, 'price' => 5.99, 'popular' => false],
+            ['category' => 'sandbox', 'egg' => 'tshock', 'name' => 'Terraria (TShock)', 'ram_mb' => 1024, 'cpu_pct' => 75, 'storage_gb' => 5, 'price' => 1.49, 'popular' => false],
+            ['category' => 'sandbox', 'egg' => 'Stationeers', 'name' => 'Stationeers', 'ram_mb' => 4096, 'cpu_pct' => 150, 'storage_gb' => 20, 'price' => 3.99, 'popular' => false],
+            ['category' => 'sandbox', 'egg' => 'Barotrauma', 'name' => 'Barotrauma', 'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 10, 'price' => 1.99, 'popular' => false],
+            ['category' => 'sandbox', 'egg' => 'Rising World Unity', 'name' => 'Rising World', 'ram_mb' => 4096, 'cpu_pct' => 150, 'storage_gb' => 20, 'price' => 3.99, 'popular' => false],
+            ['category' => 'sandbox', 'egg' => 'Veloren', 'name' => 'Veloren', 'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 10, 'price' => 1.99, 'popular' => false],
 
-            // ── Simuladores (Assetto Corsa, ETS2, ATS) ──
-            ['category' => 'simulation', 'name' => 'Cruiser',   'ram_mb' => 4096, 'cpu_pct' => 150, 'storage_gb' => 20, 'price' => 5.49, 'popular' => false],
-            ['category' => 'simulation', 'name' => 'Racer',     'ram_mb' => 6144, 'cpu_pct' => 250, 'storage_gb' => 30, 'price' => 7.99, 'popular' => true],
-            ['category' => 'simulation', 'name' => 'Endurance', 'ram_mb' => 8192, 'cpu_pct' => 300, 'storage_gb' => 40, 'price' => 9.99, 'popular' => false],
+            // ── Simuladores: un plan por juego (egg = nombre exacto en el panel) ──
+            ['category' => 'simulation', 'egg' => 'Assetto Corsa', 'name' => 'Assetto Corsa', 'ram_mb' => 2048, 'cpu_pct' => 150, 'storage_gb' => 15, 'price' => 2.49, 'popular' => true],
+            ['category' => 'simulation', 'egg' => 'Euro Truck Simulator 2 Dedicated server', 'name' => 'Euro Truck Simulator 2', 'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 15, 'price' => 2.49, 'popular' => false],
+            ['category' => 'simulation', 'egg' => 'American Truck Simulator Dedicated Server', 'name' => 'American Truck Simulator', 'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 15, 'price' => 2.49, 'popular' => false],
+            ['category' => 'simulation', 'egg' => 'Stormworks: Build and Rescue', 'name' => 'Stormworks', 'ram_mb' => 3072, 'cpu_pct' => 150, 'storage_gb' => 15, 'price' => 2.99, 'popular' => false],
+
+            // ── Roleplay y GTA: un plan por juego (egg = nombre exacto en el panel) ──
+            ['category' => 'roleplay', 'egg' => 'FiveM', 'name' => 'FiveM', 'ram_mb' => 4096, 'cpu_pct' => 200, 'storage_gb' => 30, 'price' => 3.99, 'popular' => true],
+            ['category' => 'roleplay', 'egg' => 'RedM', 'name' => 'RedM', 'ram_mb' => 4096, 'cpu_pct' => 200, 'storage_gb' => 30, 'price' => 3.99, 'popular' => false],
+            ['category' => 'roleplay', 'egg' => 'alt:V', 'name' => 'alt:V', 'ram_mb' => 4096, 'cpu_pct' => 200, 'storage_gb' => 30, 'price' => 3.99, 'popular' => false],
+            ['category' => 'roleplay', 'egg' => 'Multi Theft Auto', 'name' => 'Multi Theft Auto', 'ram_mb' => 1024, 'cpu_pct' => 100, 'storage_gb' => 10, 'price' => 1.49, 'popular' => false],
+            ['category' => 'roleplay', 'egg' => 'SA-MP', 'name' => 'SA-MP', 'ram_mb' => 1024, 'cpu_pct' => 75, 'storage_gb' => 5, 'price' => 0.99, 'popular' => false],
 
             // ── Servidores de voz (TeamSpeak 3, TeaSpeak, Lavalink) ──
             ['category' => 'voice', 'name' => 'Chat',      'ram_mb' => 1024, 'cpu_pct' => 50,  'storage_gb' => 5,  'price' => 1.49, 'popular' => false],
@@ -64,10 +102,11 @@ class PlanSeeder extends Seeder
 
         $features = [
             'minecraft' => ['Java y Bedrock', 'Instalador de modpacks', 'Backups automáticos', 'Protección DDoS', 'Soporte 24/7'],
-            'survival'  => ['Rust, ARK, Palworld, 7DTD, Conan, DayZ y más', 'Wipes y backups automáticos', 'Instalación instantánea', 'Protección DDoS', 'Soporte 24/7'],
-            'shooters'  => ['CS2, CS:GO, TF2, Insurgency y L4D2', 'Tickrate estable para competitivo', 'Instalación instantánea', 'Protección DDoS Game', 'Soporte 24/7'],
-            'sandbox'   => ["Garry's Mod, Factorio, Mindustry y DST", 'Workshop y mods compatibles', 'Backups automáticos', 'Protección DDoS', 'Soporte 24/7'],
-            'simulation'=> ['Assetto Corsa, ETS2 y ATS', 'Baja latencia para carreras', 'Backups automáticos', 'Protección DDoS', 'Soporte 24/7'],
+            'survival'  => ['El juego viene instalado y listo', 'Wipes y backups automáticos', 'Instalación instantánea', 'Protección DDoS', 'Soporte 24/7'],
+            'shooters'  => ['El juego viene instalado y listo', 'Tickrate estable para competitivo', 'Instalación instantánea', 'Protección DDoS Game', 'Soporte 24/7'],
+            'sandbox'   => ['Factorio, Satisfactory, Terraria, DST y más', 'Workshop y mods compatibles', 'Backups automáticos', 'Protección DDoS', 'Soporte 24/7'],
+            'simulation'=> ['El juego viene instalado y listo', 'Baja latencia para carreras', 'Backups automáticos', 'Protección DDoS', 'Soporte 24/7'],
+            'roleplay'  => ['FiveM, RedM, alt:V, MTA y SA-MP', 'txAdmin y recursos personalizados', 'Instalación instantánea', 'Protección DDoS', 'Soporte 24/7'],
             'voice'     => ['TeamSpeak 3, TeaSpeak y Lavalink', 'Siempre online', 'Baja latencia de voz', 'Protección DDoS', 'Soporte 24/7'],
             'bots'      => ['Discord, Twitch y TS3', 'Reinicio automático', 'Logs en tiempo real', 'Protección DDoS', 'Soporte 24/7'],
             'databases' => ['Redis, MariaDB, PostgreSQL y MongoDB', 'Backups automáticos', 'Acceso remoto seguro', 'Soporte 24/7'],
@@ -109,16 +148,38 @@ class PlanSeeder extends Seeder
         ];
 
         foreach ($plans as $i => $plan) {
-            Plan::updateOrCreate(
-                ['slug' => Str::slug($plan['category'] . '-' . $plan['name'])],
-                [
-                    ...$plan,
-                    'cycle_prices' => Plan::defaultCyclePrices($plan['price']),
-                    'features' => $features[$plan['category']],
-                    'addons' => $webAddons[$plan['name']] ?? null,
-                    'sort' => $i,
-                ]
-            );
+            $slug = Str::slug($plan['category'] . '-' . $plan['name']);
+            $existing = Plan::where('slug', $slug)->first();
+            $attributes = [
+                'egg' => null,
+                ...$plan,
+                'cycle_prices' => Plan::defaultCyclePrices($plan['price']),
+                'features' => $features[$plan['category']],
+                'addons' => $webAddons[$plan['name']] ?? null,
+                'sort' => $i,
+            ];
+
+            if ($existing) {
+                // No pisar los precios que el admin haya cambiado en /admin/plans.
+                unset($attributes['price'], $attributes['cycle_prices']);
+                $existing->update($attributes);
+            } else {
+                Plan::create(['slug' => $slug, ...$attributes]);
+            }
+        }
+
+        // Los niveles genéricos antiguos de las categorías de juegos instalaban siempre el
+        // mismo juego; ahora hay un plan por juego. Se quitan solo si nadie los ha comprado.
+        $legacy = [
+            'survival' => ['Explorer', 'Warlord', 'Apex', 'Legend'],
+            'shooters' => ['Squad', 'Clan', 'Pro League'],
+            'sandbox' => ['Builder', 'Engineer', 'Architect'],
+            'simulation' => ['Cruiser', 'Racer', 'Endurance'],
+        ];
+        foreach ($legacy as $category => $names) {
+            Plan::where('category', $category)->whereIn('name', $names)->whereNull('egg')
+                ->whereDoesntHave('orders')
+                ->delete();
         }
     }
 }

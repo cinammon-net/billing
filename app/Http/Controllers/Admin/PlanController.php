@@ -80,6 +80,7 @@ class PlanController extends Controller
             ...$cycleRules,
             'category' => ['required', Rule::in(array_keys(StoreController::CATEGORIES))],
             'name' => ['required', 'string', 'max:60'],
+            'egg' => ['nullable', 'string', 'max:255'],
             'ram_mb' => ['required', 'integer', 'min:64', 'max:1048576'],
             'cpu_pct' => ['required', 'integer', 'min:1', 'max:10000'],
             'storage_gb' => ['required', 'integer', 'min:1', 'max:100000'],
