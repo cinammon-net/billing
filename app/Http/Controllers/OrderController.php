@@ -18,6 +18,10 @@ class OrderController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        if ($this->panel->storeBlocked()) {
+            return back()->withErrors(['plan_id' => 'La tienda está en mantenimiento: no se aceptan pedidos nuevos ahora mismo. Inténtalo cuando termine.']);
+        }
+
         $validated = $request->validate([
             'plan_id' => ['required', 'exists:plans,id'],
             'server_name' => ['required', 'string', 'max:60'],

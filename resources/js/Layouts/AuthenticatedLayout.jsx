@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import MaintenanceBanner from '@/Components/MaintenanceBanner';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import { Link, usePage } from '@inertiajs/react';
@@ -221,6 +222,8 @@ export default function Authenticated({ user, header, children }) {
                     <div className="mx-auto max-w-7xl">{header}</div>
                 </header>
             )}
+
+            <MaintenanceBanner />
 
             {/* Contenido principal */}
             <main className="relative z-10">{children}</main>

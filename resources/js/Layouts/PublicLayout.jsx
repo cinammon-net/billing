@@ -1,4 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
+import MaintenanceBanner from '@/Components/MaintenanceBanner';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { 
     Box, 
@@ -122,6 +123,8 @@ export default function PublicLayout({ children }) {
                     </nav>
                 </div>
             </header>
+
+            <MaintenanceBanner />
 
             {/* Contenido dinámico */}
             <main className="relative z-10 flex-1">{children}</main>

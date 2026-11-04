@@ -36,6 +36,8 @@ class HandleInertiaRequests extends Middleware
             ],
             'panelUrl' => config('billing.panel_url'),
             'billingCycles' => \App\Models\Plan::cycleMeta(),
+            // Aviso de mantenimiento anunciado desde el panel
+            'maintenance' => fn () => app(\App\Services\PanelService::class)->maintenance(),
             'flash' => [
                 'success' => $request->session()->get('success'),
             ],

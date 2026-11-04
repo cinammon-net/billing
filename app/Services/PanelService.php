@@ -53,6 +53,31 @@ class PanelService
     }
 
     /**
+     * Mantenimiento activo o próximo anunciado en el panel (o null). Cacheado 30 s;
+     * si el panel no responde se asume que no hay mantenimiento.
+     */
+    public function maintenance(): ?array
+    {
+        return Cache::remember('panel:maintenance', 30, function () {
+            try {
+                $response = Http::timeout(3)->acceptJson()->get($this->baseUrl.'/api/maintenance');
+
+                return $response->successful() && is_array($response->json('data')) ? $response->json('data') : null;
+            } catch (\Throwable $e) {
+                return null;
+            }
+        });
+    }
+
+    /** ¿La tienda está bloqueada ahora mismo por un mantenimiento? */
+    public function storeBlocked(): bool
+    {
+        $m = $this->maintenance();
+
+        return $m !== null && !empty($m['active']) && !empty($m['block_access']) && in_array('store', $m['scope'] ?? [], true);
+    }
+
+    /**
      * Crea el servidor en el panel para un pedido. Devuelve true si se aprovisionó.
      */
     public function provision(Order $order): bool
