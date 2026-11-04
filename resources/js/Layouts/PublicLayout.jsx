@@ -14,15 +14,19 @@ import {
     Sparkles, 
     LogIn,
     UserPlus,
-    Activity
+    Activity,
+    Crown,
+    Drama,
+    LayoutGrid
 } from 'lucide-react';
 
 const CATEGORIES = [
+    { key: 'ranks', label: 'Rangos VIP', icon: Crown, vip: true },
     { key: 'minecraft', label: 'Minecraft', icon: Box },
     { key: 'survival', label: 'Supervivencia', icon: Gamepad2 },
     { key: 'shooters', label: 'Shooters', icon: Crosshair },
+    { key: 'roleplay', label: 'Roleplay', icon: Drama },
     { key: 'bots', label: 'Bots & Apps', icon: Bot },
-    { key: 'databases', label: 'Bases de Datos', icon: Database },
 ];
 
 export default function PublicLayout({ children }) {
@@ -71,16 +75,27 @@ export default function PublicLayout({ children }) {
                                         key={c.key}
                                         href={route('store.category', c.key)}
                                         className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${
-                                            isActive
-                                                ? 'border border-[#00f7ff]/50 bg-[#00f7ff]/10 text-[#00f7ff] shadow-[0_0_12px_rgba(0,247,255,0.25)] font-bold'
-                                                : 'text-slate-400 hover:border hover:border-pink-500/30 hover:bg-pink-500/10 hover:text-pink-300'
+                                            c.vip
+                                                ? `border font-bold ${isActive ? 'border-yellow-400 bg-yellow-400/20 text-yellow-200' : 'border-yellow-500/50 bg-yellow-500/10 text-yellow-300 hover:bg-yellow-400/20'} shadow-[0_0_12px_rgba(250,204,21,0.2)]`
+                                                : isActive
+                                                  ? 'border border-[#00f7ff]/50 bg-[#00f7ff]/10 text-[#00f7ff] shadow-[0_0_12px_rgba(0,247,255,0.25)] font-bold'
+                                                  : 'text-slate-400 hover:border hover:border-pink-500/30 hover:bg-pink-500/10 hover:text-pink-300'
                                         }`}
                                     >
-                                        <Icon size={13} className={isActive ? 'text-[#00f7ff]' : 'text-slate-500'} />
+                                        <Icon size={13} className={c.vip ? 'text-yellow-300' : isActive ? 'text-[#00f7ff]' : 'text-slate-500'} />
                                         <span>{c.label}</span>
                                     </Link>
                                 );
                             })}
+                            <Link
+                                href={route('store')}
+                                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${
+                                    route().current('store') ? 'border border-[#00f7ff]/50 bg-[#00f7ff]/10 font-bold text-[#00f7ff]' : 'text-slate-400 hover:bg-pink-500/10 hover:text-pink-300'
+                                }`}
+                            >
+                                <LayoutGrid size={13} className="text-slate-500" />
+                                <span>Ver todo</span>
+                            </Link>
                         </nav>
                     </div>
 
