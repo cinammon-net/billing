@@ -21,6 +21,7 @@ export default function Authenticated({ user, header, children }) {
     const { panelUrl, auth } = usePage().props;
     const isAdmin = Boolean(auth?.user?.is_admin);
     const isAdminPlans = route().current('admin.plans.index');
+    const isAdminPayments = route().current('admin.payments.index');
 
     const isDashboard = route().current('dashboard');
     const isStore = route().current('store') || route().current('store.category');
@@ -95,6 +96,20 @@ export default function Authenticated({ user, header, children }) {
                                     >
                                         <Tags size={14} />
                                         <span>Precios</span>
+                                    </Link>
+                                )}
+
+                                {isAdmin && (
+                                    <Link
+                                        href={route('admin.payments.index')}
+                                        className={`flex items-center gap-2 rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold tracking-wider transition ${
+                                            isAdminPayments
+                                                ? 'border border-yellow-400/50 bg-yellow-400/10 text-yellow-300'
+                                                : 'text-slate-400 hover:border hover:border-yellow-400/30 hover:bg-yellow-400/10 hover:text-yellow-300'
+                                        }`}
+                                    >
+                                        <Tags size={14} />
+                                        <span>Pagos</span>
                                     </Link>
                                 )}
                             </div>

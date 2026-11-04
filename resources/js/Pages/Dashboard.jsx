@@ -31,6 +31,11 @@ const STATUS_CONFIG = {
         badgeCls: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.2)]', 
         dotCls: 'bg-emerald-400' 
     },
+    awaiting: {
+        label: 'Pago en revisión',
+        badgeCls: 'border-sky-500/40 bg-sky-500/10 text-sky-300 shadow-[0_0_10px_rgba(14,165,233,0.2)]',
+        dotCls: 'bg-sky-400'
+    },
     pending: { 
         label: 'Pendiente de Pago', 
         badgeCls: 'border-amber-500/40 bg-amber-500/10 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.2)]', 
@@ -95,11 +100,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
         });
     };
 
-    const payInvoice = (invoice) => {
-        if (confirm(`¿Pagar la factura ${invoice.number} (${fmtPrice(invoice.amount)} €)?`)) {
-            router.post(route('invoices.pay', invoice.id));
-        }
-    };
+    const payInvoice = (invoice) => router.visit(route('checkout.show', invoice.id));
 
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -408,7 +409,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                                                             className="inline-flex items-center gap-1.5 rounded-lg border border-[#00f7ff]/50 bg-[#00f7ff]/15 px-3 py-1.5 text-xs font-bold text-[#00f7ff] shadow-[0_0_12px_rgba(0,247,255,0.2)] transition hover:bg-[#00f7ff] hover:text-black"
                                                         >
                                                             <CreditCard size={13} />
-                                                            <span>Pagar Factura</span>
+                                                            <span>{inv.status === 'awaiting' ? 'Ver pago' : 'Pagar Factura'}</span>
                                                         </button>
                                                     ) : (
                                                         <span className="font-mono text-[11px] text-emerald-400 font-semibold">

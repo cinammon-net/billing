@@ -66,7 +66,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
-    Route::post('/invoices/{invoice}/pay', [OrderController::class, 'pay'])->name('invoices.pay');
+    // Pago de facturas: el cliente elige método en la página de checkout
+    Route::get('/invoices/{invoice}/pay', [\App\Http\Controllers\CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/invoices/{invoice}/pay/manual', [\App\Http\Controllers\CheckoutController::class, 'manual'])->middleware('throttle:10,1')->name('checkout.manual');
+    Route::post('/invoices/{invoice}/pay/crypto', [\App\Http\Controllers\CheckoutController::class, 'crypto'])->middleware('throttle:10,1')->name('checkout.crypto');
+    Route::post('/invoices/{invoice}/pay/paypal', [\App\Http\Controllers\CheckoutController::class, 'paypal'])->middleware('throttle:10,1')->name('checkout.paypal');
+    Route::post('/invoices/{invoice}/pay/simulate', [\App\Http\Controllers\CheckoutController::class, 'simulate'])->name('checkout.simulate');
+    Route::get('/payments/paypal/return', [\App\Http\Controllers\CheckoutController::class, 'paypalReturn'])->name('payments.paypal.return');
 });
 
 // Administración de planes y precios
@@ -76,6 +82,9 @@ Route::middleware(['auth', 'verified', 'billing.admin'])->prefix('admin')->name(
     Route::put('/plans/{plan}', [\App\Http\Controllers\Admin\PlanController::class, 'update'])->name('plans.update');
     Route::patch('/plans/{plan}/price', [\App\Http\Controllers\Admin\PlanController::class, 'updatePrice'])->name('plans.price');
     Route::delete('/plans/{plan}', [\App\Http\Controllers\Admin\PlanController::class, 'destroy'])->name('plans.destroy');
+    Route::get('/payments', [\App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('payments.index');
+    Route::post('/payments/{invoice}/confirm', [\App\Http\Controllers\Admin\PaymentController::class, 'confirm'])->name('payments.confirm');
+    Route::post('/payments/{invoice}/reject', [\App\Http\Controllers\Admin\PaymentController::class, 'reject'])->name('payments.reject');
 });
 
 Route::middleware('auth')->group(function () {
@@ -104,3 +113,6 @@ Route::get('/dev-autologin', function (\Illuminate\Http\Request $request) {
     $to = $request->query('to', '/dashboard');
     return redirect($to);
 });
+
+// Notificaciones de pasarelas de pago (sin sesión ni CSRF; se verifican por firma)
+Route::post('/webhooks/nowpayments', [\App\Http\Controllers\WebhookController::class, 'nowpayments'])->middleware('throttle:60,1')->name('webhooks.nowpayments');

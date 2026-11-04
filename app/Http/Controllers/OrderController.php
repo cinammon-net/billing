@@ -72,44 +72,6 @@ class OrderController extends Controller
         );
     }
 
-    /**
-     * Paga una factura pendiente y aprovisiona el servidor del pedido.
-     */
-    public function pay(Request $request, Invoice $invoice): RedirectResponse
-    {
-        abort_unless($invoice->user_id === $request->user()->id, 403);
-
-        if ($invoice->status === 'paid') {
-            return redirect()->route('dashboard')->with('success', 'Esta factura ya está pagada.');
-        }
-
-        // Pago simulado: aquí iría la pasarela real (Stripe, PayPal…)
-        $invoice->update(['status' => 'paid', 'due_at' => now()]);
-
-        $order = $invoice->order;
-        $order->update(['status' => 'active', 'renews_at' => $order->nextRenewal()]);
-
-        if ($order->plan->isRank()) {
-            $granted = $this->panel->grantRole($order);
-
-            return redirect()->route('dashboard')->with(
-                'success',
-                $granted
-                    ? "Pago recibido. Ya tienes el rango «{$order->plan->name}» en el panel hasta el {$order->renews_at?->format('d/m/Y H:i')}. ✨"
-                    : "Pago recibido. El rango «{$order->plan->name}» se activará en el panel en unos minutos."
-            );
-        }
-
-        $provisioned = $this->panel->provision($order);
-
-        return redirect()->route('dashboard')->with(
-            'success',
-            $provisioned
-                ? "Pago recibido. Servidor «{$order->server_name}» creado en el panel. 🚀"
-                : "Pago recibido. El servidor «{$order->server_name}» se está preparando en el panel."
-        );
-    }
-
     public function cancel(Request $request, Order $order): RedirectResponse
     {
         abort_unless($order->user_id === $request->user()->id, 403);

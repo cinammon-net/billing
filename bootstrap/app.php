@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        // Las pasarelas no envían token CSRF: se valida la firma en el controlador.
+        $middleware->validateCsrfTokens(except: ['webhooks/*']);
+
         $middleware->alias([
             'billing.admin' => \App\Http\Middleware\EnsureBillingAdmin::class,
         ]);
