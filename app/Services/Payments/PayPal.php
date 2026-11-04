@@ -8,15 +8,20 @@ use Illuminate\Support\Facades\Http;
 /** PayPal Checkout (Orders API v2): crear pedido, redirigir y capturar al volver. */
 class PayPal
 {
+    private function cfg(string $key): mixed
+    {
+        return PaymentService::settings('paypal')[$key] ?? null;
+    }
+
     private function base(): string
     {
-        return config('payments.paypal.sandbox') ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+        return $this->cfg('sandbox') ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
     }
 
     private function token(): string
     {
         return (string) Http::asForm()->timeout(20)
-            ->withBasicAuth(config('payments.paypal.client_id'), config('payments.paypal.secret'))
+            ->withBasicAuth((string) $this->cfg('client_id'), (string) $this->cfg('secret'))
             ->post($this->base() . '/v1/oauth2/token', ['grant_type' => 'client_credentials'])
             ->throw()->json('access_token');
     }

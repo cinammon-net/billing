@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { fmtPrice } from '@/lib/price';
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Check, Clock, X } from 'lucide-react';
 
 const METHOD_LABELS = { transfer: 'Transferencia', bizum: 'Bizum', crypto: 'Cripto', paypal: 'PayPal', simulated: 'Simulado' };
@@ -28,7 +28,10 @@ export default function Payments({ awaiting, recent, methods }) {
                 <div>
                     <h1 className="text-2xl font-black text-white">Pagos</h1>
                     <p className="mt-1 font-mono text-xs text-slate-400">
-                        Métodos activos: {methods.length ? methods.map((m) => m.label).join(' · ') : 'ninguno (configúralos en el .env de billing)'}
+                        Métodos activos: {methods.length ? methods.map((m) => m.label).join(' · ') : 'ninguno'} ·{' '}
+                        <Link href={route('admin.payment-methods.index')} className="text-[#00f7ff] underline hover:text-white">
+                            configurar métodos de pago
+                        </Link>
                     </p>
                 </div>
 

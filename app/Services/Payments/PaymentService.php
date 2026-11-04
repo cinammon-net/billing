@@ -17,25 +17,72 @@ class PaymentService
     {
     }
 
-    /** Métodos disponibles (configurados) para mostrar al cliente. */
+    /** Campos de cada método: [clave => [etiqueta, secreto?, obligatorio?]] */
+    public const FIELDS = [
+        'transfer' => ['iban' => ['IBAN', false, true], 'holder' => ['Titular', false, true], 'bank' => ['Banco', false, false], 'bic' => ['BIC / SWIFT', false, false]],
+        'bizum' => ['phone' => ['Teléfono', false, true], 'holder' => ['Nombre que verá el cliente', false, false]],
+        'crypto' => ['api_key' => ['API key', true, true], 'ipn_secret' => ['IPN secret', true, true], 'sandbox' => ['Modo pruebas (sandbox)', false, false]],
+        'paypal' => ['client_id' => ['Client ID', false, true], 'secret' => ['Secret', true, true], 'sandbox' => ['Modo pruebas (sandbox)', false, false]],
+    ];
+
+    /** Clave de config/payments.php de cada método (para leer el .env como respaldo). */
+    private const ENV_KEYS = ['transfer' => 'transfer', 'bizum' => 'bizum', 'crypto' => 'nowpayments', 'paypal' => 'paypal'];
+
+    /**
+     * Ajustes efectivos de un método: lo guardado en Admin → Métodos de pago o,
+     * si no se ha guardado nunca, lo del .env. Incluye 'enabled'.
+     */
+    public static function settings(string $method): array
+    {
+        static $rows = null;
+        $rows ??= \Illuminate\Support\Facades\Schema::hasTable('payment_settings')
+            ? \App\Models\PaymentSetting::all()->keyBy('method')
+            : collect();
+
+        $env = config('payments.' . self::ENV_KEYS[$method], []);
+        if ($row = $rows->get($method)) {
+            return ['enabled' => $row->enabled] + ($row->data ?? []) + array_map(fn () => null, $env);
+        }
+        $required = array_keys(array_filter(self::FIELDS[$method], fn ($f) => $f[2]));
+
+        return ['enabled' => collect($required)->every(fn ($k) => !empty($env[$k]))] + $env;
+    }
+
+    /** ¿El método tiene todos sus campos obligatorios? */
+    public static function complete(string $method, array $settings): bool
+    {
+        foreach (self::FIELDS[$method] as $key => [, , $required]) {
+            if ($required && blank($settings[$key] ?? null)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /** Métodos disponibles (activados y completos) para mostrar al cliente. */
     public static function methods(): array
     {
-        $c = config('payments');
+        $c = [];
+        foreach (array_keys(self::FIELDS) as $m) {
+            $s = self::settings($m);
+            $c[$m] = !empty($s['enabled']) && self::complete($m, $s) ? $s : null;
+        }
         $methods = [];
-        if (!empty($c['transfer']['iban'])) {
+        if ($t = $c['transfer']) {
             $methods[] = ['key' => 'transfer', 'label' => 'Transferencia bancaria', 'auto' => false, 'details' => array_filter([
-                'IBAN' => $c['transfer']['iban'], 'Titular' => $c['transfer']['holder'], 'Banco' => $c['transfer']['bank'], 'BIC' => $c['transfer']['bic'],
+                'IBAN' => $t['iban'] ?? null, 'Titular' => $t['holder'] ?? null, 'Banco' => $t['bank'] ?? null, 'BIC' => $t['bic'] ?? null,
             ])];
         }
-        if (!empty($c['bizum']['phone'])) {
+        if ($b = $c['bizum']) {
             $methods[] = ['key' => 'bizum', 'label' => 'Bizum', 'auto' => false, 'details' => array_filter([
-                'Teléfono' => $c['bizum']['phone'], 'Titular' => $c['bizum']['holder'],
+                'Teléfono' => $b['phone'] ?? null, 'Titular' => $b['holder'] ?? null,
             ])];
         }
-        if (!empty($c['nowpayments']['api_key']) && !empty($c['nowpayments']['ipn_secret'])) {
+        if ($c['crypto']) {
             $methods[] = ['key' => 'crypto', 'label' => 'Criptomonedas', 'auto' => true, 'details' => []];
         }
-        if (!empty($c['paypal']['client_id']) && !empty($c['paypal']['secret'])) {
+        if ($c['paypal']) {
             $methods[] = ['key' => 'paypal', 'label' => 'PayPal', 'auto' => true, 'details' => []];
         }
 

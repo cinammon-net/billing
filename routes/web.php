@@ -82,6 +82,8 @@ Route::middleware(['auth', 'verified', 'billing.admin'])->prefix('admin')->name(
     Route::put('/plans/{plan}', [\App\Http\Controllers\Admin\PlanController::class, 'update'])->name('plans.update');
     Route::patch('/plans/{plan}/price', [\App\Http\Controllers\Admin\PlanController::class, 'updatePrice'])->name('plans.price');
     Route::delete('/plans/{plan}', [\App\Http\Controllers\Admin\PlanController::class, 'destroy'])->name('plans.destroy');
+    Route::get('/payment-methods', [\App\Http\Controllers\Admin\PaymentSettingsController::class, 'index'])->name('payment-methods.index');
+    Route::put('/payment-methods/{method}', [\App\Http\Controllers\Admin\PaymentSettingsController::class, 'update'])->name('payment-methods.update');
     Route::get('/payments', [\App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('payments.index');
     Route::post('/payments/{invoice}/confirm', [\App\Http\Controllers\Admin\PaymentController::class, 'confirm'])->name('payments.confirm');
     Route::post('/payments/{invoice}/reject', [\App\Http\Controllers\Admin\PaymentController::class, 'reject'])->name('payments.reject');
