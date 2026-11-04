@@ -8,7 +8,7 @@ export default function PublicLayout({ children }) {
     const { auth, panelUrl } = usePage().props;
 
     return (
-        <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-[#04060d] font-sans text-slate-100 antialiased selection:bg-pink-500 selection:text-white">
+        <div className="relative flex min-h-screen flex-col overflow-x-clip bg-[#04060d] font-sans text-slate-100 antialiased selection:bg-pink-500 selection:text-white">
             {/* Fondo ambiental Cyberpunk */}
             <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
                 <div className="absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-cyan-500/10 blur-[140px]" />
