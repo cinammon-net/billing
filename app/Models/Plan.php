@@ -22,13 +22,14 @@ class Plan extends Model
     ];
 
     protected $fillable = [
-        'category', 'egg', 'name', 'slug', 'ram_mb', 'cpu_pct', 'storage_gb',
-        'price', 'cycle_prices', 'popular', 'features', 'addons', 'sort',
+        'category', 'egg', 'role', 'name', 'slug', 'ram_mb', 'cpu_pct', 'storage_gb',
+        'price', 'cycle_prices', 'popular', 'features', 'perks', 'addons', 'sort',
     ];
 
     protected $casts = [
         'features' => 'array',
         'addons' => 'array',
+        'perks' => 'array',
         'cycle_prices' => 'array',
         'popular' => 'boolean',
         'price' => 'float',
@@ -87,6 +88,40 @@ class Plan extends Model
         }
 
         return $prices;
+    }
+
+    /** ¿Es un rango VIP (concede un rol en el panel) en vez de un servidor? */
+    public function isRank(): bool
+    {
+        return $this->role !== null;
+    }
+
+    /**
+     * Precios por período de un rango: sin «por hora» y con los períodos cortos más
+     * caros en proporción (un rango por un día no debe salir casi gratis).
+     */
+    public static function rankCyclePrices(float $monthly): array
+    {
+        $factors = ['daily' => 0.12, 'weekly' => 0.4, 'quarterly' => 2.85, 'semiannual' => 5.4, 'yearly' => 9.6];
+
+        return array_map(fn ($f) => round($monthly * $f, 2), $factors);
+    }
+
+    /** Mejor descuento VIP (%) del usuario por sus rangos activos. */
+    public static function vipDiscountFor(?\App\Models\User $user): int
+    {
+        if (!$user) {
+            return 0;
+        }
+
+        return (int) Order::query()
+            ->where('user_id', $user->id)
+            ->where('status', 'active')
+            ->where(fn ($q) => $q->whereNull('renews_at')->orWhere('renews_at', '>', now()))
+            ->whereHas('plan', fn ($q) => $q->whereNotNull('role'))
+            ->with('plan:id,perks')
+            ->get()
+            ->max(fn (Order $o) => (int) ($o->plan->perks['discount'] ?? 0));
     }
 
     public function orders(): HasMany

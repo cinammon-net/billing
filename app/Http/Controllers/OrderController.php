@@ -24,7 +24,7 @@ class OrderController extends Controller
 
         $validated = $request->validate([
             'plan_id' => ['required', 'exists:plans,id'],
-            'server_name' => ['required', 'string', 'max:60'],
+            'server_name' => ['nullable', 'string', 'max:60'],
             'billing_cycle' => ['nullable', Rule::in(array_keys(Plan::CYCLES))],
         ]);
 
@@ -34,6 +34,16 @@ class OrderController extends Controller
 
         if ($price === null) {
             return back()->withErrors(['billing_cycle' => 'Este plan no está disponible con ese período de facturación.']);
+        }
+
+        if ($plan->isRank()) {
+            // Un rango no crea servidor: el pedido lleva el nombre del rango.
+            $validated['server_name'] = 'Rango '.$plan->name;
+        } elseif (blank($validated['server_name'] ?? null)) {
+            return back()->withErrors(['server_name' => 'Pon un nombre para tu servidor.']);
+        } elseif ($discount = Plan::vipDiscountFor($request->user())) {
+            // Descuento VIP por rango activo (solo en servidores, no en rangos).
+            $price = round($price * (100 - $discount) / 100, Plan::CYCLES[$cycle]['decimals']);
         }
 
         $order = Order::create([
@@ -56,7 +66,9 @@ class OrderController extends Controller
 
         return redirect()->route('dashboard')->with(
             'success',
-            "Pedido «{$validated['server_name']}» creado. Paga la factura para activar tu servidor."
+            $plan->isRank()
+                ? "Pedido del rango «{$plan->name}» creado. Paga la factura para activarlo en el panel."
+                : "Pedido «{$validated['server_name']}» creado. Paga la factura para activar tu servidor."
         );
     }
 
@@ -77,6 +89,17 @@ class OrderController extends Controller
         $order = $invoice->order;
         $order->update(['status' => 'active', 'renews_at' => $order->nextRenewal()]);
 
+        if ($order->plan->isRank()) {
+            $granted = $this->panel->grantRole($order);
+
+            return redirect()->route('dashboard')->with(
+                'success',
+                $granted
+                    ? "Pago recibido. Ya tienes el rango «{$order->plan->name}» en el panel hasta el {$order->renews_at?->format('d/m/Y H:i')}. ✨"
+                    : "Pago recibido. El rango «{$order->plan->name}» se activará en el panel en unos minutos."
+            );
+        }
+
         $provisioned = $this->panel->provision($order);
 
         return redirect()->route('dashboard')->with(
@@ -92,6 +115,13 @@ class OrderController extends Controller
         abort_unless($order->user_id === $request->user()->id, 403);
 
         $order->update(['status' => 'cancelled']);
+
+        if ($order->plan?->isRank()) {
+            $this->panel->revokeRole($order);
+
+            return redirect()->route('dashboard')->with('warning', "Rango «{$order->plan->name}» cancelado. Sus ventajas se han retirado del panel.");
+        }
+
         $this->panel->cancel($order);
 
         $deletionDate = now()->addDays(7)->format('d/m/Y');

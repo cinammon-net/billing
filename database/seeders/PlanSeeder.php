@@ -100,6 +100,43 @@ class PlanSeeder extends Seeder
             ['category' => 'web', 'name' => 'Web Business', 'ram_mb' => 4096, 'cpu_pct' => 250, 'storage_gb' => 50, 'price' => 9.99, 'popular' => false],
         ];
 
+        // ── Rangos VIP: el nombre es el rol del panel (config/ranks.php del panel) ──
+        // perks: discount % en la tienda · backups/databases/allocations extra por servidor · priority = soporte prioritario
+        $ranks = [
+            // Escalera de estatus
+            ['name' => 'Chispa',               'price' => 12.99,  'perks' => ['color' => '#f59e0b', 'discount' => 5,  'backups' => 1,  'databases' => 0, 'allocations' => 0, 'priority' => false], 'tagline' => 'Tu primer paso en Cinammon.'],
+            ['name' => 'Neón',                 'price' => 24.99,  'perks' => ['color' => '#22d3ee', 'discount' => 10, 'backups' => 2,  'databases' => 1, 'allocations' => 1, 'priority' => false], 'tagline' => 'Brilla en el panel y ahorra en cada servidor.'],
+            ['name' => 'Synthwave',            'price' => 44.99,  'perks' => ['color' => '#d946ef', 'discount' => 15, 'backups' => 3,  'databases' => 2, 'allocations' => 2, 'priority' => true],  'tagline' => 'Soporte prioritario y recursos extra.', 'popular' => true],
+            ['name' => 'Cibercanela',          'price' => 79.99,  'perks' => ['color' => '#fb7185', 'discount' => 20, 'backups' => 5,  'databases' => 3, 'allocations' => 3, 'priority' => true],  'tagline' => 'Para comunidades que van en serio.'],
+            ['name' => 'Leyenda Cinammon',     'price' => 149.99, 'perks' => ['color' => '#facc15', 'discount' => 30, 'backups' => 10, 'databases' => 5, 'allocations' => 5, 'priority' => true],  'tagline' => 'El rango más alto. Máximas ventajas.'],
+            // Rangos de especialidad
+            ['name' => 'Arquitecto de Mundos', 'price' => 19.99,  'perks' => ['color' => '#34d399', 'discount' => 5,  'backups' => 4,  'databases' => 0, 'allocations' => 1, 'priority' => false], 'tagline' => 'Para constructores: más copias de tus mundos.'],
+            ['name' => 'Desarrollador',        'price' => 24.99,  'perks' => ['color' => '#818cf8', 'discount' => 5,  'backups' => 1,  'databases' => 4, 'allocations' => 2, 'priority' => false], 'tagline' => 'Más bases de datos y puertos para tus proyectos.'],
+            ['name' => 'Creador de Contenido', 'price' => 29.99,  'perks' => ['color' => '#f43f5e', 'discount' => 10, 'backups' => 3,  'databases' => 1, 'allocations' => 1, 'priority' => true],  'tagline' => 'Streamers y youtubers: soporte prioritario.'],
+            ['name' => 'Comandante de Clan',   'price' => 34.99,  'perks' => ['color' => '#f97316', 'discount' => 10, 'backups' => 2,  'databases' => 2, 'allocations' => 3, 'priority' => true],  'tagline' => 'Para líderes de clan con varios servidores.'],
+            ['name' => 'Mecenas',              'price' => 59.99,  'perks' => ['color' => '#eab308', 'discount' => 15, 'backups' => 2,  'databases' => 1, 'allocations' => 1, 'priority' => true],  'tagline' => 'Apoya el proyecto y lúcelo con la insignia dorada.'],
+        ];
+        foreach ($ranks as $rank) {
+            $p = $rank['perks'];
+            $plans[] = [
+                'category' => 'ranks', 'role' => $rank['name'], 'name' => $rank['name'], 'egg' => null,
+                'ram_mb' => 0, 'cpu_pct' => 0, 'storage_gb' => 0,
+                'price' => $rank['price'], 'popular' => $rank['popular'] ?? false, 'perks' => $p,
+                'rank_features' => array_values(array_filter([
+                    $rank['tagline'],
+                    $p['discount'] ? "{$p['discount']}% de descuento en todos tus servidores" : null,
+                    $p['backups'] ? "+{$p['backups']} copias de seguridad por servidor" : null,
+                    $p['databases'] ? "+{$p['databases']} bases de datos por servidor" : null,
+                    $p['allocations'] ? "+{$p['allocations']} puertos por servidor" : null,
+                    $p['priority'] ? 'Soporte prioritario en tickets' : null,
+                    "Insignia «{$rank['name']}» en el panel",
+                ])),
+            ];
+        }
+
+        // Un plan por cada egg restante (generado desde cinammon-net/eggs con tools/generate-egg-plans.py).
+        $plans = [...$plans, ...require __DIR__ . '/data/egg-plans.php'];
+
         $features = [
             'minecraft' => ['Java y Bedrock', 'Instalador de modpacks', 'Backups automáticos', 'Protección DDoS', 'Soporte 24/7'],
             'survival'  => ['El juego viene instalado y listo', 'Wipes y backups automáticos', 'Instalación instantánea', 'Protección DDoS', 'Soporte 24/7'],
@@ -110,6 +147,8 @@ class PlanSeeder extends Seeder
             'voice'     => ['TeamSpeak 3, TeaSpeak y Lavalink', 'Siempre online', 'Baja latencia de voz', 'Protección DDoS', 'Soporte 24/7'],
             'bots'      => ['Discord, Twitch y TS3', 'Reinicio automático', 'Logs en tiempo real', 'Protección DDoS', 'Soporte 24/7'],
             'databases' => ['Redis, MariaDB, PostgreSQL y MongoDB', 'Backups automáticos', 'Acceso remoto seguro', 'Soporte 24/7'],
+            'arcade'    => ['Clásicos multijugador listos en segundos', 'Ligeros y económicos', 'Instalación instantánea', 'Protección DDoS', 'Soporte 24/7'],
+            'software'  => ['Aplicaciones autoalojadas (Grafana, Gitea, Uptime Kuma…)', 'Acceso por web y SFTP', 'Backups automáticos', 'Soporte 24/7'],
             'web'       => ['Certificado SSL gratuito', 'PHP 8.4 y MariaDB', 'Gestor de archivos y SFTP', 'Backups automáticos', 'Soporte 24/7'],
         ];
 
@@ -150,11 +189,15 @@ class PlanSeeder extends Seeder
         foreach ($plans as $i => $plan) {
             $slug = Str::slug($plan['category'] . '-' . $plan['name']);
             $existing = Plan::where('slug', $slug)->first();
+            $rankFeatures = $plan['rank_features'] ?? null;
+            unset($plan['rank_features']);
             $attributes = [
                 'egg' => null,
+                'role' => null,
+                'perks' => null,
                 ...$plan,
-                'cycle_prices' => Plan::defaultCyclePrices($plan['price']),
-                'features' => $features[$plan['category']],
+                'cycle_prices' => isset($plan['role']) ? Plan::rankCyclePrices($plan['price']) : Plan::defaultCyclePrices($plan['price']),
+                'features' => $rankFeatures ?? $features[$plan['category']],
                 'addons' => $webAddons[$plan['name']] ?? null,
                 'sort' => $i,
             ];

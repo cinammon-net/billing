@@ -10,6 +10,10 @@ use Inertia\Response;
 class StoreController extends Controller
 {
     public const CATEGORIES = [
+        'ranks' => [
+            'title' => 'Rangos VIP',
+            'tagline' => 'Elige tu rango: descuentos en la tienda, más backups, bases de datos y puertos en tus servidores, soporte prioritario e insignia en el panel.',
+        ],
         'minecraft' => [
             'title' => 'Minecraft Hosting',
             'tagline' => 'Java y Bedrock. Paper, Fabric, Forge, Purpur y más.',
@@ -34,6 +38,10 @@ class StoreController extends Controller
             'title' => 'Roleplay y GTA',
             'tagline' => 'FiveM, RedM, alt:V, Multi Theft Auto y SA-MP para tu comunidad de rol.',
         ],
+        'arcade' => [
+            'title' => 'Clásicos y multijugador',
+            'tagline' => 'Among Us, Teeworlds, SuperTuxKart, OpenRA, Wesnoth, Risk of Rain 2 y muchos más, desde 0,99 €.',
+        ],
         'voice' => [
             'title' => 'Servidores de Voz',
             'tagline' => 'TeamSpeak 3, TeaSpeak y Lavalink para tu comunidad.',
@@ -45,6 +53,10 @@ class StoreController extends Controller
         'web' => [
             'title' => 'Hosting Web',
             'tagline' => 'Alojamiento para tu web, blog o tienda online con PHP y bases de datos.',
+        ],
+        'software' => [
+            'title' => 'Aplicaciones',
+            'tagline' => 'Grafana, Uptime Kuma, Gitea, Code-Server, MinIO y más aplicaciones autoalojadas.',
         ],
         'databases' => [
             'title' => 'Bases de Datos',
@@ -122,6 +134,11 @@ class StoreController extends Controller
     private function eggsFor(string $key, array $catalog, int $limit = 8): array
     {
         $rule = self::CATEGORY_EGGS[$key] ?? [];
+        // Con planes por egg, los iconos salen de los propios planes de la categoría.
+        $planEggs = Plan::where('category', $key)->whereNotNull('egg')->orderByDesc('popular')->orderBy('sort')->pluck('egg')->all();
+        if ($planEggs) {
+            $rule = ['names' => array_values(array_unique([...($rule['names'] ?? []), ...$planEggs]))];
+        }
         $withIcon = collect($catalog)->filter(fn ($egg) => !empty($egg['icon']) && !empty($egg['name']));
         $byName = $withIcon->keyBy(fn ($egg) => mb_strtolower($egg['name']));
 

@@ -36,6 +36,8 @@ class HandleInertiaRequests extends Middleware
             ],
             'panelUrl' => config('billing.panel_url'),
             'billingCycles' => \App\Models\Plan::cycleMeta(),
+            // Descuento por rango VIP activo (se aplica a los servidores)
+            'vipDiscount' => fn () => \App\Models\Plan::vipDiscountFor($request->user()),
             // Aviso de mantenimiento anunciado desde el panel
             'maintenance' => fn () => app(\App\Services\PanelService::class)->maintenance(),
             'flash' => [

@@ -77,6 +77,49 @@ class PanelService
         return $m !== null && !empty($m['active']) && !empty($m['block_access']) && in_array('store', $m['scope'] ?? [], true);
     }
 
+    /** Concede en el panel el rol del rango comprado, hasta la fecha de renovación del pedido. */
+    public function grantRole(Order $order): bool
+    {
+        $order->loadMissing(['user', 'plan']);
+
+        try {
+            $response = Http::withHeaders(['X-Billing-Token' => $this->token])
+                ->acceptJson()
+                ->timeout(30)
+                ->post("{$this->baseUrl}/api/billing/roles/grant", [
+                    'external_id' => "billing-rank-{$order->id}",
+                    'email' => $order->user->email,
+                    'user_name' => $order->user->name,
+                    'role' => $order->plan->role,
+                    'perks' => collect($order->plan->perks ?? [])->except('color')->all(),
+                    'expires_at' => $order->renews_at?->toIso8601String(),
+                ]);
+
+            if (!$response->successful()) {
+                Log::warning('Billing grantRole: el panel respondió '.$response->status(), ['order' => $order->id, 'body' => $response->body()]);
+            }
+
+            return $response->successful();
+        } catch (\Throwable $e) {
+            Log::warning('Billing grantRole: '.$e->getMessage(), ['order' => $order->id]);
+
+            return false;
+        }
+    }
+
+    public function revokeRole(Order $order): bool
+    {
+        try {
+            return Http::withHeaders(['X-Billing-Token' => $this->token])->acceptJson()->timeout(30)
+                ->post("{$this->baseUrl}/api/billing/roles/billing-rank-{$order->id}/revoke")
+                ->successful();
+        } catch (\Throwable $e) {
+            Log::warning('Billing revokeRole: '.$e->getMessage(), ['order' => $order->id]);
+
+            return false;
+        }
+    }
+
     /**
      * Crea el servidor en el panel para un pedido. Devuelve true si se aprovisionó.
      */
