@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Order;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -19,6 +20,36 @@ class PanelService
     {
         $this->baseUrl = rtrim(config('billing.panel_url'), '/');
         $this->token = (string) config('billing.panel_token');
+    }
+
+    /**
+     * Catálogo público de eggs del panel (nombre, categoría, icono).
+     * Se cachea 1 h; si el panel no responde devuelve [] y lo reintenta en 5 min.
+     *
+     * @return array<int, array{name: string, category: ?string, icon: ?string}>
+     */
+    public function eggCatalog(): array
+    {
+        if (is_array($cached = Cache::get('panel:egg-catalog'))) {
+            return $cached;
+        }
+
+        try {
+            $response = Http::timeout(4)->acceptJson()->get($this->baseUrl.'/api/eggs/catalog');
+            $data = $response->successful() ? $response->json('data') : null;
+        } catch (\Throwable $e) {
+            $data = null;
+        }
+
+        if (!is_array($data)) {
+            Cache::put('panel:egg-catalog', [], now()->addMinutes(5));
+
+            return [];
+        }
+
+        Cache::put('panel:egg-catalog', $data, now()->addHour());
+
+        return $data;
     }
 
     /**

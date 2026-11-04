@@ -116,6 +116,24 @@ export default function StoreCategory({ category, plans }) {
                         {category.tagline}
                     </p>
 
+                    {category.eggs?.length > 0 && (
+                        <ul className="mx-auto mt-6 flex max-w-3xl flex-wrap items-center justify-center gap-3" aria-label="Disponibles en esta categoría">
+                            {category.eggs.map((egg) => (
+                                <li key={egg.name} title={egg.name}>
+                                    <img
+                                        src={egg.icon}
+                                        alt={egg.name}
+                                        width={44}
+                                        height={44}
+                                        loading="lazy"
+                                        className="h-11 w-11 rounded-lg border border-slate-700/80 bg-black/40 object-cover shadow-[0_0_12px_rgba(0,247,255,0.12)]"
+                                        onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }}
+                                    />
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+
                     {/* Badge de Clúster en Vivo */}
                     <div className="mt-6 flex flex-wrap items-center justify-center gap-3 font-mono text-xs">
                         <div className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-[#070b18]/80 px-3 py-1 text-slate-300">

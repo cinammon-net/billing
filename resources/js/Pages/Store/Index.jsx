@@ -226,6 +226,24 @@ export default function StoreIndex({ categories }) {
                                             {c.tagline}
                                         </p>
 
+                                        {c.eggs?.length > 0 && (
+                                            <div className="mt-4 flex flex-wrap items-center gap-2">
+                                                {c.eggs.map((egg) => (
+                                                    <img
+                                                        key={egg.name}
+                                                        src={egg.icon}
+                                                        alt={egg.name}
+                                                        title={egg.name}
+                                                        width={32}
+                                                        height={32}
+                                                        loading="lazy"
+                                                        className="h-8 w-8 rounded-md border border-slate-700/80 bg-black/40 object-cover"
+                                                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
+
                                         {/* Software / Framework Chips */}
                                         <div className="mt-4 inline-flex items-center gap-1.5 rounded-md border border-slate-800/80 bg-black/40 px-3 py-1 font-mono text-[10px] text-slate-400">
                                             <Sparkles size={11} className="text-[#00f7ff]" />
