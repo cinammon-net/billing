@@ -7,7 +7,7 @@ import TextInput from '@/Components/TextInput';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { fmtPrice, cycleUnit } from '@/lib/price';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
     Box,
     Gamepad2,
@@ -28,6 +28,11 @@ import {
     Hammer,
     Car,
     Headphones,
+    Search,
+    Joystick,
+    AppWindow,
+    Drama,
+    Crown,
     Layers,
     LogIn,
     UserPlus,
@@ -46,12 +51,16 @@ const CATEGORY_ICONS = {
     bots: Bot,
     databases: Database,
     web: Globe,
+    roleplay: Drama,
+    arcade: Joystick,
+    software: AppWindow,
+    ranks: Crown,
 };
 
 const fmtRam = (mb) => (mb >= 1024 ? `${mb / 1024} GB` : `${mb} MB`);
 
 export default function StoreCategory({ category, plans }) {
-    const { auth, billingCycles = [] } = usePage().props;
+    const { auth, billingCycles = [], vipDiscount = 0 } = usePage().props;
     const [selected, setSelected] = useState(null);
     const [addonsPlan, setAddonsPlan] = useState(null);
     const availableCycles = billingCycles.filter((c) => plans.some((plan) => plan.prices?.[c.key] != null));
@@ -64,6 +73,18 @@ export default function StoreCategory({ category, plans }) {
     });
 
     const CategoryIcon = CATEGORY_ICONS[category.key] || Server;
+
+    // Buscador y orden: hay categorías con decenas de planes (uno por juego).
+    const [query, setQuery] = useState('');
+    const [sort, setSort] = useState('recommended');
+    const visiblePlans = useMemo(() => {
+        const q = query.trim().toLowerCase();
+        const list = q ? plans.filter((p) => `${p.name} ${p.egg ?? ''}`.toLowerCase().includes(q)) : [...plans];
+        if (sort === 'price') list.sort((a, b) => (a.prices?.[cycle] ?? Infinity) - (b.prices?.[cycle] ?? Infinity));
+        if (sort === 'ram') list.sort((a, b) => b.ram_mb - a.ram_mb);
+        if (sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
+        return list;
+    }, [plans, query, sort, cycle]);
 
     const openOrder = (plan) => {
         setSelected(plan);
@@ -172,11 +193,47 @@ export default function StoreCategory({ category, plans }) {
                     </div>
                 )}
 
+                {/* BUSCADOR */}
+                {plans.length > 6 && (
+                    <div className="mx-auto mt-8 flex max-w-6xl flex-col gap-3 font-mono text-xs sm:flex-row sm:items-center">
+                        <div className="relative flex-1">
+                            <Search size={14} className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-slate-500" />
+                            <input
+                                type="search"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder={`Buscar entre ${plans.length} planes…`}
+                                aria-label="Buscar plan"
+                                className="w-full rounded-lg border border-slate-700 bg-black/50 py-2 pr-3 pl-9 text-sm text-white placeholder-slate-500 focus:border-[#00f7ff] focus:outline-none"
+                            />
+                        </div>
+                        <label className="flex items-center gap-2 text-slate-400">
+                            Ordenar
+                            <select
+                                value={sort}
+                                onChange={(e) => setSort(e.target.value)}
+                                className="rounded-lg border border-slate-700 bg-black/50 py-2 pr-8 pl-3 text-slate-200 focus:border-[#00f7ff] focus:outline-none"
+                            >
+                                <option value="recommended">Recomendados</option>
+                                <option value="price">Precio: menor a mayor</option>
+                                <option value="ram">Más RAM</option>
+                                <option value="name">Nombre (A-Z)</option>
+                            </select>
+                        </label>
+                        <span className="text-slate-500">{visiblePlans.length} resultados</span>
+                    </div>
+                )}
+
+                {visiblePlans.length === 0 && (
+                    <p className="mx-auto mt-10 max-w-6xl text-center font-mono text-sm text-slate-400">No hay planes que coincidan con «{query}».</p>
+                )}
+
                 {/* GRID DE PLANES */}
                 <div className="mx-auto mt-8 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {plans.map((plan) => (
+                    {visiblePlans.map((plan) => (
                         <div
                             key={plan.id}
+                            style={plan.role && plan.perks?.color ? { borderColor: `${plan.perks.color}99`, boxShadow: `0 0 28px ${plan.perks.color}26` } : undefined}
                             className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border p-7 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 ${
                                 plan.popular
                                     ? 'border-[#00f7ff] bg-gradient-to-b from-cyan-950/30 via-[#070b18] to-black shadow-[0_0_35px_rgba(0,247,255,0.25)] ring-1 ring-[#00f7ff]/40'
@@ -209,7 +266,7 @@ export default function StoreCategory({ category, plans }) {
                                     )}
                                     <div className="min-w-0">
                                         <span className="font-mono text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                                            {plan.egg ? '// SERVIDOR DE JUEGO' : '// PLAN TIER'}
+                                            {plan.role ? '// RANGO VIP' : plan.egg ? '// SERVIDOR DE JUEGO' : '// PLAN TIER'}
                                         </span>
                                         <h2 className="text-2xl font-black text-white group-hover:text-pink-300 transition-colors">
                                             {plan.name}
@@ -220,19 +277,54 @@ export default function StoreCategory({ category, plans }) {
                                 {/* Precio */}
                                 <div className="mt-5 flex items-baseline gap-1.5 border-b border-slate-800/80 pb-5">
                                     {plan.prices?.[cycle] != null ? (
-                                        <>
-                                            <span className="font-mono text-4xl font-black tracking-tight text-white">
-                                                {fmtPrice(plan.prices[cycle])} €
-                                            </span>
-                                            <span className="font-mono text-xs text-slate-400">/ {unit}</span>
-                                        </>
+                                        !plan.role && vipDiscount > 0 ? (
+                                            <>
+                                                <span className="font-mono text-4xl font-black tracking-tight text-white">
+                                                    {fmtPrice(plan.prices[cycle] * (100 - vipDiscount) / 100)} €
+                                                </span>
+                                                <span className="font-mono text-xs text-slate-400">/ {unit}</span>
+                                                <span className="ml-2 font-mono text-xs text-slate-500 line-through">{fmtPrice(plan.prices[cycle])} €</span>
+                                                <span className="rounded bg-fuchsia-500/20 px-1.5 py-0.5 font-mono text-[10px] font-bold text-fuchsia-300">-{vipDiscount}% VIP</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span className="font-mono text-4xl font-black tracking-tight text-white">
+                                                    {fmtPrice(plan.prices[cycle])} €
+                                                </span>
+                                                <span className="font-mono text-xs text-slate-400">/ {unit}</span>
+                                            </>
+                                        )
                                     ) : (
                                         <span className="font-mono text-sm text-slate-400">No disponible por {unit}</span>
                                     )}
                                 </div>
 
+                                {/* VENTAJAS DEL RANGO */}
+                                {plan.role && (
+                                    <div className="mt-5 grid grid-cols-2 gap-2 text-xs">
+                                        {[
+                                            ['Descuento', plan.perks?.discount ? `${plan.perks.discount}%` : '—'],
+                                            ['Backups extra', plan.perks?.backups ? `+${plan.perks.backups}` : '—'],
+                                            ['BBDD extra', plan.perks?.databases ? `+${plan.perks.databases}` : '—'],
+                                            ['Puertos extra', plan.perks?.allocations ? `+${plan.perks.allocations}` : '—'],
+                                        ].map(([label, value]) => (
+                                            <div key={label} className="rounded-lg border border-slate-800/80 bg-black/40 px-3 py-2">
+                                                <span className="block text-[10px] text-slate-400">{label}</span>
+                                                <span className="font-mono text-base font-black" style={{ color: plan.perks?.color ?? '#fff' }}>
+                                                    {value}
+                                                </span>
+                                            </div>
+                                        ))}
+                                        {plan.perks?.priority && (
+                                            <div className="col-span-2 rounded-lg border px-3 py-2 text-center font-mono text-[11px] font-bold" style={{ color: plan.perks.color, borderColor: `${plan.perks.color}66` }}>
+                                                ★ SOPORTE PRIORITARIO
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
                                 {/* SPECS CHIPS (RAM / CPU / SSD) */}
-                                <div className="mt-5 space-y-2.5">
+                                <div className={`mt-5 space-y-2.5 ${plan.role ? 'hidden' : ''}`}>
                                     <div className="flex items-center justify-between rounded-lg border border-slate-800/80 bg-black/40 px-3 py-2 text-xs">
                                         <div className="flex items-center gap-2 text-slate-300">
                                             <Cpu size={14} className="text-[#00f7ff]" />
@@ -432,6 +524,13 @@ export default function StoreCategory({ category, plans }) {
 
                             {auth?.user ? (
                                 <form onSubmit={submit} className="mt-6 space-y-5">
+                                    {selected.role ? (
+                                        <div className="rounded-lg border border-fuchsia-500/40 bg-fuchsia-500/10 p-3 font-mono text-xs text-fuchsia-200">
+                                            El rango se activa en tu cuenta del panel en cuanto pagues la factura y dura el período elegido.
+                                            <InputError message={errors.plan_id} className="mt-1" />
+                                            <InputError message={errors.billing_cycle} className="mt-1" />
+                                        </div>
+                                    ) : (
                                     <div>
                                         <InputLabel
                                             htmlFor="server_name"
@@ -454,6 +553,7 @@ export default function StoreCategory({ category, plans }) {
                                         <InputError message={errors.plan_id} className="mt-1" />
                                         <InputError message={errors.billing_cycle} className="mt-1" />
                                     </div>
+                                    )}
 
                                     <div className="flex items-center justify-end gap-3 border-t border-slate-800 pt-5">
                                         <SecondaryButton

@@ -20,7 +20,10 @@ import {
     Layers,
     Activity,
     Terminal,
-    Car
+    Car,
+    Joystick,
+    AppWindow,
+    Crown
 } from 'lucide-react';
 
 const CATEGORY_META = {
@@ -82,6 +85,39 @@ const CATEGORY_META = {
         badgeBg: 'bg-orange-500/15 border-orange-500/30 text-orange-300',
         badge: 'FIVEM · REDM · ALT:V · MTA · SA-MP',
         specs: ['txAdmin incluido en FiveM/RedM', 'Recursos y scripts personalizados', 'Licencia Cfx.re gratuita (la pones tú)'],
+    },
+    ranks: {
+        icon: Crown,
+        code: 'VIP-ACCESS',
+        color: 'from-yellow-500/20 via-fuchsia-500/10 to-transparent',
+        borderHover: 'group-hover:border-yellow-400',
+        glowHover: 'group-hover:shadow-[0_0_30px_rgba(250,204,21,0.25)]',
+        accentText: 'text-yellow-400',
+        badgeBg: 'bg-yellow-500/15 border-yellow-500/30 text-yellow-300',
+        badge: 'CHISPA · NEÓN · SYNTHWAVE · LEYENDA',
+        specs: ['Hasta 30% de descuento en servidores', 'Backups, BBDD y puertos extra', 'Por día, semana, mes, trimestre, semestre o año'],
+    },
+    arcade: {
+        icon: Joystick,
+        code: 'CLUSTER-ARCADE',
+        color: 'from-violet-500/20 via-fuchsia-500/10 to-transparent',
+        borderHover: 'group-hover:border-violet-400',
+        glowHover: 'group-hover:shadow-[0_0_30px_rgba(139,92,246,0.25)]',
+        accentText: 'text-violet-400',
+        badgeBg: 'bg-violet-500/15 border-violet-500/30 text-violet-300',
+        badge: 'AMONG US · TEEWORLDS · OPENRA · WESNOTH',
+        specs: ['Desde 0,99 € al mes', 'Ideal para jugar con amigos', 'Instalación instantánea'],
+    },
+    software: {
+        icon: AppWindow,
+        code: 'CLUSTER-APPS',
+        color: 'from-sky-500/20 via-cyan-500/10 to-transparent',
+        borderHover: 'group-hover:border-sky-400',
+        glowHover: 'group-hover:shadow-[0_0_30px_rgba(14,165,233,0.25)]',
+        accentText: 'text-sky-400',
+        badgeBg: 'bg-sky-500/15 border-sky-500/30 text-sky-300',
+        badge: 'GRAFANA · GITEA · UPTIME KUMA · MINIO',
+        specs: ['Aplicaciones autoalojadas', 'Acceso web y SFTP', 'Backups automáticos'],
     },
     web: {
         icon: Globe,
