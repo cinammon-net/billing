@@ -23,7 +23,7 @@ class Plan extends Model
 
     protected $fillable = [
         'category', 'egg', 'role', 'name', 'slug', 'ram_mb', 'cpu_pct', 'storage_gb',
-        'price', 'cycle_prices', 'popular', 'features', 'perks', 'addons', 'sort',
+        'price', 'coin_cost', 'coin_renew_cost', 'coin_days', 'cycle_prices', 'popular', 'features', 'perks', 'addons', 'sort',
     ];
 
     protected $casts = [

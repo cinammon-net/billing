@@ -60,7 +60,13 @@ const CATEGORY_ICONS = {
 const fmtRam = (mb) => (mb >= 1024 ? `${mb / 1024} GB` : `${mb} MB`);
 
 export default function StoreCategory({ category, plans }) {
-    const { auth, billingCycles = [], vipDiscount = 0 } = usePage().props;
+    const { auth, billingCycles = [], vipDiscount = 0, season } = usePage().props;
+    const promo = season?.discount ?? 0;
+    // Se aplica el mayor descuento (festivo o VIP); el VIP no cuenta en los rangos.
+    const discountFor = (plan) => {
+        const d = plan.role ? promo : Math.max(promo, vipDiscount);
+        return { pct: d, label: d > 0 && d === promo ? season?.promotion : 'VIP' };
+    };
     const [selected, setSelected] = useState(null);
     const [addonsPlan, setAddonsPlan] = useState(null);
     const availableCycles = billingCycles.filter((c) => plans.some((plan) => plan.prices?.[c.key] != null));
@@ -277,15 +283,15 @@ export default function StoreCategory({ category, plans }) {
                                 {/* Precio */}
                                 <div className="mt-5 flex items-baseline gap-1.5 border-b border-slate-800/80 pb-5">
                                     {plan.prices?.[cycle] != null ? (
-                                        !plan.role && vipDiscount > 0 ? (
-                                            <>
+                                        discountFor(plan).pct > 0 ? (
+                                            <span className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
                                                 <span className="font-mono text-4xl font-black tracking-tight text-white">
-                                                    {fmtPrice(plan.prices[cycle] * (100 - vipDiscount) / 100)} €
+                                                    {fmtPrice(plan.prices[cycle] * (100 - discountFor(plan).pct) / 100)} €
                                                 </span>
                                                 <span className="font-mono text-xs text-slate-400">/ {unit}</span>
-                                                <span className="ml-2 font-mono text-xs text-slate-500 line-through">{fmtPrice(plan.prices[cycle])} €</span>
-                                                <span className="rounded bg-fuchsia-500/20 px-1.5 py-0.5 font-mono text-[10px] font-bold text-fuchsia-300">-{vipDiscount}% VIP</span>
-                                            </>
+                                                <span className="ml-1 font-mono text-xs text-slate-500 line-through">{fmtPrice(plan.prices[cycle])} €</span>
+                                                <span className="rounded bg-fuchsia-500/20 px-1.5 py-0.5 font-mono text-[10px] font-bold text-fuchsia-300">-{discountFor(plan).pct}% {discountFor(plan).label}</span>
+                                            </span>
                                         ) : (
                                             <>
                                                 <span className="font-mono text-4xl font-black tracking-tight text-white">
@@ -517,7 +523,7 @@ export default function StoreCategory({ category, plans }) {
                                 <div className="mt-3 border-t border-slate-800 pt-2 flex items-center justify-between">
                                     <span className="text-slate-400">Total por {cycleUnit(billingCycles, data.billing_cycle)}:</span>
                                     <span className="text-lg font-black text-[#00f7ff]">
-                                        {fmtPrice(selected.prices?.[data.billing_cycle] ?? selected.price)} €
+                                        {fmtPrice((selected.prices?.[data.billing_cycle] ?? selected.price) * (100 - discountFor(selected).pct) / 100)} €
                                     </span>
                                 </div>
                             </div>

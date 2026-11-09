@@ -3,12 +3,13 @@ import MaintenanceBanner from '@/Components/MaintenanceBanner';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import { Link, usePage } from '@inertiajs/react';
-import { ArrowUpRight, ChevronDown, CreditCard, Layers, LogOut, Menu, Receipt, Server, ShieldCheck, ShoppingCart, Tags, User, X } from 'lucide-react';
+import { ArrowUpRight, BadgePercent, ChevronDown, Coins, CreditCard, Layers, LogOut, Menu, Receipt, Server, ShieldCheck, ShoppingCart, Tags, User, X } from 'lucide-react';
 
 const ADMIN_LINKS = [
     { route: 'admin.plans.index', label: 'Precios', icon: Tags },
     { route: 'admin.payments.index', label: 'Pagos', icon: Receipt },
     { route: 'admin.payment-methods.index', label: 'Métodos de pago', icon: CreditCard },
+    { route: 'admin.promotions.index', label: 'Descuentos por festivo', icon: BadgePercent },
 ];
 
 function TopLink({ href, active, icon: Icon, children }) {
@@ -37,13 +38,14 @@ function MobileLink({ href, active, icon: Icon, admin = false, children }) {
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-    const { panelUrl, auth } = usePage().props;
+    const { panelUrl, auth, coins } = usePage().props;
     const isAdmin = Boolean(auth?.user?.is_admin);
     const isAdminArea = ADMIN_LINKS.some((l) => route().current(l.route));
     const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : 'U';
 
     const isDashboard = route().current('dashboard');
     const isStore = route().current('store') || route().current('store.category');
+    const isCoins = route().current('coins.index');
 
     return (
         <div className="relative min-h-screen bg-[#04060d] font-sans text-slate-100 antialiased selection:bg-pink-500 selection:text-white">
@@ -78,6 +80,9 @@ export default function Authenticated({ user, header, children }) {
                             </TopLink>
                             <TopLink href={route('store')} active={isStore} icon={ShoppingCart}>
                                 Tienda
+                            </TopLink>
+                            <TopLink href={route('coins.index')} active={isCoins} icon={Coins}>
+                                Monedas{typeof coins === 'number' && <span className="ml-1 rounded bg-yellow-400/15 px-1.5 py-0.5 text-[10px] font-bold text-yellow-300">{coins}</span>}
                             </TopLink>
 
                             {isAdmin && (
@@ -180,6 +185,7 @@ export default function Authenticated({ user, header, children }) {
                         <div className="mt-3 grid grid-cols-2 gap-2">
                             <MobileLink href={route('dashboard')} active={isDashboard} icon={Layers}>Mis servicios</MobileLink>
                             <MobileLink href={route('store')} active={isStore} icon={ShoppingCart}>Tienda</MobileLink>
+                            <MobileLink href={route('coins.index')} active={isCoins} icon={Coins}>Monedas{typeof coins === 'number' ? ` · ${coins}` : ''}</MobileLink>
                         </div>
 
                         {isAdmin && (

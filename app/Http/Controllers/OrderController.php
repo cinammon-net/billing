@@ -16,7 +16,7 @@ class OrderController extends Controller
     {
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, \App\Services\SeasonService $seasons): RedirectResponse
     {
         if ($this->panel->storeBlocked()) {
             return back()->withErrors(['plan_id' => 'La tienda está en mantenimiento: no se aceptan pedidos nuevos ahora mismo. Inténtalo cuando termine.']);
@@ -29,6 +29,10 @@ class OrderController extends Controller
         ]);
 
         $plan = Plan::findOrFail($validated['plan_id']);
+        if ($plan->coin_cost !== null) {
+            // Los planes gratuitos solo se consiguen con monedas.
+            return redirect()->route('coins.index');
+        }
         $cycle = $validated['billing_cycle'] ?? 'monthly';
         $price = $plan->priceFor($cycle);
 
@@ -41,8 +45,15 @@ class OrderController extends Controller
             $validated['server_name'] = 'Rango '.$plan->name;
         } elseif (blank($validated['server_name'] ?? null)) {
             return back()->withErrors(['server_name' => 'Pon un nombre para tu servidor.']);
-        } elseif ($discount = Plan::vipDiscountFor($request->user())) {
-            // Descuento VIP por rango activo (solo en servidores, no en rangos).
+        }
+
+        // Descuento: el mayor entre la promoción del festivo (país del visitante) y el VIP (solo servidores).
+        $discount = \App\Services\SeasonService::bestDiscount(
+            $seasons->forRequest($request)['discount'],
+            $plan->isRank() ? 0 : Plan::vipDiscountFor($request->user()),
+            $plan->isRank(),
+        );
+        if ($discount > 0) {
             $price = round($price * (100 - $discount) / 100, Plan::CYCLES[$cycle]['decimals']);
         }
 

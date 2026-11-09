@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import MaintenanceBanner from '@/Components/MaintenanceBanner';
 import StoreNav from '@/Components/StoreNav';
+import PromoStrip from '@/Components/PromoStrip';
 import { Activity, Shield, Sparkles, Zap } from 'lucide-react';
 
 
@@ -20,6 +21,8 @@ export default function PublicLayout({ children }) {
             <StoreNav />
 
             <MaintenanceBanner />
+
+            <PromoStrip />
 
             {/* Contenido dinámico */}
             <main className="relative z-10 flex-1">{children}</main>

@@ -91,13 +91,13 @@ class StoreController extends Controller
 
         return Inertia::render('Store/Index', [
             'categories' => collect(self::CATEGORIES)->map(function ($meta, $key) use ($catalog) {
-                $cheapest = Plan::where('category', $key)->orderBy('price')->first();
+                $cheapest = Plan::where('category', $key)->whereNull('coin_cost')->orderBy('price')->first();
 
                 return [
                     'key' => $key,
                     ...$meta,
                     'from' => $cheapest?->price,
-                    'plans_count' => Plan::where('category', $key)->count(),
+                    'plans_count' => Plan::where('category', $key)->whereNull('coin_cost')->count(),
                     'eggs' => $this->eggsFor($key, $catalog),
                 ];
             })->filter(fn ($category) => $category['from'] !== null)->values(),
@@ -112,7 +112,7 @@ class StoreController extends Controller
         $icons = collect($catalog)->filter(fn ($egg) => !empty($egg['icon']))
             ->mapWithKeys(fn ($egg) => [mb_strtolower($egg['name']) => $egg['icon']]);
 
-        $plans = Plan::where('category', $category)->orderBy('sort')->get()
+        $plans = Plan::where('category', $category)->whereNull('coin_cost')->orderBy('sort')->get()
             ->each(fn (Plan $plan) => $plan->setAttribute('icon', $plan->egg ? $icons->get(mb_strtolower($plan->egg)) : null));
 
         return Inertia::render('Store/Category', [
@@ -135,7 +135,7 @@ class StoreController extends Controller
     {
         $rule = self::CATEGORY_EGGS[$key] ?? [];
         // Con planes por egg, los iconos salen de los propios planes de la categoría.
-        $planEggs = Plan::where('category', $key)->whereNotNull('egg')->orderByDesc('popular')->orderBy('sort')->pluck('egg')->all();
+        $planEggs = Plan::where('category', $key)->whereNull('coin_cost')->whereNotNull('egg')->orderByDesc('popular')->orderBy('sort')->pluck('egg')->all();
         if ($planEggs) {
             $rule = ['names' => array_values(array_unique([...($rule['names'] ?? []), ...$planEggs]))];
         }

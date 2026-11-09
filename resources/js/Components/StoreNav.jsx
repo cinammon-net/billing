@@ -22,7 +22,7 @@ import {
     LogIn,
     Menu,
     UserPlus,
-    X,
+    X, Coins,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -237,6 +237,13 @@ export default function StoreNav() {
 
                 {/* Acciones */}
                 <div className="col-start-3 flex items-center justify-end gap-2 font-mono text-xs">
+                    <Link
+                        href={route('coins.index')}
+                        className="hidden items-center gap-1.5 rounded-lg px-3 py-2 whitespace-nowrap font-bold text-yellow-300 transition hover:text-yellow-200 md:flex"
+                        title="Consigue un servidor gratis con monedas"
+                    >
+                        <Coins size={14} /> Gratis
+                    </Link>
                     <a
                         href={panelUrl}
                         className="hidden items-center gap-1 rounded-lg px-3 py-2 whitespace-nowrap text-slate-400 transition hover:text-white md:flex lg:hidden xl:flex"
@@ -337,6 +344,9 @@ export default function StoreNav() {
                             <div className="mt-6 space-y-1 text-xs">
                                 <Link href={route('store')} onClick={closeAll} className="flex items-center gap-2 rounded-lg px-2 py-2 text-slate-300 hover:bg-white/5">
                                     <LayoutGrid size={14} /> Todo el catálogo
+                                </Link>
+                                <Link href={route('coins.index')} onClick={closeAll} className="flex items-center gap-2 rounded-lg px-2 py-2 font-bold text-yellow-300 hover:bg-white/5">
+                                    <Coins size={14} /> Servidor gratis con monedas
                                 </Link>
                                 <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-lg px-2 py-2 text-slate-300 hover:bg-white/5">
                                     <LifeBuoy size={14} /> Soporte en Discord
