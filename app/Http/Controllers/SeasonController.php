@@ -16,7 +16,10 @@ class SeasonController extends Controller
             ? Seasons::countryFrom($request->query('country'))
             : $seasons->countryFor($request);
 
+        // Datos públicos: el panel y la portada la piden desde el navegador (otro dominio).
         return response()->json($seasons->context($country))
-            ->header('Cache-Control', 'public, max-age=300');
+            ->header('Cache-Control', 'private, max-age=300')
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Vary', 'CF-IPCountry');
     }
 }
