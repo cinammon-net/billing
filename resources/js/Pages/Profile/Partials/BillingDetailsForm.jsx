@@ -62,7 +62,7 @@ export default function BillingDetailsForm({ billingDetails, className = '' }) {
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-[#00f7ff]">Guardado.</p>
+                        <p className="text-sm text-neon">Guardado.</p>
                     </Transition>
                 </div>
             </form>

@@ -20,7 +20,7 @@ export default function Guest({ children }) {
                         </a>
                     </div>
                     <h1 className="text-2xl font-bold tracking-wide text-pink-400">
-                        <span className="text-[#00f7ff]">cinammon</span>.net billing
+                        <span className="text-neon">cinammon</span>.net billing
                     </h1>
                 </div>
 

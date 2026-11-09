@@ -77,7 +77,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         </p>
 
                         {status === 'verification-link-sent' && (
-                            <div className="mt-2 font-medium text-sm text-[#00f7ff]">
+                            <div className="mt-2 font-medium text-sm text-neon">
                                 A new verification link has been sent to your email address.
                             </div>
                         )}

@@ -24,11 +24,11 @@ function CopyBox({ label, value }) {
     return (
         <div className="flex flex-wrap items-center gap-2 rounded-lg border border-slate-800 bg-black/50 px-3 py-2 font-mono text-[11px]">
             <span className="text-slate-400">{label}</span>
-            <span className="min-w-0 flex-1 break-all text-[#00f7ff]">{value}</span>
+            <span className="min-w-0 flex-1 break-all text-neon">{value}</span>
             <button
                 type="button"
                 onClick={() => navigator.clipboard?.writeText(value).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); })}
-                className="inline-flex items-center gap-1 rounded border border-slate-700 px-1.5 py-0.5 text-slate-300 hover:border-[#00f7ff]"
+                className="inline-flex items-center gap-1 rounded border border-slate-700 px-1.5 py-0.5 text-slate-300 hover:border-neon"
             >
                 {copied ? <Check size={11} /> : <Copy size={11} />} {copied ? 'Copiado' : 'Copiar'}
             </button>
@@ -50,7 +50,7 @@ function MethodCard({ method, webhookUrl }) {
         <form onSubmit={save} className={`rounded-2xl border p-5 ${data.enabled ? 'border-emerald-500/40 bg-emerald-950/10' : 'border-slate-800 bg-[#070b18]/90'}`}>
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <h2 className="flex items-center gap-2 text-base font-black text-white">
-                    <Icon size={18} className="text-[#00f7ff]" /> {meta.title}
+                    <Icon size={18} className="text-neon" /> {meta.title}
                 </h2>
                 <label className="flex cursor-pointer items-center gap-2 font-mono text-xs text-slate-300">
                     <input type="checkbox" checked={data.enabled} onChange={(e) => setData('enabled', e.target.checked)} className="peer sr-only" />
@@ -82,7 +82,7 @@ function MethodCard({ method, webhookUrl }) {
                                 value={data.values[f.key] ?? ''}
                                 onChange={(e) => setData('values', { ...data.values, [f.key]: e.target.value })}
                                 placeholder={f.secret && f.set ? '•••••••• guardado (déjalo vacío para conservarlo)' : ''}
-                                className="w-full rounded-lg border border-slate-700 bg-black/50 px-3 py-2 font-mono text-sm text-white placeholder-slate-500 focus:border-[#00f7ff] focus:outline-none"
+                                className="w-full rounded-lg border border-slate-700 bg-black/50 px-3 py-2 font-mono text-sm text-white placeholder-slate-500 focus:border-neon focus:outline-none"
                             />
                             <InputError message={errors[`values.${f.key}`]} />
                         </label>
@@ -101,7 +101,7 @@ function MethodCard({ method, webhookUrl }) {
                 <button
                     type="submit"
                     disabled={processing}
-                    className="rounded-lg border border-[#00f7ff]/60 bg-[#00f7ff]/15 px-4 py-2 text-xs font-bold text-[#00f7ff] transition hover:bg-[#00f7ff] hover:text-black disabled:opacity-50"
+                    className="rounded-lg border border-neon/60 bg-neon/15 px-4 py-2 text-xs font-bold text-neon transition hover:bg-neon hover:text-black disabled:opacity-50"
                 >
                     Guardar
                 </button>

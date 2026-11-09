@@ -26,7 +26,7 @@ export default function Edit({ auth, mustVerifyEmail, status, billing, billingDe
                     {/* RESUMEN DE CUENTA */}
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 px-4 sm:px-0">
                         {[
-                            { label: 'Servicios activos', value: billing?.activeServices ?? 0, accent: 'text-[#00f7ff]' },
+                            { label: 'Servicios activos', value: billing?.activeServices ?? 0, accent: 'text-neon' },
                             { label: 'Facturas emitidas', value: billing?.invoices ?? 0, accent: 'text-pink-400' },
                             { label: 'Total gastado', value: `${(billing?.totalSpent ?? 0).toFixed(2)} €`, accent: 'text-fuchsia-400' },
                             { label: 'Cliente desde', value: billing?.memberSince ?? '—', accent: 'text-white' },

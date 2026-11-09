@@ -33,7 +33,7 @@ export default function PublicLayout({ children }) {
                     {/* Mini badges de garantía */}
                     <div className="grid grid-cols-2 gap-4 pb-8 border-b border-neutral-800/80 sm:grid-cols-4 font-mono text-xs">
                         <div className="flex items-center gap-2.5 text-slate-300">
-                            <Zap size={18} className="text-[#00f7ff] shrink-0" />
+                            <Zap size={18} className="text-neon shrink-0" />
                             <span>Despliegue &lt; 60 Segundos</span>
                         </div>
                         <div className="flex items-center gap-2.5 text-slate-300">

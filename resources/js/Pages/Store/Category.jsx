@@ -122,7 +122,7 @@ export default function StoreCategory({ category, plans }) {
                 <div className="mx-auto max-w-6xl">
                     <Link
                         href={route('store')}
-                        className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-pink-400 transition hover:text-[#00f7ff]"
+                        className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-pink-400 transition hover:text-neon"
                     >
                         <ArrowLeft size={14} />
                         <span>// VOLVER AL CATÁLOGO DE SERVIDORES</span>
@@ -132,7 +132,7 @@ export default function StoreCategory({ category, plans }) {
                 {/* HEADER DE LA CATEGORÍA */}
                 <header className="mx-auto mt-6 max-w-6xl text-center">
                     <div className="inline-flex items-center gap-2 rounded-full border border-pink-500/30 bg-pink-500/10 px-4 py-1.5 font-mono text-xs text-pink-300 shadow-[0_0_15px_rgba(255,0,128,0.2)]">
-                        <CategoryIcon size={14} className="text-[#00f7ff]" />
+                        <CategoryIcon size={14} className="text-neon" />
                         <span>LÍNEA DE SERVICIO: {category.title.toUpperCase()}</span>
                     </div>
 
@@ -153,7 +153,7 @@ export default function StoreCategory({ category, plans }) {
                                         width={44}
                                         height={44}
                                         loading="lazy"
-                                        className="h-11 w-11 rounded-lg border border-slate-700/80 bg-black/40 object-cover shadow-[0_0_12px_rgba(0,247,255,0.12)]"
+                                        className="h-11 w-11 rounded-lg border border-slate-700/80 bg-black/40 object-cover shadow-[0_0_12px_oklch(var(--tw-c-neon)_/_0.12)]"
                                         onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }}
                                     />
                                 </li>
@@ -168,7 +168,7 @@ export default function StoreCategory({ category, plans }) {
                             <span>Nodo: Miami, FL (US-East)</span>
                         </div>
                         <div className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-[#070b18]/80 px-3 py-1 text-slate-300">
-                            <Shield size={12} className="text-[#00f7ff]" />
+                            <Shield size={12} className="text-neon" />
                             <span>Anti-DDoS Game 2.5 Tbps</span>
                         </div>
                         <div className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-[#070b18]/80 px-3 py-1 text-slate-300">
@@ -189,7 +189,7 @@ export default function StoreCategory({ category, plans }) {
                                 onClick={() => setCycle(c.key)}
                                 className={`rounded-lg border px-3.5 py-1.5 font-bold transition ${
                                     cycle === c.key
-                                        ? 'border-[#00f7ff] bg-[#00f7ff]/10 text-[#00f7ff] shadow-[0_0_12px_rgba(0,247,255,0.3)]'
+                                        ? 'border-neon bg-neon/10 text-neon shadow-[0_0_12px_oklch(var(--tw-c-neon)_/_0.3)]'
                                         : 'border-slate-700 bg-black/40 text-slate-300 hover:border-pink-500/60 hover:text-pink-300'
                                 }`}
                             >
@@ -210,7 +210,7 @@ export default function StoreCategory({ category, plans }) {
                                 onChange={(e) => setQuery(e.target.value)}
                                 placeholder={`Buscar entre ${plans.length} planes…`}
                                 aria-label="Buscar plan"
-                                className="w-full rounded-lg border border-slate-700 bg-black/50 py-2 pr-3 pl-9 text-sm text-white placeholder-slate-500 focus:border-[#00f7ff] focus:outline-none"
+                                className="w-full rounded-lg border border-slate-700 bg-black/50 py-2 pr-3 pl-9 text-sm text-white placeholder-slate-500 focus:border-neon focus:outline-none"
                             />
                         </div>
                         <label className="flex items-center gap-2 text-slate-400">
@@ -218,7 +218,7 @@ export default function StoreCategory({ category, plans }) {
                             <select
                                 value={sort}
                                 onChange={(e) => setSort(e.target.value)}
-                                className="rounded-lg border border-slate-700 bg-black/50 py-2 pr-8 pl-3 text-slate-200 focus:border-[#00f7ff] focus:outline-none"
+                                className="rounded-lg border border-slate-700 bg-black/50 py-2 pr-8 pl-3 text-slate-200 focus:border-neon focus:outline-none"
                             >
                                 <option value="recommended">Recomendados</option>
                                 <option value="price">Precio: menor a mayor</option>
@@ -242,14 +242,14 @@ export default function StoreCategory({ category, plans }) {
                             style={plan.role && plan.perks?.color ? { borderColor: `${plan.perks.color}99`, boxShadow: `0 0 28px ${plan.perks.color}26` } : undefined}
                             className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border p-7 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 ${
                                 plan.popular
-                                    ? 'border-[#00f7ff] bg-gradient-to-b from-cyan-950/30 via-[#070b18] to-black shadow-[0_0_35px_rgba(0,247,255,0.25)] ring-1 ring-[#00f7ff]/40'
+                                    ? 'border-neon bg-gradient-to-b from-cyan-950/30 via-[#070b18] to-black shadow-[0_0_35px_oklch(var(--tw-c-neon)_/_0.25)] ring-1 ring-neon/40'
                                     : 'border-slate-800 bg-[#070b18]/90 hover:border-pink-500/60 hover:shadow-[0_0_25px_rgba(255,0,128,0.2)]'
                             }`}
                         >
                             {/* Cinta "Popular" */}
                             {plan.popular && (
                                 <div className="absolute top-0 right-0">
-                                    <div className="flex items-center gap-1 rounded-bl-xl bg-gradient-to-r from-[#00f7ff] to-cyan-400 px-3.5 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[0_0_15px_rgba(0,247,255,0.6)]">
+                                    <div className="flex items-center gap-1 rounded-bl-xl bg-gradient-to-r from-neon to-cyan-400 px-3.5 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[0_0_15px_oklch(var(--tw-c-neon)_/_0.6)]">
                                         <Sparkles size={11} />
                                         <span>Recomendado</span>
                                     </div>
@@ -333,7 +333,7 @@ export default function StoreCategory({ category, plans }) {
                                 <div className={`mt-5 space-y-2.5 ${plan.role ? 'hidden' : ''}`}>
                                     <div className="flex items-center justify-between rounded-lg border border-slate-800/80 bg-black/40 px-3 py-2 text-xs">
                                         <div className="flex items-center gap-2 text-slate-300">
-                                            <Cpu size={14} className="text-[#00f7ff]" />
+                                            <Cpu size={14} className="text-neon" />
                                             <span>Memoria RAM</span>
                                         </div>
                                         <span className="font-mono font-bold text-white">
@@ -372,7 +372,7 @@ export default function StoreCategory({ category, plans }) {
                                             <li key={idx} className="flex items-center gap-2">
                                                 <CheckCircle2
                                                     size={13}
-                                                    className={plan.popular ? 'text-[#00f7ff]' : 'text-pink-400'}
+                                                    className={plan.popular ? 'text-neon' : 'text-pink-400'}
                                                 />
                                                 <span>{feature}</span>
                                             </li>
@@ -380,7 +380,7 @@ export default function StoreCategory({ category, plans }) {
                                         <li className="flex items-center gap-2">
                                             <CheckCircle2
                                                 size={13}
-                                                className={plan.popular ? 'text-[#00f7ff]' : 'text-pink-400'}
+                                                className={plan.popular ? 'text-neon' : 'text-pink-400'}
                                             />
                                             <span>Consola Cinammon 2.0 en Tiempo Real</span>
                                         </li>
@@ -394,7 +394,7 @@ export default function StoreCategory({ category, plans }) {
                                     <button
                                         type="button"
                                         onClick={() => setAddonsPlan(plan)}
-                                        className="w-full flex items-center justify-center gap-2 rounded-xl border border-[#00f7ff]/40 bg-[#00f7ff]/5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-[#00f7ff] transition-all duration-200 hover:border-[#00f7ff] hover:bg-[#00f7ff]/15 hover:shadow-[0_0_20px_rgba(0,247,255,0.3)]"
+                                        className="w-full flex items-center justify-center gap-2 rounded-xl border border-neon/40 bg-neon/5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-neon transition-all duration-200 hover:border-neon hover:bg-neon/15 hover:shadow-[0_0_20px_oklch(var(--tw-c-neon)_/_0.3)]"
                                     >
                                         <Layers size={14} />
                                         <span>Ver complementos</span>
@@ -405,7 +405,7 @@ export default function StoreCategory({ category, plans }) {
                                     disabled={plan.prices?.[cycle] == null}
                                     className={`w-full flex disabled:cursor-not-allowed disabled:opacity-40 items-center justify-center gap-2 rounded-xl py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                                         plan.popular
-                                            ? 'bg-gradient-to-r from-[#00f7ff] to-cyan-400 text-black shadow-[0_0_20px_rgba(0,247,255,0.4)] hover:brightness-110 hover:shadow-[0_0_30px_rgba(0,247,255,0.6)]'
+                                            ? 'bg-gradient-to-r from-neon to-cyan-400 text-black shadow-[0_0_20px_oklch(var(--tw-c-neon)_/_0.4)] hover:brightness-110 hover:shadow-[0_0_30px_oklch(var(--tw-c-neon)_/_0.6)]'
                                             : 'border border-pink-500/40 bg-pink-500/10 text-pink-300 shadow-[0_0_15px_rgba(255,0,128,0.15)] hover:border-pink-500 hover:bg-pink-500 hover:text-white hover:shadow-[0_0_25px_rgba(255,0,128,0.4)]'
                                     }`}
                                 >
@@ -420,16 +420,16 @@ export default function StoreCategory({ category, plans }) {
                 {/* MODAL DE COMPLEMENTOS INCLUIDOS */}
                 <Modal show={addonsPlan !== null} onClose={() => setAddonsPlan(null)} maxWidth="md">
                     {addonsPlan && (
-                        <div className="relative overflow-hidden bg-[#070b18] p-6 sm:p-8 font-sans text-white border border-[#00f7ff]/30">
-                            <div className="pointer-events-none absolute -top-12 -right-12 h-36 w-36 rounded-full bg-[#00f7ff]/10 blur-3xl" />
+                        <div className="relative overflow-hidden bg-[#070b18] p-6 sm:p-8 font-sans text-white border border-neon/30">
+                            <div className="pointer-events-none absolute -top-12 -right-12 h-36 w-36 rounded-full bg-neon/10 blur-3xl" />
 
                             <div className="flex items-center justify-between border-b border-slate-800 pb-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#00f7ff]/40 bg-[#00f7ff]/10 text-[#00f7ff]">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-neon/40 bg-neon/10 text-neon">
                                         <Layers size={20} />
                                     </div>
                                     <div>
-                                        <span className="font-mono text-[10px] uppercase tracking-wider text-[#00f7ff]">
+                                        <span className="font-mono text-[10px] uppercase tracking-wider text-neon">
                                             // COMPLEMENTOS INCLUIDOS
                                         </span>
                                         <h3 className="text-lg font-bold text-white">
@@ -445,7 +445,7 @@ export default function StoreCategory({ category, plans }) {
                                         key={idx}
                                         className="flex items-start gap-3 rounded-xl border border-slate-800 bg-black/60 px-4 py-3"
                                     >
-                                        <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-[#00f7ff]" />
+                                        <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-neon" />
                                         <div>
                                             <p className="text-sm font-bold text-white">{addon.name}</p>
                                             {addon.desc && (
@@ -472,7 +472,7 @@ export default function StoreCategory({ category, plans }) {
                                         openOrder(plan);
                                     }}
                                     disabled={addonsPlan.prices?.[cycle] == null}
-                                    className="border border-[#00f7ff] bg-gradient-to-r from-pink-500 to-fuchsia-600 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-[0_0_20px_rgba(255,0,128,0.4)] hover:brightness-110"
+                                    className="border border-neon bg-gradient-to-r from-pink-500 to-fuchsia-600 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-[0_0_20px_rgba(255,0,128,0.4)] hover:brightness-110"
                                 >
                                     Desplegar Servidor
                                 </PrimaryButton>
@@ -486,7 +486,7 @@ export default function StoreCategory({ category, plans }) {
                     {selected && (
                         <div className="relative overflow-hidden bg-[#070b18] p-6 sm:p-8 font-sans text-white border border-pink-500/30">
                             {/* Brillo ambiental */}
-                            <div className="pointer-events-none absolute -top-12 -right-12 h-36 w-36 rounded-full bg-[#00f7ff]/10 blur-3xl" />
+                            <div className="pointer-events-none absolute -top-12 -right-12 h-36 w-36 rounded-full bg-neon/10 blur-3xl" />
 
                             <div className="flex items-center justify-between border-b border-slate-800 pb-4">
                                 <div className="flex items-center gap-3">
@@ -518,11 +518,11 @@ export default function StoreCategory({ category, plans }) {
                                 </div>
                                 <div className="mt-2 flex items-center justify-between text-slate-300">
                                     <span>Nodo Datacenter:</span>
-                                    <span className="text-[#00f7ff]">Miami, FL US-01</span>
+                                    <span className="text-neon">Miami, FL US-01</span>
                                 </div>
                                 <div className="mt-3 border-t border-slate-800 pt-2 flex items-center justify-between">
                                     <span className="text-slate-400">Total por {cycleUnit(billingCycles, data.billing_cycle)}:</span>
-                                    <span className="text-lg font-black text-[#00f7ff]">
+                                    <span className="text-lg font-black text-neon">
                                         {fmtPrice((selected.prices?.[data.billing_cycle] ?? selected.price) * (100 - discountFor(selected).pct) / 100)} €
                                     </span>
                                 </div>
@@ -545,7 +545,7 @@ export default function StoreCategory({ category, plans }) {
                                         />
                                         <TextInput
                                             id="server_name"
-                                            className="mt-2 block w-full border-pink-500/40 bg-black/80 font-mono text-sm text-white placeholder-slate-600 focus:border-[#00f7ff] focus:ring-[#00f7ff]"
+                                            className="mt-2 block w-full border-pink-500/40 bg-black/80 font-mono text-sm text-white placeholder-slate-600 focus:border-neon focus:ring-neon"
                                             value={data.server_name}
                                             onChange={(e) => setData('server_name', e.target.value)}
                                             placeholder="ej. survival-smp-v2"
@@ -571,7 +571,7 @@ export default function StoreCategory({ category, plans }) {
                                         </SecondaryButton>
                                         <PrimaryButton
                                             disabled={processing}
-                                            className="border border-[#00f7ff] bg-gradient-to-r from-pink-500 to-fuchsia-600 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-[0_0_20px_rgba(255,0,128,0.4)] hover:brightness-110"
+                                            className="border border-neon bg-gradient-to-r from-pink-500 to-fuchsia-600 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-[0_0_20px_rgba(255,0,128,0.4)] hover:brightness-110"
                                         >
                                             {processing ? 'Desplegando...' : 'Confirmar y Desplegar'}
                                         </PrimaryButton>

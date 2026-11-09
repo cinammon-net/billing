@@ -83,19 +83,19 @@ function ReflexGame({ onDone }) {
                 <span>Puntos: <b className="text-white">{score}</b></span>
                 <span className="flex items-center gap-1"><Clock size={12} /> {left}s</span>
             </div>
-            <div className="relative h-64 select-none overflow-hidden rounded-xl border border-cyan-500/30 bg-[radial-gradient(circle_at_center,rgba(0,247,255,0.08),transparent_70%)] sm:h-72">
+            <div className="relative h-64 select-none overflow-hidden rounded-xl border border-cyan-500/30 bg-[radial-gradient(circle_at_center,oklch(var(--tw-c-neon)_/_0.08),transparent_70%)] sm:h-72">
                 {playing ? (
                     <button
                         type="button"
                         onPointerDown={hit}
                         aria-label="Núcleo"
-                        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-[#00f7ff] to-pink-500 shadow-[0_0_20px_#00f7ff] transition-[left,top] duration-75"
+                        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-neon to-pink-500 shadow-[0_0_20px_oklch(var(--tw-c-neon))] transition-[left,top] duration-75"
                         style={{ left: `${pos.x}%`, top: `${pos.y}%`, width: pos.size, height: pos.size }}
                     />
                 ) : (
                     <div className="flex h-full flex-col items-center justify-center gap-3 p-4 text-center">
                         <p className="max-w-xs text-sm text-slate-300">Pulsa los núcleos tan rápido como puedas durante 30 segundos. Cada 5 aciertos = 1 moneda (máx. 15).</p>
-                        <button type="button" onClick={begin} className="inline-flex items-center gap-2 rounded-xl bg-[#00f7ff] px-5 py-2.5 font-bold text-black hover:brightness-110">
+                        <button type="button" onClick={begin} className="inline-flex items-center gap-2 rounded-xl bg-neon px-5 py-2.5 font-bold text-black hover:brightness-110">
                             <PlayCircle size={16} /> Jugar
                         </button>
                     </div>
@@ -376,7 +376,7 @@ export default function Coins({ balance: initialBalance, earnedToday: initialEar
                 <div className="grid gap-6 lg:grid-cols-5">
                     <section className="space-y-4 rounded-2xl border border-slate-800 bg-[#070b18]/90 p-5 lg:col-span-3">
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                            <h2 className="flex items-center gap-2 font-black text-white"><Sparkles size={18} className="text-[#00f7ff]" /> Gana monedas</h2>
+                            <h2 className="flex items-center gap-2 font-black text-white"><Sparkles size={18} className="text-neon" /> Gana monedas</h2>
                             <div className="flex gap-1 rounded-xl border border-slate-800 p-1 text-xs">
                                 <button type="button" onClick={() => setTab('reflex')} className={`flex items-center gap-1 rounded-lg px-3 py-1.5 ${tab === 'reflex' ? 'bg-cyan-500/20 text-cyan-200' : 'text-slate-400'}`}>
                                     <Crosshair size={13} /> Núcleos

@@ -31,12 +31,12 @@ export default function Login({ status, canResetPassword }) {
         <GuestLayout>
             <Head title="Log in" />
 
-            {status && <div className="mb-4 font-medium text-sm text-[#00f7ff]">{status}</div>}
+            {status && <div className="mb-4 font-medium text-sm text-neon">{status}</div>}
 
             <div className="mb-6">
                 <a
                     href={`${panelUrl}/billing/redirect`}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#00f7ff]/60 bg-gradient-to-r from-[#00f7ff]/20 to-pink-500/20 py-3 font-mono text-xs font-bold text-white shadow-[0_0_20px_rgba(0,247,255,0.25)] transition hover:brightness-125 hover:shadow-[0_0_25px_rgba(0,247,255,0.4)]"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-neon/60 bg-gradient-to-r from-neon/20 to-pink-500/20 py-3 font-mono text-xs font-bold text-white shadow-[0_0_20px_oklch(var(--tw-c-neon)_/_0.25)] transition hover:brightness-125 hover:shadow-[0_0_25px_oklch(var(--tw-c-neon)_/_0.4)]"
                 >
                     <span>⚡ Acceso directo desde Cinammon Panel</span>
                 </a>

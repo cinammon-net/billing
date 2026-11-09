@@ -8,7 +8,7 @@ import { useState } from 'react';
 const fmtRam = (mb) => (mb >= 1024 ? `${mb / 1024} GB` : `${mb} MB`);
 
 const inputClass =
-    'w-full rounded-lg border border-slate-700 bg-black/60 px-3 py-2 font-mono text-sm text-slate-100 outline-none transition focus:border-[#00f7ff] disabled:opacity-60';
+    'w-full rounded-lg border border-slate-700 bg-black/60 px-3 py-2 font-mono text-sm text-slate-100 outline-none transition focus:border-neon disabled:opacity-60';
 
 function PriceInput({ plan }) {
     const [value, setValue] = useState(plan.price.toFixed(2));
@@ -33,7 +33,7 @@ function PriceInput({ plan }) {
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && save()}
-                className="w-24 rounded-md border border-slate-700 bg-black/60 px-2 py-1 text-right font-mono text-sm text-[#00f7ff] outline-none focus:border-[#00f7ff]"
+                className="w-24 rounded-md border border-slate-700 bg-black/60 px-2 py-1 text-right font-mono text-sm text-neon outline-none focus:border-neon"
             />
             <span className="font-mono text-xs text-slate-400">€</span>
             {dirty && (
@@ -170,7 +170,7 @@ function PlanForm({ editing, categories, onClose }) {
                 <button
                     type="submit"
                     disabled={processing}
-                    className="rounded-lg border border-[#00f7ff]/60 bg-[#00f7ff]/10 px-4 py-2 font-mono text-xs font-bold text-[#00f7ff] hover:bg-[#00f7ff]/20 disabled:opacity-50"
+                    className="rounded-lg border border-neon/60 bg-neon/10 px-4 py-2 font-mono text-xs font-bold text-neon hover:bg-neon/20 disabled:opacity-50"
                 >
                     {processing ? 'Guardando…' : 'Guardar'}
                 </button>
@@ -194,7 +194,7 @@ export default function AdminPlans({ categories }) {
 
             <div className="relative z-10 mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
                 <div className="flex items-center gap-3 border-b border-pink-500/25 pb-5">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#00f7ff]/40 bg-[#00f7ff]/10 text-[#00f7ff]">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-neon/40 bg-neon/10 text-neon">
                         <Tags size={22} />
                     </div>
                     <div>
@@ -275,7 +275,7 @@ export default function AdminPlans({ categories }) {
                                                             type="button"
                                                             onClick={() => setEditing({ category: plan.category, plan })}
                                                             title="Editar"
-                                                            className="rounded-md border border-slate-700 p-1.5 text-slate-300 hover:border-[#00f7ff] hover:text-[#00f7ff]"
+                                                            className="rounded-md border border-slate-700 p-1.5 text-slate-300 hover:border-neon hover:text-neon"
                                                         >
                                                             <Pencil size={14} />
                                                         </button>

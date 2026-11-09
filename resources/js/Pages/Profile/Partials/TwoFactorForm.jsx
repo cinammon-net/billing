@@ -75,7 +75,7 @@ export default function TwoFactorForm({ twoFactor, className = '' }) {
                     <div className="inline-block rounded-xl border border-pink-500/40 bg-black/80 p-4">
                         <canvas ref={canvasRef} />
                     </div>
-                    <p className="font-mono text-xs break-all text-[#00f7ff]">{twoFactor.pendingSecret}</p>
+                    <p className="font-mono text-xs break-all text-neon">{twoFactor.pendingSecret}</p>
 
                     <form onSubmit={confirm} className="space-y-3">
                         <p className="text-sm text-gray-300">2. Introduce el código de 6 dígitos para confirmar:</p>
@@ -101,7 +101,7 @@ export default function TwoFactorForm({ twoFactor, className = '' }) {
             {/* ESTADO: ACTIVADO */}
             {twoFactor?.enabled && (
                 <div className="mt-6 space-y-4">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-[#00f7ff]/40 bg-[#00f7ff]/10 px-3 py-1 text-xs font-semibold text-[#00f7ff]">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-neon/40 bg-neon/10 px-3 py-1 text-xs font-semibold text-neon">
                         ● Activado
                     </div>
 

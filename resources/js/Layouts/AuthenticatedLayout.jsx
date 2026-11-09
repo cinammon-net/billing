@@ -21,7 +21,7 @@ function TopLink({ href, active, icon: Icon, children }) {
             <Icon size={14} /> {children}
             <span
                 aria-hidden="true"
-                className={`absolute inset-x-3 -bottom-[13px] h-0.5 rounded-full bg-gradient-to-r from-pink-500 to-[#00f7ff] shadow-[0_0_8px_#00f7ff] transition-opacity ${active ? 'opacity-100' : 'opacity-0'}`}
+                className={`absolute inset-x-3 -bottom-[13px] h-0.5 rounded-full bg-gradient-to-r from-pink-500 to-neon shadow-[0_0_8px_oklch(var(--tw-c-neon))] transition-opacity ${active ? 'opacity-100' : 'opacity-0'}`}
             />
         </Link>
     );
@@ -64,10 +64,10 @@ export default function Authenticated({ user, header, children }) {
                     <div className="flex h-16 items-center gap-6 font-mono text-xs">
                         {/* Logo */}
                         <a href={panelUrl} title="Volver a Cinammon.net" className="group flex shrink-0 items-center gap-2.5">
-                            <ApplicationLogo className="h-8 w-8 drop-shadow-[0_0_10px_rgba(255,77,166,0.45)] transition duration-300 group-hover:rotate-[30deg] group-hover:drop-shadow-[0_0_12px_rgba(0,247,255,0.6)]" />
+                            <ApplicationLogo className="h-8 w-8 drop-shadow-[0_0_10px_rgba(255,77,166,0.45)] transition duration-300 group-hover:rotate-[30deg] group-hover:drop-shadow-[0_0_12px_oklch(var(--tw-c-neon)_/_0.6)]" />
                             <span className="flex flex-col leading-none">
                                 <span className="text-sm font-black tracking-[0.2em] whitespace-nowrap text-white">
-                                    CINAMMON<span className="text-[#00f7ff]">.NET</span>
+                                    CINAMMON<span className="text-neon">.NET</span>
                                 </span>
                                 <span className="mt-1 text-[9px] tracking-[0.25em] whitespace-nowrap text-slate-500 uppercase">Billing &amp; cloud</span>
                             </span>
@@ -122,7 +122,7 @@ export default function Authenticated({ user, header, children }) {
                         <div className="ml-auto hidden items-center gap-3 lg:flex">
                             <a
                                 href={panelUrl}
-                                className="group flex items-center gap-1.5 rounded-xl border border-[#00f7ff]/40 bg-[#00f7ff]/10 px-3.5 py-2 font-bold whitespace-nowrap text-[#00f7ff] transition hover:bg-[#00f7ff] hover:text-[#04060d] hover:shadow-[0_0_16px_rgba(0,247,255,0.4)]"
+                                className="group flex items-center gap-1.5 rounded-xl border border-neon/40 bg-neon/10 px-3.5 py-2 font-bold whitespace-nowrap text-neon transition hover:bg-neon hover:text-[#04060d] hover:shadow-[0_0_16px_oklch(var(--tw-c-neon)_/_0.4)]"
                             >
                                 <Server size={14} /> Panel
                                 <ArrowUpRight size={13} className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -201,7 +201,7 @@ export default function Authenticated({ user, header, children }) {
                             </>
                         )}
 
-                        <a href={panelUrl} className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-[#00f7ff]/40 bg-[#00f7ff]/10 px-3 py-3 font-bold text-[#00f7ff]">
+                        <a href={panelUrl} className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-neon/40 bg-neon/10 px-3 py-3 font-bold text-neon">
                             <Server size={14} /> Panel de servidores <ArrowUpRight size={14} />
                         </a>
                         <div className="mt-3 grid grid-cols-2 gap-2">

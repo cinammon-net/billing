@@ -35,7 +35,7 @@ export default function SessionsForm({ className = '' }) {
                     <div
                         key={session.id}
                         className={`flex items-center justify-between rounded-md border px-4 py-3 text-sm ${
-                            session.is_current ? 'border-[#00f7ff]/50 bg-[#00f7ff]/5' : 'border-pink-500/30 bg-black/40'
+                            session.is_current ? 'border-neon/50 bg-neon/5' : 'border-pink-500/30 bg-black/40'
                         }`}
                     >
                         <div>
@@ -45,7 +45,7 @@ export default function SessionsForm({ className = '' }) {
                             </p>
                         </div>
                         {session.is_current && (
-                            <span className="rounded-full border border-[#00f7ff]/50 px-3 py-0.5 text-xs font-semibold text-[#00f7ff]">
+                            <span className="rounded-full border border-neon/50 px-3 py-0.5 text-xs font-semibold text-neon">
                                 Este dispositivo
                             </span>
                         )}
@@ -78,7 +78,7 @@ export default function SessionsForm({ className = '' }) {
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-[#00f7ff]">Sesiones cerradas.</p>
+                        <p className="text-sm text-neon">Sesiones cerradas.</p>
                     </Transition>
                 </div>
             </form>

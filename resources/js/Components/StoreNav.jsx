@@ -80,7 +80,7 @@ function NavLink({ href, active, children }) {
             {children}
             <span
                 aria-hidden="true"
-                className={`absolute inset-x-3 -bottom-[13px] h-0.5 rounded-full bg-gradient-to-r from-pink-500 to-[#00f7ff] shadow-[0_0_8px_#00f7ff] transition-opacity ${
+                className={`absolute inset-x-3 -bottom-[13px] h-0.5 rounded-full bg-gradient-to-r from-pink-500 to-neon shadow-[0_0_8px_oklch(var(--tw-c-neon))] transition-opacity ${
                     active ? 'opacity-100' : 'opacity-0'
                 }`}
             />
@@ -139,10 +139,10 @@ export default function StoreNav() {
             <div className="mx-auto grid h-16 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-4 px-4 sm:px-6 lg:px-8">
                 {/* Logo */}
                 <Link href={route('store')} title="Cinammon Store" className="group flex shrink-0 items-center gap-2.5">
-                    <ApplicationLogo className="h-8 w-8 drop-shadow-[0_0_10px_rgba(255,77,166,0.45)] transition duration-300 group-hover:rotate-[30deg] group-hover:drop-shadow-[0_0_12px_rgba(0,247,255,0.6)]" />
+                    <ApplicationLogo className="h-8 w-8 drop-shadow-[0_0_10px_rgba(255,77,166,0.45)] transition duration-300 group-hover:rotate-[30deg] group-hover:drop-shadow-[0_0_12px_oklch(var(--tw-c-neon)_/_0.6)]" />
                     <span className="flex flex-col leading-none">
                         <span className="font-mono text-sm font-black tracking-[0.2em] text-white">
-                            CINAMMON<span className="text-[#00f7ff]">.STORE</span>
+                            CINAMMON<span className="text-neon">.STORE</span>
                         </span>
                         <span className="mt-1 hidden font-mono text-[9px] tracking-[0.25em] text-slate-500 uppercase sm:block">Game &amp; cloud hosting</span>
                     </span>
@@ -166,13 +166,13 @@ export default function StoreNav() {
                             <ChevronDown size={13} className={`transition-transform ${gamesOpen ? 'rotate-180' : ''}`} />
                             <span
                                 aria-hidden="true"
-                                className={`absolute inset-x-3 -bottom-[13px] h-0.5 rounded-full bg-gradient-to-r from-pink-500 to-[#00f7ff] shadow-[0_0_8px_#00f7ff] ${gamesActive ? 'opacity-100' : 'opacity-0'}`}
+                                className={`absolute inset-x-3 -bottom-[13px] h-0.5 rounded-full bg-gradient-to-r from-pink-500 to-neon shadow-[0_0_8px_oklch(var(--tw-c-neon))] ${gamesActive ? 'opacity-100' : 'opacity-0'}`}
                             />
                         </button>
 
                         {gamesOpen && (
                             <div className="absolute top-full left-1/2 mt-3 w-[760px] max-w-[calc(100vw-2rem)] -translate-x-1/2 overflow-hidden rounded-2xl border border-white/10 bg-[#070a16] shadow-[0_24px_70px_rgba(0,0,0,0.75)] ring-1 ring-pink-500/10">
-                                <div aria-hidden="true" className="h-px bg-gradient-to-r from-pink-500/60 via-[#00f7ff]/50 to-transparent" />
+                                <div aria-hidden="true" className="h-px bg-gradient-to-r from-pink-500/60 via-neon/50 to-transparent" />
                                 <div className="grid grid-cols-[1fr_220px]">
                                     <div className="p-3">
                                         <p className="px-3 pt-1 pb-2 text-[10px] font-bold tracking-[0.2em] text-pink-400 uppercase">Servidores de juego</p>
@@ -218,7 +218,7 @@ export default function StoreNav() {
                                         <Link
                                             href={route('store')}
                                             onClick={closeAll}
-                                            className="mt-auto flex items-center justify-center gap-1 rounded-lg border border-[#00f7ff]/30 bg-[#00f7ff]/5 px-3 py-2 text-[11px] font-bold text-[#00f7ff] transition hover:bg-[#00f7ff] hover:text-black"
+                                            className="mt-auto flex items-center justify-center gap-1 rounded-lg border border-neon/30 bg-neon/5 px-3 py-2 text-[11px] font-bold text-neon transition hover:bg-neon hover:text-black"
                                         >
                                             Ver todo el catálogo <ArrowUpRight size={12} />
                                         </Link>
@@ -254,7 +254,7 @@ export default function StoreNav() {
                     {auth?.user ? (
                         <Link
                             href={route('dashboard')}
-                            className="flex items-center gap-2 rounded-xl border border-[#00f7ff]/50 bg-[#00f7ff]/10 px-4 py-2 font-bold text-[#00f7ff] shadow-[0_0_15px_rgba(0,247,255,0.2)] transition hover:bg-[#00f7ff] hover:text-black"
+                            className="flex items-center gap-2 rounded-xl border border-neon/50 bg-neon/10 px-4 py-2 font-bold text-neon shadow-[0_0_15px_oklch(var(--tw-c-neon)_/_0.2)] transition hover:bg-neon hover:text-black"
                         >
                             <Layers size={14} />
                             <span className="hidden whitespace-nowrap sm:inline">Mis servicios</span>
@@ -293,7 +293,7 @@ export default function StoreNav() {
                         <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
                             <span className="flex items-center gap-2 text-xs font-black tracking-[0.2em] text-white">
                                 <ApplicationLogo className="h-6 w-6" />
-                                CINAMMON<span className="-ml-2 text-[#00f7ff]">.STORE</span>
+                                CINAMMON<span className="-ml-2 text-neon">.STORE</span>
                             </span>
                             <button type="button" onClick={() => setMobileOpen(false)} className="rounded-lg p-1 text-slate-400 hover:bg-white/5 hover:text-white" aria-label="Cerrar menú">
                                 <X size={20} />
@@ -363,7 +363,7 @@ export default function StoreNav() {
                                 <Link
                                     href={route('dashboard')}
                                     onClick={closeAll}
-                                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#00f7ff]/50 bg-[#00f7ff]/10 px-4 py-3 text-xs font-bold text-[#00f7ff]"
+                                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-neon/50 bg-neon/10 px-4 py-3 text-xs font-bold text-neon"
                                 >
                                     <Layers size={14} /> Mis servicios
                                 </Link>

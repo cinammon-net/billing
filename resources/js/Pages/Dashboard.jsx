@@ -53,7 +53,7 @@ const STATUS_CONFIG = {
     },
     paid: { 
         label: 'Pagada', 
-        badgeCls: 'border-cyan-500/40 bg-cyan-500/10 text-cyan-300 shadow-[0_0_10px_rgba(0,247,255,0.2)]', 
+        badgeCls: 'border-cyan-500/40 bg-cyan-500/10 text-cyan-300 shadow-[0_0_10px_oklch(var(--tw-c-neon)_/_0.2)]', 
         dotCls: 'bg-cyan-400' 
     },
     overdue: { 
@@ -113,7 +113,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-pink-500/20 pb-6">
                         <div>
                             <div className="flex items-center gap-2">
-                                <span className="font-mono text-xs font-semibold tracking-widest text-[#00f7ff] uppercase">
+                                <span className="font-mono text-xs font-semibold tracking-widest text-neon uppercase">
                                     // CONTROL DE CLIENTE
                                 </span>
                                 <span className="rounded border border-pink-500/40 bg-pink-500/10 px-2 py-0.5 font-mono text-[10px] text-pink-300">
@@ -130,9 +130,9 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
 
                         <Link
                             href={route('store')}
-                            className="group flex items-center justify-center gap-2 rounded-xl border border-[#00f7ff]/50 bg-gradient-to-r from-[#00f7ff]/20 to-pink-500/20 px-5 py-3 font-mono text-xs font-bold text-white shadow-[0_0_20px_rgba(0,247,255,0.25)] transition hover:brightness-125 hover:shadow-[0_0_25px_rgba(0,247,255,0.4)]"
+                            className="group flex items-center justify-center gap-2 rounded-xl border border-neon/50 bg-gradient-to-r from-neon/20 to-pink-500/20 px-5 py-3 font-mono text-xs font-bold text-white shadow-[0_0_20px_oklch(var(--tw-c-neon)_/_0.25)] transition hover:brightness-125 hover:shadow-[0_0_25px_oklch(var(--tw-c-neon)_/_0.4)]"
                         >
-                            <Plus size={16} className="text-[#00f7ff] transition group-hover:rotate-90" />
+                            <Plus size={16} className="text-neon transition group-hover:rotate-90" />
                             <span>Contratar Nuevo Servidor</span>
                         </Link>
                     </div>
@@ -157,13 +157,13 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
 
                     {/* METRICAS TELEMETRICAS */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 font-mono">
-                        <div className="relative overflow-hidden rounded-xl border border-[#00f7ff]/40 bg-[#060a17]/80 p-5 shadow-[0_0_15px_rgba(0,247,255,0.15)] backdrop-blur-sm">
+                        <div className="relative overflow-hidden rounded-xl border border-neon/40 bg-[#060a17]/80 p-5 shadow-[0_0_15px_oklch(var(--tw-c-neon)_/_0.15)] backdrop-blur-sm">
                             <div className="flex items-center justify-between text-slate-400 text-xs">
                                 <span>SERVICIOS ACTIVOS</span>
-                                <Server size={16} className="text-[#00f7ff]" />
+                                <Server size={16} className="text-neon" />
                             </div>
                             <div className="mt-2 text-3xl font-black text-white">{active.length}</div>
-                            <div className="mt-1 text-[11px] text-[#00f7ff]/80">Instancias en línea</div>
+                            <div className="mt-1 text-[11px] text-neon/80">Instancias en línea</div>
                         </div>
 
                         <div className="relative overflow-hidden rounded-xl border border-pink-500/40 bg-[#060a17]/80 p-5 shadow-[0_0_15px_rgba(255,0,128,0.15)] backdrop-blur-sm">
@@ -256,7 +256,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
 
                                                     {/* IP y dirección */}
                                                     {o.server_address ? (
-                                                        <div className="flex items-center gap-2 font-mono text-xs text-[#00f7ff]">
+                                                        <div className="flex items-center gap-2 font-mono text-xs text-neon">
                                                             <span>IP: {o.server_address}</span>
                                                             <button
                                                                 type="button"
@@ -287,7 +287,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                                                                     ⚡ {fmtRam(o.plan.ram_mb)} RAM
                                                                 </span>
                                                                 <span className="rounded-md border border-neutral-800 bg-[#090d1f] px-2.5 py-1">
-                                                                    <Cpu size={11} className="inline mr-1 text-[#00f7ff]" />
+                                                                    <Cpu size={11} className="inline mr-1 text-neon" />
                                                                     {o.plan.cpu_pct}% CPU
                                                                 </span>
                                                                 <span className="rounded-md border border-neutral-800 bg-[#090d1f] px-2.5 py-1">
@@ -319,7 +319,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                                                             href={o.panel_server_id ? `${panelUrl}/servers/${o.panel_server_id}/console` : `${panelUrl}/servers`}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="flex items-center gap-2 rounded-xl border border-[#00f7ff]/60 bg-gradient-to-r from-[#00f7ff]/15 to-cyan-600/20 px-4 py-2 font-bold text-[#00f7ff] shadow-[0_0_15px_rgba(0,247,255,0.2)] transition hover:border-[#00f7ff] hover:bg-[#00f7ff] hover:text-[#04060d] hover:shadow-[0_0_20px_rgba(0,247,255,0.4)]"
+                                                            className="flex items-center gap-2 rounded-xl border border-neon/60 bg-gradient-to-r from-neon/15 to-cyan-600/20 px-4 py-2 font-bold text-neon shadow-[0_0_15px_oklch(var(--tw-c-neon)_/_0.2)] transition hover:border-neon hover:bg-neon hover:text-[#04060d] hover:shadow-[0_0_20px_oklch(var(--tw-c-neon)_/_0.4)]"
                                                         >
                                                             <Terminal size={14} />
                                                             <span>Gestionar Consola</span>
@@ -356,7 +356,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                     <div className="overflow-hidden rounded-2xl border border-pink-500/30 bg-[#060a16]/85 shadow-[0_0_30px_rgba(0,0,0,0.6)] backdrop-blur-md">
                         <div className="flex items-center justify-between border-b border-pink-500/20 px-6 py-4 bg-[#080d1e]/80">
                             <div className="flex items-center gap-2">
-                                <Receipt size={18} className="text-[#00f7ff]" />
+                                <Receipt size={18} className="text-neon" />
                                 <h2 className="font-mono text-sm font-bold uppercase tracking-wider text-white">
                                     Historial de Facturación & Invoices
                                 </h2>
@@ -392,7 +392,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                                                 <td className="px-6 py-4 text-slate-300">
                                                     {inv.order?.server_name ?? `Pedido #${inv.order_id}`}
                                                 </td>
-                                                <td className="px-6 py-4 font-bold text-[#00f7ff]">
+                                                <td className="px-6 py-4 font-bold text-neon">
                                                     {fmtPrice(inv.amount)} €
                                                 </td>
                                                 <td className="px-6 py-4 text-slate-400">
@@ -406,7 +406,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                                                         <button
                                                             type="button"
                                                             onClick={() => payInvoice(inv)}
-                                                            className="inline-flex items-center gap-1.5 rounded-lg border border-[#00f7ff]/50 bg-[#00f7ff]/15 px-3 py-1.5 text-xs font-bold text-[#00f7ff] shadow-[0_0_12px_rgba(0,247,255,0.2)] transition hover:bg-[#00f7ff] hover:text-black"
+                                                            className="inline-flex items-center gap-1.5 rounded-lg border border-neon/50 bg-neon/15 px-3 py-1.5 text-xs font-bold text-neon shadow-[0_0_12px_oklch(var(--tw-c-neon)_/_0.2)] transition hover:bg-neon hover:text-black"
                                                         >
                                                             <CreditCard size={13} />
                                                             <span>{inv.status === 'awaiting' ? 'Ver pago' : 'Pagar Factura'}</span>

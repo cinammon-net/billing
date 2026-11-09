@@ -55,9 +55,9 @@ const CATEGORY_META = {
         icon: Bot,
         code: 'CLUSTER-APPS',
         color: 'from-cyan-500/20 via-blue-500/10 to-transparent',
-        borderHover: 'group-hover:border-[#00f7ff]',
-        glowHover: 'group-hover:shadow-[0_0_30px_rgba(0,247,255,0.25)]',
-        accentText: 'text-[#00f7ff]',
+        borderHover: 'group-hover:border-neon',
+        glowHover: 'group-hover:shadow-[0_0_30px_oklch(var(--tw-c-neon)_/_0.25)]',
+        accentText: 'text-neon',
         badgeBg: 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300',
         badge: 'NODE.JS · PYTHON · JAVA · GO',
         specs: ['Reinicio Automático 24/7', 'Logs en Tiempo Real', 'Uptime 99.98% Garantizado'],
@@ -174,15 +174,15 @@ export default function StoreIndex({ categories }) {
                     {/* Badge de estado del clúster */}
                     <div className="inline-flex items-center gap-2 rounded-full border border-pink-500/30 bg-pink-500/10 px-4 py-1.5 text-xs font-mono tracking-wider text-pink-300 shadow-[0_0_15px_rgba(255,0,128,0.2)]">
                         <span className="flex h-2 w-2 relative">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00f7ff] opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00f7ff]"></span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-neon"></span>
                         </span>
                         <span>CLUSTER REGION: US-EAST (MIAMI, FL) // STOCK DISPONIBLE</span>
                     </div>
 
                     {/* Título Principal */}
                     <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-white sm:text-6xl sm:leading-none">
-                        POTENCIA <span className="bg-gradient-to-r from-pink-500 via-purple-400 to-[#00f7ff] bg-clip-text text-transparent">CYBERPUNK</span>
+                        POTENCIA <span className="bg-gradient-to-r from-pink-500 via-purple-400 to-neon bg-clip-text text-transparent">CYBERPUNK</span>
                         <br />
                         PARA TUS SERVIDORES
                     </h1>
@@ -201,7 +201,7 @@ export default function StoreIndex({ categories }) {
                                     key={idx}
                                     className="flex flex-col items-center rounded-xl border border-slate-800 bg-[#070b18]/80 p-4 backdrop-blur-md transition hover:border-pink-500/40"
                                 >
-                                    <Icon size={20} className="mb-2 text-[#00f7ff]" />
+                                    <Icon size={20} className="mb-2 text-neon" />
                                     <span className="font-mono text-2xl font-black text-white">{s.value}</span>
                                     <span className="mt-0.5 text-xs font-semibold text-slate-300">{s.label}</span>
                                     <span className="mt-1 text-[10px] text-slate-500 text-center leading-tight">{s.detail}</span>
@@ -294,7 +294,7 @@ export default function StoreIndex({ categories }) {
 
                                         {/* Software / Framework Chips */}
                                         <div className="mt-4 inline-flex items-center gap-1.5 rounded-md border border-slate-800/80 bg-black/40 px-3 py-1 font-mono text-[10px] text-slate-400">
-                                            <Sparkles size={11} className="text-[#00f7ff]" />
+                                            <Sparkles size={11} className="text-neon" />
                                             <span>{meta.badge}</span>
                                         </div>
 
@@ -316,7 +316,7 @@ export default function StoreIndex({ categories }) {
                                             {c.from != null ? (
                                                 <div className="flex items-baseline gap-1">
                                                     <span className="text-xs text-slate-400">desde</span>
-                                                    <span className="font-mono text-2xl font-black text-[#00f7ff]">
+                                                    <span className="font-mono text-2xl font-black text-neon">
                                                         {c.from.toFixed(2)} €
                                                     </span>
                                                     <span className="font-mono text-xs text-slate-400">/ mes</span>
@@ -326,7 +326,7 @@ export default function StoreIndex({ categories }) {
                                             )}
                                         </div>
 
-                                        <div className="flex items-center gap-2 rounded-xl border border-pink-500/40 bg-pink-500/10 px-4 py-2 font-mono text-xs font-bold text-pink-300 shadow-[0_0_12px_rgba(255,0,128,0.2)] transition group-hover:border-[#00f7ff] group-hover:bg-[#00f7ff] group-hover:text-black group-hover:shadow-[0_0_20px_rgba(0,247,255,0.4)]">
+                                        <div className="flex items-center gap-2 rounded-xl border border-pink-500/40 bg-pink-500/10 px-4 py-2 font-mono text-xs font-bold text-pink-300 shadow-[0_0_12px_rgba(255,0,128,0.2)] transition group-hover:border-neon group-hover:bg-neon group-hover:text-black group-hover:shadow-[0_0_20px_oklch(var(--tw-c-neon)_/_0.4)]">
                                             <span>Ver Planes</span>
                                             <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
                                         </div>
@@ -340,7 +340,7 @@ export default function StoreIndex({ categories }) {
                 {/* HARDWARE & CLUSTER ARCHITECTURE SECTION */}
                 <div className="mx-auto mt-24 max-w-6xl rounded-2xl border border-slate-800 bg-[#070b18]/80 p-8 sm:p-12 backdrop-blur-xl">
                     <div className="max-w-2xl">
-                        <div className="font-mono text-xs font-bold uppercase tracking-widest text-[#00f7ff]">
+                        <div className="font-mono text-xs font-bold uppercase tracking-widest text-neon">
                             // INFRAESTRUCTURA DE NIVEL EMPRESARIAL
                         </div>
                         <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
@@ -379,7 +379,7 @@ export default function StoreIndex({ categories }) {
                                 <span className="h-2.5 w-2.5 rounded-full bg-green-500 inline-block" />
                                 <span className="ml-2 text-[11px] text-slate-400">cinammon-provisioner --workflow-v2</span>
                             </div>
-                            <span className="text-[10px] text-[#00f7ff]">STATUS: READY</span>
+                            <span className="text-[10px] text-neon">STATUS: READY</span>
                         </div>
                         <div className="pt-3 space-y-1 text-slate-300">
                             <p><span className="text-pink-400">$</span> checkout --plan=&quot;diamond-8gb&quot; --datacenter=&quot;miami-us-01&quot;</p>
@@ -409,7 +409,7 @@ export default function StoreIndex({ categories }) {
                         ].map((s) => (
                             <div
                                 key={s.step}
-                                className="relative rounded-xl border border-slate-800 bg-[#070b18]/60 p-6 text-left transition hover:border-[#00f7ff]/40"
+                                className="relative rounded-xl border border-slate-800 bg-[#070b18]/60 p-6 text-left transition hover:border-neon/40"
                             >
                                 <span className="font-mono text-3xl font-black text-pink-500/40">{s.step}</span>
                                 <h3 className="mt-2 font-mono text-base font-bold text-white">{s.title}</h3>

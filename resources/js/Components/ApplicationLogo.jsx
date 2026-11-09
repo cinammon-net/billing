@@ -8,7 +8,7 @@ export default function ApplicationLogo({ className = '', ...props }) {
             <defs>
                 <linearGradient id={gradient} x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#ff4da6" />
-                    <stop offset="100%" stopColor="#00f7ff" />
+                    <stop offset="100%" style={{ stopColor: 'oklch(var(--tw-c-neon))' }} />
                 </linearGradient>
             </defs>
             <path fillRule="evenodd" d="M50 5L90 30V70L50 95L10 70V30L50 5Z M50 20L25 35V65L50 80L75 65V35L50 20Z" fill={`url(#${gradient})`} />

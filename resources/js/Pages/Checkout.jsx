@@ -24,7 +24,7 @@ function CopyValue({ value }) {
                     setTimeout(() => setCopied(false), 1500);
                 });
             }}
-            className="inline-flex items-center gap-1 rounded border border-slate-700 px-1.5 py-0.5 text-[10px] text-slate-300 hover:border-[#00f7ff] hover:text-[#00f7ff]"
+            className="inline-flex items-center gap-1 rounded border border-slate-700 px-1.5 py-0.5 text-[10px] text-slate-300 hover:border-neon hover:text-neon"
             aria-label={`Copiar ${value}`}
         >
             {copied ? <Check size={11} /> : <Copy size={11} />}
@@ -59,7 +59,7 @@ export default function Checkout({ invoice, methods, currency, canSimulate, retu
         <AuthenticatedLayout user={auth.user}>
             <Head title={`Pagar ${invoice.number}`} />
             <div className="mx-auto max-w-3xl space-y-6 px-4 py-8 sm:px-6">
-                <Link href={route('dashboard')} className="inline-flex items-center gap-2 font-mono text-xs text-pink-400 hover:text-[#00f7ff]">
+                <Link href={route('dashboard')} className="inline-flex items-center gap-2 font-mono text-xs text-pink-400 hover:text-neon">
                     <ArrowLeft size={14} /> Volver a mis servicios
                 </Link>
 
@@ -70,7 +70,7 @@ export default function Checkout({ invoice, methods, currency, canSimulate, retu
                             <h1 className="text-xl font-black text-white">{invoice.concept ?? invoice.plan}</h1>
                             {invoice.plan && invoice.concept !== invoice.plan && <p className="text-xs text-slate-400">Plan {invoice.plan}</p>}
                         </div>
-                        <p className="font-mono text-3xl font-black text-[#00f7ff]">
+                        <p className="font-mono text-3xl font-black text-neon">
                             {fmtPrice(invoice.amount)} {currency === 'EUR' ? '€' : currency}
                         </p>
                     </div>
@@ -119,7 +119,7 @@ export default function Checkout({ invoice, methods, currency, canSimulate, retu
                                         onClick={() => choose(m.key)}
                                         className={`flex flex-col items-center gap-2 rounded-xl border p-4 text-xs font-bold transition ${
                                             on
-                                                ? 'border-[#00f7ff] bg-[#00f7ff]/10 text-[#00f7ff] shadow-[0_0_14px_rgba(0,247,255,0.25)]'
+                                                ? 'border-neon bg-neon/10 text-neon shadow-[0_0_14px_oklch(var(--tw-c-neon)_/_0.25)]'
                                                 : 'border-slate-800 bg-black/40 text-slate-300 hover:border-pink-500/60'
                                         }`}
                                     >
@@ -166,7 +166,7 @@ export default function Checkout({ invoice, methods, currency, canSimulate, retu
                                                 onChange={(e) => setData('payer_note', e.target.value)}
                                                 maxLength={255}
                                                 required
-                                                className="w-full rounded-lg border border-slate-700 bg-black/50 px-3 py-2 text-sm text-white focus:border-[#00f7ff] focus:outline-none"
+                                                className="w-full rounded-lg border border-slate-700 bg-black/50 px-3 py-2 text-sm text-white focus:border-neon focus:outline-none"
                                                 placeholder={current.key === 'bizum' ? '6XX XXX XXX' : 'Nombre y apellidos'}
                                             />
                                             <InputError message={errors.payer_note} />
@@ -175,7 +175,7 @@ export default function Checkout({ invoice, methods, currency, canSimulate, retu
                                         <button
                                             type="submit"
                                             disabled={processing}
-                                            className="w-full rounded-lg border border-[#00f7ff]/60 bg-[#00f7ff]/15 py-2.5 text-sm font-bold text-[#00f7ff] transition hover:bg-[#00f7ff] hover:text-black disabled:opacity-50"
+                                            className="w-full rounded-lg border border-neon/60 bg-neon/15 py-2.5 text-sm font-bold text-neon transition hover:bg-neon hover:text-black disabled:opacity-50"
                                         >
                                             Ya he pagado
                                         </button>
@@ -185,7 +185,7 @@ export default function Checkout({ invoice, methods, currency, canSimulate, retu
                                         type="button"
                                         onClick={() => goGateway(current.key)}
                                         disabled={redirecting}
-                                        className="mt-4 w-full rounded-lg border border-[#00f7ff]/60 bg-[#00f7ff]/15 py-2.5 text-sm font-bold text-[#00f7ff] transition hover:bg-[#00f7ff] hover:text-black disabled:opacity-50"
+                                        className="mt-4 w-full rounded-lg border border-neon/60 bg-neon/15 py-2.5 text-sm font-bold text-neon transition hover:bg-neon hover:text-black disabled:opacity-50"
                                     >
                                         {redirecting ? 'Redirigiendo…' : `Pagar ${fmtPrice(invoice.amount)} € con ${current.label}`}
                                     </button>

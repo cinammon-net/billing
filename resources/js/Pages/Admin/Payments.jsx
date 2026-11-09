@@ -29,7 +29,7 @@ export default function Payments({ awaiting, recent, methods }) {
                     <h1 className="text-2xl font-black text-white">Pagos</h1>
                     <p className="mt-1 font-mono text-xs text-slate-400">
                         Métodos activos: {methods.length ? methods.map((m) => m.label).join(' · ') : 'ninguno'} ·{' '}
-                        <Link href={route('admin.payment-methods.index')} className="text-[#00f7ff] underline hover:text-white">
+                        <Link href={route('admin.payment-methods.index')} className="text-neon underline hover:text-white">
                             configurar métodos de pago
                         </Link>
                     </p>
