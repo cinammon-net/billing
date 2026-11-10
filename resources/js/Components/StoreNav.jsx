@@ -262,7 +262,7 @@ export default function StoreNav() {
                             href={route('dashboard')}
                             className="flex items-center gap-2 rounded-xl border border-neon/50 bg-neon/10 px-4 py-2 font-bold text-neon shadow-[0_0_15px_oklch(var(--tw-c-neon)_/_0.2)] transition hover:bg-neon hover:text-black"
                         >
-                            <Layers size={14} />
+                            {auth?.avatar ? <img src={auth.avatar} alt="" referrerPolicy="no-referrer" className="h-[18px] w-[18px] rounded-full object-cover" /> : <Layers size={14} />}
                             <span className="hidden whitespace-nowrap sm:inline">Mis servicios</span>
                         </Link>
                     ) : (
@@ -371,7 +371,7 @@ export default function StoreNav() {
                                     onClick={closeAll}
                                     className="flex w-full items-center justify-center gap-2 rounded-xl border border-neon/50 bg-neon/10 px-4 py-3 text-xs font-bold text-neon"
                                 >
-                                    <Layers size={14} /> Mis servicios
+                                    {auth?.avatar ? <img src={auth.avatar} alt="" referrerPolicy="no-referrer" className="h-[18px] w-[18px] rounded-full object-cover" /> : <Layers size={14} />} Mis servicios
                                 </Link>
                             ) : (
                                 <div className="grid grid-cols-2 gap-2 text-xs">

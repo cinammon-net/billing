@@ -33,6 +33,8 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                // Foto de perfil del panel (la tienda no guarda fotos propias)
+                'avatar' => fn () => $request->user() ? app(\App\Services\PanelService::class)->avatarFor($request->user()->email) : null,
             ],
             'panelUrl' => config('billing.panel_url'),
             'billingCycles' => \App\Models\Plan::cycleMeta(),

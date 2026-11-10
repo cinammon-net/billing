@@ -42,6 +42,9 @@ export default function Authenticated({ user, header, children }) {
     const isAdmin = Boolean(auth?.user?.is_admin);
     const isAdminArea = ADMIN_LINKS.some((l) => route().current(l.route));
     const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : 'U';
+    // Foto de perfil del panel; si no tiene (o no carga) se ven las iniciales
+    const [avatarFailed, setAvatarFailed] = useState(false);
+    const avatar = !avatarFailed && auth?.avatar ? auth.avatar : null;
 
     const isDashboard = route().current('dashboard');
     const isStore = route().current('store') || route().current('store.category');
@@ -137,7 +140,7 @@ export default function Authenticated({ user, header, children }) {
                                         className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] py-1 pr-2.5 pl-1 font-semibold text-slate-200 transition hover:border-pink-500/60 hover:text-white"
                                     >
                                         <span className="relative flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-tr from-pink-500 to-fuchsia-600 text-[11px] font-bold text-white">
-                                            {initials}
+                                            {avatar ? <img src={avatar} alt="" referrerPolicy="no-referrer" onError={() => setAvatarFailed(true)} className="h-full w-full rounded-lg object-cover" /> : initials}
                                             <span title="Conectado" className="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#05070f] bg-emerald-400" />
                                         </span>
                                         <span className="max-w-[120px] truncate">{user.name}</span>
@@ -175,7 +178,7 @@ export default function Authenticated({ user, header, children }) {
                 {showingNavigationDropdown && (
                     <div className="border-t border-white/5 bg-[#070a16] px-4 pt-3 pb-4 font-mono text-xs lg:hidden">
                         <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-tr from-pink-500 to-fuchsia-600 text-[12px] font-bold text-white">{initials}</span>
+                            <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-tr from-pink-500 to-fuchsia-600 text-[12px] font-bold text-white">{avatar ? <img src={avatar} alt="" referrerPolicy="no-referrer" onError={() => setAvatarFailed(true)} className="h-full w-full object-cover" /> : initials}</span>
                             <span className="min-w-0">
                                 <span className="block truncate font-bold text-white">{user.name}</span>
                                 <span className="block truncate text-[11px] text-slate-400">{user.email}</span>

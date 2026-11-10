@@ -121,6 +121,30 @@ class PanelService
     }
 
     /**
+     * Foto de perfil que tiene en el panel la persona con ese email (o null). Se guarda una hora en caché
+     * para no preguntar al panel en cada página.
+     */
+    public function avatarFor(?string $email): ?string
+    {
+        $email = strtolower(trim((string) $email));
+        if ($email === '' || !$this->token) {
+            return null;
+        }
+
+        return \Illuminate\Support\Facades\Cache::remember('panel_avatar:'.sha1($email), 3600, function () use ($email) {
+            try {
+                $response = Http::withHeaders(['X-Billing-Token' => $this->token])->acceptJson()->timeout(4)
+                    ->get("{$this->baseUrl}/api/billing/avatar", ['email' => $email]);
+                $url = $response->successful() ? $response->json('avatar') : null;
+
+                return is_string($url) && preg_match('#^https://#i', $url) ? $url : null;
+            } catch (\Throwable) {
+                return null;
+            }
+        });
+    }
+
+    /**
      * Crea el servidor en el panel para un pedido. Devuelve true si se aprovisionó.
      */
     public function provision(Order $order): bool
