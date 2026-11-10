@@ -20,7 +20,7 @@
 
         <!-- Ambientación de temporada / festivos según el país del visitante -->
         <script>window.__SEASON__ = @json(app(\App\Services\SeasonService::class)->forRequest(request()));</script>
-        <script src="/season/season.js?v=9" defer></script>
+        <script src="/season/season.js?v=10" defer></script>
     </head>
     <body class="font-sans antialiased bg-black text-white">
         @inertia
