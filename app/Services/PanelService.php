@@ -141,6 +141,8 @@ class PanelService
                     'memory_mb' => $order->plan->ram_mb,
                     'disk_mb' => $order->plan->storage_gb * 1024,
                     'cpu_pct' => $order->plan->cpu_pct,
+                    // Los gratuitos (monedas) no tienen dominio propio en el panel.
+                    'paid' => (float) $order->price > 0,
                 ]);
 
             if (!$response->successful()) {
