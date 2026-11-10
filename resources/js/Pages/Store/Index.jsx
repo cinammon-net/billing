@@ -310,11 +310,11 @@ export default function StoreIndex({ categories }) {
                                     </div>
 
                                     {/* Card Footer: Price & CTA */}
-                                    <div className="mt-6 flex items-center justify-between border-t border-slate-800/80 pt-5">
+                                    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-800/80 pt-5">
                                         <div>
                                             <span className="block font-mono text-[11px] text-slate-400">PRECIO DE PARTIDA</span>
                                             {c.from != null ? (
-                                                <div className="flex items-baseline gap-1">
+                                                <div className="flex items-baseline gap-1 whitespace-nowrap">
                                                     <span className="text-xs text-slate-400">desde</span>
                                                     <span className="font-mono text-2xl font-black text-neon">
                                                         {c.from.toFixed(2)} €
@@ -326,7 +326,7 @@ export default function StoreIndex({ categories }) {
                                             )}
                                         </div>
 
-                                        <div className="flex items-center gap-2 rounded-xl border border-pink-500/40 bg-pink-500/10 px-4 py-2 font-mono text-xs font-bold text-pink-300 shadow-[0_0_12px_rgba(255,0,128,0.2)] transition group-hover:border-neon group-hover:bg-neon group-hover:text-black group-hover:shadow-[0_0_20px_oklch(var(--tw-c-neon)_/_0.4)]">
+                                        <div className="flex shrink-0 items-center gap-2 rounded-xl border border-pink-500/40 bg-pink-500/10 px-4 py-2 font-mono text-xs font-bold whitespace-nowrap text-pink-300 shadow-[0_0_12px_rgba(255,0,128,0.2)] transition group-hover:border-neon group-hover:bg-neon group-hover:text-black group-hover:shadow-[0_0_20px_oklch(var(--tw-c-neon)_/_0.4)]">
                                             <span>Ver Planes</span>
                                             <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
                                         </div>
