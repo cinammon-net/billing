@@ -22,6 +22,14 @@ class PanelService
         $this->token = (string) config('billing.panel_token');
     }
 
+    /** Cliente HTTP hacia el panel; si hay certificado propio configurado, se verifica contra él. */
+    private function http(): \Illuminate\Http\Client\PendingRequest
+    {
+        $ca = (string) config('billing.panel_ca_bundle');
+
+        return $ca !== '' && is_readable($ca) ? Http::withOptions(['verify' => $ca]) : Http::withOptions([]);
+    }
+
     /**
      * Catálogo público de eggs del panel (nombre, categoría, icono).
      * Se cachea 1 h; si el panel no responde devuelve [] y lo reintenta en 5 min.
@@ -35,7 +43,7 @@ class PanelService
         }
 
         try {
-            $response = Http::timeout(4)->acceptJson()->get($this->baseUrl.'/api/eggs/catalog');
+            $response = $this->http()->timeout(4)->acceptJson()->get($this->baseUrl.'/api/eggs/catalog');
             $data = $response->successful() ? $response->json('data') : null;
         } catch (\Throwable $e) {
             $data = null;
@@ -60,7 +68,7 @@ class PanelService
     {
         return Cache::remember('panel:maintenance', 30, function () {
             try {
-                $response = Http::timeout(3)->acceptJson()->get($this->baseUrl.'/api/maintenance');
+                $response = $this->http()->timeout(3)->acceptJson()->get($this->baseUrl.'/api/maintenance');
 
                 return $response->successful() && is_array($response->json('data')) ? $response->json('data') : null;
             } catch (\Throwable $e) {
@@ -83,7 +91,7 @@ class PanelService
         $order->loadMissing(['user', 'plan']);
 
         try {
-            $response = Http::withHeaders(['X-Billing-Token' => $this->token])
+            $response = $this->http()->withHeaders(['X-Billing-Token' => $this->token])
                 ->acceptJson()
                 ->timeout(30)
                 ->post("{$this->baseUrl}/api/billing/roles/grant", [
@@ -110,7 +118,7 @@ class PanelService
     public function revokeRole(Order $order): bool
     {
         try {
-            return Http::withHeaders(['X-Billing-Token' => $this->token])->acceptJson()->timeout(30)
+            return $this->http()->withHeaders(['X-Billing-Token' => $this->token])->acceptJson()->timeout(30)
                 ->post("{$this->baseUrl}/api/billing/roles/billing-rank-{$order->id}/revoke")
                 ->successful();
         } catch (\Throwable $e) {
@@ -133,7 +141,7 @@ class PanelService
 
         return \Illuminate\Support\Facades\Cache::remember('panel_avatar:'.sha1($email), 3600, function () use ($email) {
             try {
-                $response = Http::withHeaders(['X-Billing-Token' => $this->token])->acceptJson()->timeout(4)
+                $response = $this->http()->withHeaders(['X-Billing-Token' => $this->token])->acceptJson()->timeout(4)
                     ->get("{$this->baseUrl}/api/billing/avatar", ['email' => $email]);
                 $url = $response->successful() ? $response->json('avatar') : null;
 
@@ -152,7 +160,7 @@ class PanelService
         $order->loadMissing(['user', 'plan']);
 
         try {
-            $response = Http::withHeaders(['X-Billing-Token' => $this->token])
+            $response = $this->http()->withHeaders(['X-Billing-Token' => $this->token])
                 ->acceptJson()
                 ->timeout(60)
                 ->post("{$this->baseUrl}/api/billing/provision", [
@@ -199,7 +207,7 @@ class PanelService
     public function cancel(Order $order): bool
     {
         try {
-            $response = Http::withHeaders(['X-Billing-Token' => $this->token])
+            $response = $this->http()->withHeaders(['X-Billing-Token' => $this->token])
                 ->acceptJson()
                 ->timeout(15)
                 ->post("{$this->baseUrl}/api/billing/servers/billing-{$order->id}/cancel");
