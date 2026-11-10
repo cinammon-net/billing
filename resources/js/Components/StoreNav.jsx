@@ -27,6 +27,12 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+// Sufijo de la marca según el subdominio: CINAMMON.STORE en la tienda, CINAMMON.BILLING en billing.
+const brandSuffix = (() => {
+    const sub = typeof window !== 'undefined' ? window.location.hostname.split('.')[0] : '';
+    return sub === 'billing' ? 'BILLING' : 'STORE';
+})();
+
 const GAMES = [
     { key: 'minecraft', label: 'Minecraft', desc: 'Paper, Fabric, Forge, modpacks', icon: Box, tint: 'text-emerald-400' },
     { key: 'survival', label: 'Supervivencia', desc: 'Rust, ARK, Palworld, Valheim', icon: Gamepad2, tint: 'text-pink-400' },
@@ -138,11 +144,11 @@ export default function StoreNav() {
 
             <div className="mx-auto grid h-16 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-4 px-4 sm:px-6 lg:px-8">
                 {/* Logo */}
-                <Link href={route('store')} title="Cinammon Store" className="group flex shrink-0 items-center gap-2.5">
+                <Link href={route('store')} title={`Cinammon ${brandSuffix.charAt(0) + brandSuffix.slice(1).toLowerCase()}`} className="group flex shrink-0 items-center gap-2.5">
                     <ApplicationLogo className="h-8 w-8 drop-shadow-[0_0_10px_rgba(255,77,166,0.45)] transition duration-300 group-hover:rotate-[30deg] group-hover:drop-shadow-[0_0_12px_oklch(var(--tw-c-neon)_/_0.6)]" />
                     <span className="flex flex-col leading-none">
                         <span className="font-mono text-sm font-black tracking-[0.2em] text-white">
-                            CINAMMON<span className="text-neon">.STORE</span>
+                            CINAMMON<span className="text-neon">.{brandSuffix}</span>
                         </span>
                         <span className="mt-1 hidden font-mono text-[9px] tracking-[0.25em] text-slate-500 uppercase sm:block">Game &amp; cloud hosting</span>
                     </span>
