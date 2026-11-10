@@ -65,7 +65,7 @@ export default function StoreCategory({ category, plans }) {
     // Se aplica el mayor descuento (festivo o VIP); el VIP no cuenta en los rangos.
     const discountFor = (plan) => {
         const d = plan.role ? promo : Math.max(promo, vipDiscount);
-        return { pct: d, label: d > 0 && d === promo ? season?.promotion : 'VIP' };
+        return { pct: d, label: d > 0 && d === promo ? season?.holiday?.name ?? 'oferta' : 'VIP' };
     };
     const [selected, setSelected] = useState(null);
     const [addonsPlan, setAddonsPlan] = useState(null);
