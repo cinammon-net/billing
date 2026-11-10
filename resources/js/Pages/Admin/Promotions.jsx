@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { BadgePercent, Check } from 'lucide-react';
+import SeasonIcon from '@/Components/SeasonIcon';
 
 function Row({ promo }) {
     const { data, setData, put, processing, recentlySuccessful, isDirty } = useForm({ percent: promo.percent, enabled: promo.enabled });
@@ -63,8 +64,8 @@ export default function Promotions({ promotions, now }) {
                 </header>
 
                 <div className="rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-4 font-mono text-xs text-cyan-100">
-                    Ahora mismo para ti ({now.country}): {now.season ? `${now.season.emoji} ${now.season.name}` : 'sin estación'}
-                    {now.holiday ? ` · ${now.holiday.emoji} ${now.holiday.name}` : ' · sin festivo'}
+                    Ahora mismo para ti ({now.country}): {now.season ? <><SeasonIcon k={now.season.key} /> {now.season.name}</> : 'sin estación'}
+                    {now.holiday ? <> · <SeasonIcon k={now.holiday.key} /> {now.holiday.name}</> : ' · sin festivo'}
                     {now.discount > 0 ? ` · -${now.discount}% activo` : ' · sin descuento'}
                 </div>
 

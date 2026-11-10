@@ -2,7 +2,7 @@ import InputError from '@/Components/InputError';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import { Brain, Clock, Coins as CoinsIcon, Crosshair, Gift, PlayCircle, RefreshCw, Rocket, Server, Sparkles, TrendingUp } from 'lucide-react';
+import { Brain, Clock, Flame, Gamepad2, Gem, Ghost, Globe, Shield, Zap, Coins as CoinsIcon, Crosshair, Gift, PlayCircle, RefreshCw, Rocket, Server, Sparkles, TrendingUp } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const fmtDate = (d) => (d ? new Date(d).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—');
@@ -106,7 +106,16 @@ function ReflexGame({ onDone }) {
     );
 }
 
-const SYMBOLS = ['🚀', '🎮', '💎', '🔥', '⚡', '🛡️', '👾', '🌐'];
+// Parejas del memory: iconos de línea con su color (sin emojis).
+const SYMBOLS = ['rocket', 'gamepad', 'gem', 'flame', 'zap', 'shield', 'ghost', 'globe'];
+const SYMBOL_ICON = {
+    rocket: [Rocket, 'text-cyan-300'], gamepad: [Gamepad2, 'text-pink-300'], gem: [Gem, 'text-violet-300'], flame: [Flame, 'text-orange-300'],
+    zap: [Zap, 'text-yellow-300'], shield: [Shield, 'text-emerald-300'], ghost: [Ghost, 'text-slate-200'], globe: [Globe, 'text-sky-300'],
+};
+const SymbolIcon = ({ k }) => {
+    const [Icon, color] = SYMBOL_ICON[k];
+    return <Icon className={`h-7 w-7 sm:h-8 sm:w-8 ${color}`} aria-hidden="true" />;
+};
 const shuffle = (a) => a.map((v) => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map((x) => x[1]);
 
 /** Minijuego 2: memoria de 8 parejas. */
@@ -161,7 +170,7 @@ function MemoryGame({ onDone }) {
                                     onClick={() => flip(i)}
                                     className={`flex aspect-square items-center justify-center rounded-lg border text-2xl transition sm:text-3xl ${shown ? 'border-pink-400/60 bg-pink-500/15' : 'border-slate-700 bg-slate-900 hover:border-cyan-500/60'}`}
                                 >
-                                    {shown ? c : ''}
+                                    {shown ? <SymbolIcon k={c} /> : ''}
                                 </button>
                             );
                         })}

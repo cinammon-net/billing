@@ -19,7 +19,11 @@ import {
     ExternalLink,
     HardDrive,
     Activity,
-    ShieldAlert
+    ShieldAlert,
+    Gamepad2,
+    Zap,
+    Hourglass,
+    OctagonX,
 } from 'lucide-react';
 
 const fmtRam = (mb) => (mb >= 1024 ? `${mb / 1024} GB` : `${mb} MB`);
@@ -272,19 +276,19 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                                                         </div>
                                                     ) : (
                                                         <div className="font-mono text-xs text-slate-500">
-                                                            {isPending ? '⏳ Asignando IP al confirmar pago...' : 'IP no disponible'}
+                                                            {isPending ? 'Asignando IP al confirmar pago...' : 'IP no disponible'}
                                                         </div>
                                                     )}
 
                                                     {/* Specs Hardware */}
                                                     <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] text-slate-300">
                                                         <span className="rounded-md border border-neutral-800 bg-[#090d1f] px-2.5 py-1">
-                                                            🎮 Plan: <span className="text-pink-300 font-semibold">{o.plan?.name || 'Personalizado'}</span>
+                                                            <Gamepad2 className="mr-1 inline h-3.5 w-3.5 -translate-y-px" aria-hidden="true" />Plan: <span className="text-pink-300 font-semibold">{o.plan?.name || 'Personalizado'}</span>
                                                         </span>
                                                         {o.plan && (
                                                             <>
                                                                 <span className="rounded-md border border-neutral-800 bg-[#090d1f] px-2.5 py-1">
-                                                                    ⚡ {fmtRam(o.plan.ram_mb)} RAM
+                                                                    <Zap className="mr-1 inline h-3.5 w-3.5 -translate-y-px" aria-hidden="true" />{fmtRam(o.plan.ram_mb)} RAM
                                                                 </span>
                                                                 <span className="rounded-md border border-neutral-800 bg-[#090d1f] px-2.5 py-1">
                                                                     <Cpu size={11} className="inline mr-1 text-neon" />
@@ -306,7 +310,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                                                         <div className="mt-2 flex items-center gap-2 rounded-lg border border-rose-500/40 bg-rose-950/40 px-3 py-2 font-mono text-xs text-rose-300">
                                                             <ShieldAlert size={15} className="text-rose-400 shrink-0" />
                                                             <span>
-                                                                ⚠️ Servidor detenido de inmediato. Programado para eliminación permanente en 7 días.
+                                                                <AlertTriangle className="mr-1 inline h-3.5 w-3.5 -translate-y-px" aria-hidden="true" />Servidor detenido de inmediato. Programado para eliminación permanente en 7 días.
                                                             </span>
                                                         </div>
                                                     )}
@@ -448,7 +452,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                         <div className="mt-4 space-y-3 text-xs text-slate-300 leading-relaxed font-sans">
                             <div className="rounded-xl border border-rose-500/30 bg-rose-950/30 p-3.5 space-y-2">
                                 <p className="font-bold text-rose-300 flex items-center gap-1.5">
-                                    <span>🛑 Detención Inmediata:</span>
+                                    <span className="inline-flex items-center gap-1"><OctagonX className="h-3.5 w-3.5" aria-hidden="true" />Detención Inmediata:</span>
                                 </p>
                                 <p className="text-slate-300 text-[12px]">
                                     El servidor en Wings se <strong>detendrá de inmediato</strong> y dejará de aceptar conexiones.
@@ -457,7 +461,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
 
                             <div className="rounded-xl border border-amber-500/30 bg-amber-950/30 p-3.5 space-y-2">
                                 <p className="font-bold text-amber-300 flex items-center gap-1.5">
-                                    <span>⏳ Aviso de Eliminación Programada:</span>
+                                    <span className="inline-flex items-center gap-1"><Hourglass className="h-3.5 w-3.5" aria-hidden="true" />Aviso de Eliminación Programada:</span>
                                 </p>
                                 <p className="text-slate-300 text-[12px]">
                                     Dispones de un <strong>periodo de gracia de 7 días</strong> para descargar tus copias de seguridad antes de que los archivos, base de datos y volumen sean <strong>eliminados permanentemente</strong>.

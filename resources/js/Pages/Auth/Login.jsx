@@ -6,6 +6,7 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Zap } from 'lucide-react';
 
 export default function Login({ status, canResetPassword }) {
     const { panelUrl } = usePage().props;
@@ -38,7 +39,8 @@ export default function Login({ status, canResetPassword }) {
                     href={`${panelUrl}/billing/redirect`}
                     className="flex w-full items-center justify-center gap-2 rounded-xl border border-neon/60 bg-gradient-to-r from-neon/20 to-pink-500/20 py-3 font-mono text-xs font-bold text-white shadow-[0_0_20px_oklch(var(--tw-c-neon)_/_0.25)] transition hover:brightness-125 hover:shadow-[0_0_25px_oklch(var(--tw-c-neon)_/_0.4)]"
                 >
-                    <span>⚡ Acceso directo desde Cinammon Panel</span>
+                    <Zap className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Acceso directo desde Cinammon Panel</span>
                 </a>
                 <div className="relative my-5 text-center">
                     <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-pink-500/20" /></div>

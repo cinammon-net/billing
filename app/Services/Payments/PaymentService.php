@@ -126,12 +126,12 @@ class PaymentService
 
         if ($order->plan->isRank()) {
             return $this->panel->grantRole($order)
-                ? "Pago recibido. Ya tienes el rango «{$order->plan->name}» en el panel hasta el {$order->renews_at?->format('d/m/Y H:i')}. ✨"
+                ? "Pago recibido. Ya tienes el rango «{$order->plan->name}» en el panel hasta el {$order->renews_at?->format('d/m/Y H:i')}."
                 : "Pago recibido. El rango «{$order->plan->name}» se activará en el panel en unos minutos.";
         }
 
         return $this->panel->provision($order)
-            ? "Pago recibido. Servidor «{$order->server_name}» creado en el panel. 🚀"
+            ? "Pago recibido. Servidor «{$order->server_name}» creado en el panel."
             : "Pago recibido. El servidor «{$order->server_name}» se está preparando en el panel.";
     }
 }

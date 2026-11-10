@@ -102,7 +102,7 @@ class OrderController extends Controller
         return redirect()->route('dashboard')
             ->with(
                 'warning',
-                "⚠️ Servicio «{$order->server_name}» cancelado. Los servidores han sido detenidos de inmediato. Tienes hasta el {$deletionDate} (7 días) para descargar tus respaldos antes de su eliminación permanente."
+                "Servicio «{$order->server_name}» cancelado. Los servidores han sido detenidos de inmediato. Tienes hasta el {$deletionDate} (7 días) para descargar tus respaldos antes de su eliminación permanente."
             );
     }
 }
