@@ -64,6 +64,7 @@ Route::get('/api/plans', function () {
 
 // Ambientación de temporada + promoción vigente por país (la consume el panel)
 Route::get('/api/season', [\App\Http\Controllers\SeasonController::class, 'show'])->middleware('throttle:120,1')->name('api.season');
+Route::get('/api/season-favicon/{site}.png', [\App\Http\Controllers\SeasonController::class, 'favicon'])->middleware('throttle:240,1')->where('site', '[a-z]+')->name('api.season.favicon');
 
 // Área de clientes
 Route::middleware(['auth', 'verified'])->group(function () {

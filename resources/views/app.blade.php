@@ -12,7 +12,11 @@
             $cinSub = explode('.', request()->getHost())[0];
             $cinLogo = in_array($cinSub, ['panel', 'demo', 'store', 'billing'], true) ? "/logos/cinammon-{$cinSub}.png" : '/favicon.ico';
         @endphp
-        <link rel="icon" href="{{ $cinLogo }}" />
+        @php
+            // Favicon ya coloreado con la temporada/festivo del visitante (Safari no acepta cambiarlo por JS).
+            $cinFavSite = in_array($cinSub, ['panel', 'demo', 'store', 'billing'], true) ? $cinSub : 'net';
+        @endphp
+        <link rel="icon" type="image/png" href="/api/season-favicon/{{ $cinFavSite }}.png?d={{ now()->format('Ymd') }}" />
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet" />
@@ -25,7 +29,7 @@
 
         <!-- Ambientación de temporada / festivos según el país del visitante -->
         <script>window.__SEASON__ = @json(app(\App\Services\SeasonService::class)->forRequest(request()));</script>
-        <script src="/season/season.js?v=14" defer></script>
+        <script src="/season/season.js?v=19" defer></script>
     </head>
     <body class="font-sans antialiased bg-black text-white">
         @include('partials.loader', ['a' => 'oklch(var(--tw-c-pink-500, 0.656 0.241 354))', 'b' => 'oklch(var(--tw-c-neon, 0.887 0.151 199))', 'logo' => $cinLogo])

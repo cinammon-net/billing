@@ -22,4 +22,36 @@ class SeasonController extends Controller
             ->header('Access-Control-Allow-Origin', '*')
             ->header('Vary', 'CF-IPCountry');
     }
+
+    /** Subdominios con logo propio (public/season/fav/{sitio}.png y {sitio}-{tema}.png). */
+    private const FAVICON_SITES = ['net', 'panel', 'store', 'billing', 'demo', 'nodo', 'wings', 'admin'];
+
+    /** Temas con colores propios (los mismos que PALETTES en season.js). */
+    private const PALETTES = ['christmas', 'new_year', 'reyes', 'valentine', 'carnival', 'easter', 'halloween', 'muertos', 'thanksgiving',
+        'black_friday', 'gamer_day', 'star_wars', 'book_day', 'san_juan', 'winter', 'spring', 'summer', 'autumn'];
+
+    /**
+     * Favicon del subdominio con los colores de la temporada o festivo del visitante.
+     * Safari no hace caso de los favicons que cambia JavaScript, así que se sirve ya coloreado.
+     */
+    public function favicon(Request $request, SeasonService $seasons, string $site)
+    {
+        abort_unless(in_array($site, self::FAVICON_SITES, true), 404);
+        $context = $seasons->forRequest($request);
+        // Igual que season.js: si hay festivo manda el festivo (y si no tiene colores, el logo original).
+        $key = $context['holiday']
+            ? (in_array($context['holiday']['key'] ?? '', self::PALETTES, true) ? $context['holiday']['key'] : null)
+            : ($context['season']['key'] ?? null);
+        $dir = public_path('season/fav/');
+        $file = $key && is_file($dir.$site.'-'.$key.'.png') ? $dir.$site.'-'.$key.'.png' : $dir.$site.'.png';
+
+        return response()->file($file, [
+            'Content-Type' => 'image/png',
+            // private: Cloudflare no lo guarda (cambia según el país del visitante)
+            'Cache-Control' => 'private, max-age=3600',
+            'Vary' => 'CF-IPCountry',
+            'Access-Control-Allow-Origin' => '*',
+            'Cross-Origin-Resource-Policy' => 'cross-origin',
+        ]);
+    }
 }
