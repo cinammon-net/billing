@@ -23,6 +23,7 @@
         <script src="/season/season.js?v=11" defer></script>
     </head>
     <body class="font-sans antialiased bg-black text-white">
+        @include('partials.loader', ['a' => 'oklch(var(--tw-c-pink-500, 0.656 0.241 354))', 'b' => 'oklch(var(--tw-c-neon, 0.887 0.151 199))'])
         @inertia
     </body>
 </html>
