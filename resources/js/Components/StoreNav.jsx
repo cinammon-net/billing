@@ -52,7 +52,7 @@ const SERVICES = [
     { key: 'software', label: 'Aplicaciones', icon: AppWindow },
 ];
 
-const DISCORD_URL = 'https://discord.gg/hikarinet';
+const DISCORD_URL = 'https://discord.gg/U5EaDJerhZ';
 
 const isCategory = (key) => route().current('store.category', key);
 
