@@ -34,7 +34,8 @@ class SeasonService
         $discount = 0;
         $promotion = null;
         foreach ($holidays as $h) {
-            $p = $promotions[$h['promotion']] ?? null;
+            // Si aún no existe la fila de new_years_eve, hereda el descuento de new_year
+            $p = $promotions[$h['promotion']] ?? ($h['promotion'] === 'new_years_eve' ? ($promotions['new_year'] ?? null) : null);
             if ($p && $p['enabled'] && $p['percent'] > $discount) {
                 $discount = $p['percent'];
                 $promotion = $h['name'];

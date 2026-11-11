@@ -32,7 +32,7 @@ const ACCENT_STYLES = {
 
 function AdminAdventPanel({ advent, themes }) {
     const { data, setData, put, processing } = useForm({
-        mode: advent.mode || 'active',
+        mode: advent.mode || 'auto',
         theme: advent.theme_key || 'christmas',
         multiplier: advent.multiplier || 100,
         allow_catchup: Boolean(advent.allow_catchup),
@@ -67,8 +67,8 @@ function AdminAdventPanel({ advent, themes }) {
                         onChange={(e) => setData('mode', e.target.value)}
                         className="w-full rounded-lg border border-slate-700 bg-black/70 px-3 py-2 text-xs text-white focus:border-pink-500"
                     >
-                        <option value="active">🟢 Activo ahora</option>
-                        <option value="auto">🎄 Automático (1–26 Dic)</option>
+                        <option value="auto">🎄 Automático (1–25 Dic)</option>
+                        <option value="active">🟢 Activo ahora (manual)</option>
                         <option value="off">⏸️ Desactivado</option>
                     </select>
                 </label>

@@ -94,8 +94,8 @@ class Advent
         $saved = Setting::get('advent', []);
 
         return [
-            // 'auto' = se activa solo en diciembre (1–26 dic); 'active' = activo ahora; 'off' = oculto
-            'mode' => $saved['mode'] ?? 'active',
+            // Por defecto 'auto': se activa solo el 1 de diciembre a las 00:00 y se desactiva el 25 de diciembre a las 23:59
+            'mode' => $saved['mode'] ?? 'auto',
             'theme' => isset(self::THEMES[$saved['theme'] ?? '']) ? $saved['theme'] : 'christmas',
             // Multiplicador porcentual de premios (100 = normal, 200 = doble monedas)
             'multiplier' => max(50, min(500, (int) ($saved['multiplier'] ?? 100))),
@@ -117,7 +117,8 @@ class Advent
         $themeKey = $s['theme'];
         $theme = self::THEMES[$themeKey] ?? self::THEMES['christmas'];
 
-        $isDecemberWindow = $now->month === 12 && $now->day >= 1 && $now->day <= 26;
+        // El Adviento real va del 1 de diciembre al 24 de diciembre (con margen hasta el 25 dic 23:59 para recoger el día 24)
+        $isDecemberWindow = $now->month === 12 && $now->day >= 1 && $now->day <= 25;
         $active = match ($s['mode']) {
             'active' => true,
             'auto' => $isDecemberWindow,

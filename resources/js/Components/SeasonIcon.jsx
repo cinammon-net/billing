@@ -5,7 +5,7 @@ import {
 /** Icono de línea para una estación o festivo (en vez de emojis). `k` = clave de Seasons.php. */
 const ICONS = {
     winter: Snowflake, spring: Flower2, summer: Sun, autumn: Leaf,
-    new_year: PartyPopper, reyes: Crown, valentine: Heart, carnival: PartyPopper, easter: Egg, book_day: BookOpen,
+    new_years_eve: PartyPopper, new_year: PartyPopper, reyes: Crown, valentine: Heart, carnival: PartyPopper, easter: Egg, book_day: BookOpen,
     star_wars: Rocket, san_juan: Flame, gamer_day: Gamepad2, halloween: Ghost, muertos: Skull, thanksgiving: Leaf,
     black_friday: ShoppingCart, christmas: TreePine,
 };

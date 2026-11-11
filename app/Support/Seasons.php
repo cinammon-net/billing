@@ -35,7 +35,8 @@ class Seasons
      *  ['nth', mes, díaSemana(0=dom), n, desde, hasta]  n-ésimo día de la semana del mes
      */
     public const HOLIDAYS = [
-        'new_year' => ['name' => 'Año Nuevo', 'emoji' => '🎆', 'theme' => 'confetti', 'priority' => 70, 'countries' => null, 'rule' => ['fixed', '12-30', '01-02']],
+        'new_years_eve' => ['name' => 'Nochevieja · Fin de Año', 'emoji' => '🥂', 'theme' => 'confetti', 'priority' => 75, 'countries' => null, 'rule' => ['fixed', '12-27', '12-31']],
+        'new_year' => ['name' => 'Año Nuevo', 'emoji' => '🎆', 'theme' => 'confetti', 'priority' => 75, 'countries' => null, 'rule' => ['fixed', '01-01', '01-03']],
         'reyes' => ['name' => 'Día de Reyes', 'emoji' => '👑', 'theme' => 'stars', 'priority' => 60, 'countries' => self::HISPANIC, 'rule' => ['fixed', '01-04', '01-06']],
         'valentine' => ['name' => 'San Valentín', 'emoji' => '💘', 'theme' => 'hearts', 'priority' => 50, 'countries' => null, 'rule' => ['fixed', '02-10', '02-14']],
         'carnival' => ['name' => 'Carnaval', 'emoji' => '🎭', 'theme' => 'confetti', 'priority' => 40, 'countries' => ['BR', 'ES', 'MX', 'AR', 'CO', 'UY', 'BO', 'PA', 'DO', 'PE', 'VE', 'IT', 'DE', 'PT'], 'rule' => ['easter', -52, -47]],
@@ -47,7 +48,7 @@ class Seasons
         'halloween' => ['name' => 'Halloween', 'emoji' => '🎃', 'theme' => 'spooky', 'priority' => 60, 'countries' => null, 'rule' => ['fixed', '10-24', '10-31']],
         'muertos' => ['name' => 'Día de Muertos', 'emoji' => '💀', 'theme' => 'marigold', 'priority' => 65, 'countries' => ['MX', 'GT', 'BO', 'EC', 'SV', 'HN'], 'rule' => ['fixed', '11-01', '11-02']],
         'thanksgiving' => ['name' => 'Acción de Gracias', 'emoji' => '🦃', 'theme' => 'leaves', 'priority' => 55, 'countries' => ['US'], 'rule' => ['nth', 11, 4, 4, 0, 0]],
-        'black_friday' => ['name' => 'Black Friday', 'emoji' => '🛒', 'theme' => 'sparks', 'priority' => 100, 'countries' => null, 'rule' => ['nth', 11, 4, 4, 1, 4]],
+        'black_friday' => ['name' => 'Black Friday', 'emoji' => '🛒', 'theme' => 'sparks', 'priority' => 100, 'countries' => null, 'rule' => ['fixed', '11-11', '12-01']],
         'christmas' => ['name' => 'Navidad', 'emoji' => '🎄', 'theme' => 'snow', 'priority' => 80, 'countries' => null, 'rule' => ['fixed', '12-15', '12-26']],
     ];
 

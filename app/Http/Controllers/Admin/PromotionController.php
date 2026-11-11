@@ -15,6 +15,10 @@ class PromotionController extends Controller
 {
     public function index(Request $request, SeasonService $seasons): Response
     {
+        foreach (Seasons::promotionKeys() as $key => $name) {
+            Promotion::firstOrCreate(['key' => $key], ['name' => $name, 'percent' => $key === 'new_years_eve' ? 20 : 0, 'enabled' => true]);
+        }
+
         $dates = collect(Seasons::HOLIDAYS)->map(fn ($h) => match ($h['rule'][0]) {
             'fixed' => $h['rule'][1] === $h['rule'][2] ? $this->md($h['rule'][1]) : $this->md($h['rule'][1]).' – '.$this->md($h['rule'][2]),
             'easter' => 'Según Semana Santa',
