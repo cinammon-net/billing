@@ -53,6 +53,18 @@ class PanelBotController extends Controller
         ]);
     }
 
+    /** Set de regalo de cumpleaños (una vez por año; si se repite, devuelve el mismo). */
+    public function birthday(Request $request): JsonResponse
+    {
+        $user = $this->user($request);
+        if (! $user) {
+            return response()->json(['error' => 'not_found'], 404);
+        }
+        $data = $request->validate(['year' => 'required|integer|min:2024|max:2100', 'vip' => 'boolean']);
+
+        return response()->json(['gifts' => \App\Support\BirthdayGift::grant($user, (int) $data['year'], (bool) ($data['vip'] ?? false))]);
+    }
+
     public function checkin(Request $request, CoinsController $coins): JsonResponse
     {
         $user = $this->user($request);

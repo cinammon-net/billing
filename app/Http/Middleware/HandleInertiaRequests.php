@@ -41,6 +41,8 @@ class HandleInertiaRequests extends Middleware
             'billingCycles' => \App\Models\Plan::cycleMeta(),
             // Descuento por rango VIP activo (se aplica a los servidores)
             'vipDiscount' => fn () => \App\Models\Plan::vipDiscountFor($request->user()),
+            // Regalo de cumpleaños: descuento de un solo uso durante unos días
+            'birthdayDiscount' => fn () => \App\Support\BirthdayGift::forPage($request->user()),
             'vipRanks' => fn () => \App\Models\Plan::activeRanksFor($request->user()),
             // Ambientación de temporada y descuento del festivo para el país del visitante
             'season' => fn () => app(\App\Services\SeasonService::class)->forRequest($request),

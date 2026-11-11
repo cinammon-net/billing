@@ -10,6 +10,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { fmtPrice, cycleUnit } from '@/lib/price';
 import { useMemo, useState } from 'react';
 import {
+    Cake,
     Box,
     Gamepad2,
     Bot,
@@ -61,12 +62,15 @@ const CATEGORY_ICONS = {
 const fmtRam = (mb) => (mb >= 1024 ? `${mb / 1024} GB` : `${mb} MB`);
 
 export default function StoreCategory({ category, plans }) {
-    const { auth, billingCycles = [], vipDiscount = 0, season } = usePage().props;
+    const { auth, billingCycles = [], vipDiscount = 0, season, birthdayDiscount } = usePage().props;
     const promo = season?.discount ?? 0;
     // Se aplica el mayor descuento (festivo o VIP); el VIP no cuenta en los rangos.
     const discountFor = (plan) => {
-        const d = plan.role ? promo : Math.max(promo, vipDiscount);
-        return { pct: d, label: d > 0 && d === promo ? season?.holiday?.name ?? 'oferta' : 'VIP' };
+        const base = plan.role ? promo : Math.max(promo, vipDiscount);
+        const bday = birthdayDiscount?.percent ?? 0;
+        // El de cumpleaños (un solo uso) solo cuenta si mejora el que ya había
+        if (bday > base) return { pct: bday, label: 'cumpleaños' };
+        return { pct: base, label: base > 0 && base === promo ? season?.holiday?.name ?? 'oferta' : 'VIP' };
     };
     const [selected, setSelected] = useState(null);
     const [addonsPlan, setAddonsPlan] = useState(null);
@@ -143,6 +147,16 @@ export default function StoreCategory({ category, plans }) {
                         <span>// VOLVER AL CATÁLOGO DE SERVIDORES</span>
                     </Link>
                 </div>
+
+                {birthdayDiscount && (
+                    <div className="mx-auto mt-4 flex max-w-6xl items-center gap-3 rounded-xl border border-pink-400/40 bg-pink-500/10 px-4 py-3 text-sm text-pink-100">
+                        <Cake size={18} className="shrink-0 text-pink-300" />
+                        <span>
+                            <b>Regalo de cumpleaños:</b> -{birthdayDiscount.percent}% en tu próximo pedido, hasta el{' '}
+                            {new Date(birthdayDiscount.until).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}. Ya está aplicado en los precios.
+                        </span>
+                    </div>
+                )}
 
                 {/* HEADER DE LA CATEGORÍA */}
                 <header className="mx-auto mt-6 max-w-6xl text-center">

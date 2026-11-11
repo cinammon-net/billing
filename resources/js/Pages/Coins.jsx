@@ -13,7 +13,7 @@ const fmtRam = (mb) => (mb >= 1024 ? `${+(mb / 1024).toFixed(2)} GB` : `${mb} MB
 const fmtEur = (n) => `${Number(n).toFixed(2).replace('.', ',')} €`;
 const REASONS = {
     ad: 'Anuncio', checkin: 'Racha diaria', mission: 'Misión', referral: 'Invitación', purchase: 'Regalo por compra',
-    free_server: 'Servidor gratis', free_renew: 'Renovación', admin: 'Ajuste', game: 'Minijuego', advent: 'Calendario de Adviento',
+    free_server: 'Servidor gratis', free_renew: 'Renovación', admin: 'Ajuste', game: 'Minijuego', advent: 'Calendario de Adviento', birthday: 'Regalo de cumpleaños',
 };
 const MISSION_ICONS = { image: ImageIcon, id: IdCard, shield: Shield, flame: Flame, users: Users, cart: ShoppingCart };
 

@@ -53,8 +53,15 @@ class OrderController extends Controller
             $plan->isRank() ? 0 : Plan::vipDiscountFor($request->user()),
             $plan->isRank(),
         );
+        // Regalo de cumpleaños: un solo uso, solo si mejora el descuento que ya tenía.
+        $birthday = \App\Support\BirthdayGift::discountFor($request->user());
+        $usedBirthday = $birthday > $discount;
+        $discount = max($discount, $birthday);
         if ($discount > 0) {
             $price = round($price * (100 - $discount) / 100, Plan::CYCLES[$cycle]['decimals']);
+        }
+        if ($usedBirthday) {
+            \App\Support\BirthdayGift::consume($request->user());
         }
 
         $order = Order::create([
