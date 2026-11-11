@@ -149,10 +149,12 @@ function AdminAdventPanel({ advent, themes }) {
     );
 }
 
-export default function Advent({ advent, claimedDays = [], totalEarned = 0, themes = [], rewardModal }) {
+export default function Advent({ advent, paidPerks = { is_paid: false }, claimedDays = [], totalEarned = 0, themes = [], rewardModal }) {
     const { auth, coins = 0, flash, errors, panelUrl } = usePage().props;
     const [busyDay, setBusyDay] = useState(null);
     const [modal, setModal] = useState(rewardModal || null);
+    const [selectedOrderId, setSelectedOrderId] = useState(paidPerks?.order_id || '');
+    const isPaid = Boolean(paidPerks?.is_paid);
 
     useEffect(() => {
         if (rewardModal) setModal(rewardModal);
@@ -172,7 +174,7 @@ export default function Advent({ advent, claimedDays = [], totalEarned = 0, them
         setBusyDay(day);
         router.post(
             route('advent.claim', day),
-            {},
+            { order_id: selectedOrderId || paidPerks?.order_id || undefined },
             {
                 preserveScroll: true,
                 onFinish: () => setBusyDay(null),
@@ -180,7 +182,9 @@ export default function Advent({ advent, claimedDays = [], totalEarned = 0, them
         );
     };
 
-    const maxReward = (advent.doors || []).reduce((sum, d) => sum + d.coins, 0) + (advent.milestones || []).reduce((sum, m) => sum + m.coins, 0);
+    const maxReward =
+        (advent.doors || []).reduce((sum, d) => sum + (isPaid ? d.vip_coins || d.coins * 2 : d.coins), 0) +
+        (advent.milestones || []).reduce((sum, m) => sum + (isPaid ? m.vip_coins || m.coins * 2 : m.coins), 0);
 
     return (
         <PublicLayout>
@@ -256,6 +260,7 @@ export default function Advent({ advent, claimedDays = [], totalEarned = 0, them
                         <div className="grid gap-3 sm:grid-cols-3">
                             {(advent.milestones || []).map((m) => {
                                 const done = openedCount >= m.count;
+                                const mCoins = isPaid ? m.vip_coins || m.coins * 2 : m.coins;
                                 return (
                                     <div
                                         key={m.count}
@@ -281,11 +286,84 @@ export default function Advent({ advent, claimedDays = [], totalEarned = 0, them
                                             </div>
                                         </div>
                                         <span className="rounded-lg bg-yellow-400/20 px-2.5 py-1 font-extrabold text-yellow-300">
-                                            +{m.coins} 🪙
+                                            +{mCoins} 🪙
                                         </span>
                                     </div>
                                 );
                             })}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Bloque de ventajas para Clientes de Pago y Rangos VIP */}
+                <div
+                    className={`rounded-3xl border p-6 shadow-lg ${
+                        isPaid
+                            ? 'border-yellow-400/50 bg-gradient-to-r from-yellow-500/15 via-amber-500/10 to-yellow-500/15'
+                            : 'border-yellow-500/30 bg-[#080c1a]/90'
+                    }`}
+                >
+                    <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
+                        <div className="space-y-1.5">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-400/50 bg-yellow-400/20 px-3 py-0.5 font-mono text-[11px] font-extrabold text-yellow-200">
+                                    <Crown size={13} className="text-yellow-300" />
+                                    {isPaid ? 'VENTAJAS DE CLIENTE DE PAGO ACTIVAS' : 'VENTAJAS EXCLUSIVAS PARA CLIENTES DE PAGO Y VIP'}
+                                </span>
+                                {isPaid && paidPerks.order_name && (
+                                    <span className="font-mono text-xs text-emerald-300">
+                                        · Extendiendo servicio: <strong>{paidPerks.order_name}</strong>
+                                    </span>
+                                )}
+                            </div>
+                            <p className="text-xs text-slate-300 sm:text-sm">
+                                Si tienes cualquier servidor de pago o rango VIP activo, recibes automáticamente estas 3 mejoras en el calendario:
+                            </p>
+                        </div>
+
+                        {isPaid && paidPerks.active_orders?.length > 1 ? (
+                            <label className="flex flex-col gap-1 font-mono text-xs text-slate-300">
+                                <span className="text-[11px] text-yellow-200">Elegir servicio a extender con los cofres:</span>
+                                <select
+                                    value={selectedOrderId}
+                                    onChange={(e) => setSelectedOrderId(Number(e.target.value))}
+                                    className="rounded-xl border border-yellow-400/50 bg-black/70 px-3 py-2 text-xs font-bold text-white"
+                                >
+                                    {paidPerks.active_orders.map((o) => (
+                                        <option key={o.id} value={o.id}>
+                                            {o.name} {o.renews_at ? `(vence ${o.renews_at})` : ''}
+                                        </option>
+                                    ))}
+                                </select>
+                            </label>
+                        ) : !isPaid ? (
+                            <Link
+                                href={route('store')}
+                                className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 px-4 py-2.5 font-mono text-xs font-extrabold text-black shadow transition hover:brightness-110"
+                            >
+                                <Crown size={14} /> Activar con un plan o VIP →
+                            </Link>
+                        ) : null}
+                    </div>
+
+                    <div className="mt-4 grid gap-3 font-mono text-xs sm:grid-cols-3">
+                        <div className="rounded-xl border border-white/10 bg-black/40 p-3.5">
+                            <p className="font-bold text-yellow-300">🪙 1. Doble de monedas (2x)</p>
+                            <p className="mt-1 font-sans text-xs text-slate-300">
+                                Todas las casillas diarias y las metas te dan el doble de monedas (hasta +3.020 monedas en total).
+                            </p>
+                        </div>
+                        <div className="rounded-xl border border-white/10 bg-black/40 p-3.5">
+                            <p className="font-bold text-cyan-300">🔓 2. Abre casillas atrasadas</p>
+                            <p className="mt-1 font-sans text-xs text-slate-300">
+                                Si un día no puedes entrar, no pierdes el regalo: puedes abrir cualquier día anterior cuando quieras.
+                            </p>
+                        </div>
+                        <div className="rounded-xl border border-white/10 bg-black/40 p-3.5">
+                            <p className="font-bold text-emerald-300">⏳ 3. Hasta +13 días gratis en tu servidor</p>
+                            <p className="mt-1 font-sans text-xs text-slate-300">
+                                Los Cofres Especiales (días 6, 12, 18 y 24) añaden días gratis directamente a la fecha de renovación de tu servidor de pago o VIP.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -317,11 +395,12 @@ export default function Advent({ advent, claimedDays = [], totalEarned = 0, them
                     {(advent.doors || []).map((door) => {
                         const isClaimed = openedSet.has(door.day);
                         const isToday = advent.active && door.day === advent.current_day;
-                        const canCatchUp = advent.active && advent.allow_catchup && door.day < advent.current_day && !isClaimed;
+                        const canCatchUp = advent.active && (advent.allow_catchup || isPaid) && door.day < advent.current_day && !isClaimed;
                         const canOpen = !isClaimed && (isToday || canCatchUp);
-                        const isPastMissed = advent.active && door.day < advent.current_day && !isClaimed && !advent.allow_catchup;
+                        const isPastMissed = advent.active && door.day < advent.current_day && !isClaimed && !advent.allow_catchup && !isPaid;
                         const isGrand = door.tier === 'grand';
                         const isSpecial = door.tier === 'special';
+                        const displayCoins = isPaid ? door.vip_coins || door.coins * 2 : door.coins;
 
                         const emoji = isGrand ? theme.grand_emoji : isSpecial ? theme.special_emoji : theme.box_emoji;
 
@@ -396,8 +475,13 @@ export default function Advent({ advent, claimedDays = [], totalEarned = 0, them
                                                   : 'bg-yellow-400/15 text-yellow-300'
                                         }`}
                                     >
-                                        +{door.coins} monedas
+                                        +{displayCoins} monedas {isPaid && <span className="text-[10px] text-yellow-200">(2x 👑)</span>}
                                     </span>
+                                    {door.extra_days > 0 && (
+                                        <span className="mt-1 inline-flex items-center gap-1 rounded-full border border-emerald-400/40 bg-emerald-500/15 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-300">
+                                            👑 +{door.extra_days} {door.extra_days === 1 ? 'día gratis' : 'días gratis'} (Pago/VIP)
+                                        </span>
+                                    )}
                                 </div>
 
                                 {/* Botón de acción */}
@@ -458,6 +542,12 @@ export default function Advent({ advent, claimedDays = [], totalEarned = 0, them
                         {modal.bonus_coins > 0 && (
                             <div className="mt-3 rounded-xl border border-emerald-400/40 bg-emerald-500/15 px-3 py-2 font-mono text-xs text-emerald-200">
                                 🎉 <strong>¡Meta alcanzada ({modal.milestone_label})!</strong> Incluye +{modal.bonus_coins} monedas de bonus.
+                            </div>
+                        )}
+
+                        {modal.extra_days > 0 && (
+                            <div className="mt-3 rounded-xl border border-yellow-400/50 bg-yellow-400/15 px-3 py-2 font-mono text-xs text-yellow-200">
+                                👑 <strong>¡Ventaja Cliente de Pago!</strong> Se han añadido <strong>+{modal.extra_days} día(s) gratis</strong> a la renovación de «{modal.extended_order_name}».
                             </div>
                         )}
 

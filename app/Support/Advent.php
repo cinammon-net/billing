@@ -2,7 +2,9 @@
 
 namespace App\Support;
 
+use App\Models\Order;
 use App\Models\Setting;
+use App\Models\User;
 use Carbon\CarbonImmutable;
 
 /**
@@ -54,32 +56,32 @@ class Advent
         ],
     ];
 
-    /** Recompensa base de cada una de las 24 casillas. */
+    /** Recompensa base de cada una de las 24 casillas (extra_days = días gratis añadidos al servicio activo de pago en cofres). */
     public const BASE_DOORS = [
-        1  => ['coins' => 20,  'tier' => 'normal',  'label' => 'Día 1 · Bienvenida'],
-        2  => ['coins' => 20,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        3  => ['coins' => 25,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        4  => ['coins' => 25,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        5  => ['coins' => 30,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        6  => ['coins' => 75,  'tier' => 'special', 'label' => 'Cofre Especial #1'],
-        7  => ['coins' => 30,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        8  => ['coins' => 30,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        9  => ['coins' => 35,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        10 => ['coins' => 35,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        11 => ['coins' => 40,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        12 => ['coins' => 100, 'tier' => 'special', 'label' => 'Cofre Especial #2'],
-        13 => ['coins' => 40,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        14 => ['coins' => 40,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        15 => ['coins' => 45,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        16 => ['coins' => 45,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        17 => ['coins' => 50,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        18 => ['coins' => 125, 'tier' => 'special', 'label' => 'Cofre Especial #3'],
-        19 => ['coins' => 50,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        20 => ['coins' => 55,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        21 => ['coins' => 55,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        22 => ['coins' => 60,  'tier' => 'normal',  'label' => 'Sorpresa diaria'],
-        23 => ['coins' => 70,  'tier' => 'normal',  'label' => 'Víspera del Gran Cofre'],
-        24 => ['coins' => 250, 'tier' => 'grand',   'label' => '¡Gran Cofre Final!'],
+        1  => ['coins' => 20,  'tier' => 'normal',  'label' => 'Día 1 · Bienvenida',        'extra_days' => 0],
+        2  => ['coins' => 20,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        3  => ['coins' => 25,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        4  => ['coins' => 25,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        5  => ['coins' => 30,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        6  => ['coins' => 75,  'tier' => 'special', 'label' => 'Cofre Especial #1',         'extra_days' => 1],
+        7  => ['coins' => 30,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        8  => ['coins' => 30,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        9  => ['coins' => 35,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        10 => ['coins' => 35,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        11 => ['coins' => 40,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        12 => ['coins' => 100, 'tier' => 'special', 'label' => 'Cofre Especial #2',         'extra_days' => 2],
+        13 => ['coins' => 40,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        14 => ['coins' => 40,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        15 => ['coins' => 45,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        16 => ['coins' => 45,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        17 => ['coins' => 50,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        18 => ['coins' => 125, 'tier' => 'special', 'label' => 'Cofre Especial #3',         'extra_days' => 3],
+        19 => ['coins' => 50,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        20 => ['coins' => 55,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        21 => ['coins' => 55,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        22 => ['coins' => 60,  'tier' => 'normal',  'label' => 'Sorpresa diaria',           'extra_days' => 0],
+        23 => ['coins' => 70,  'tier' => 'normal',  'label' => 'Víspera del Gran Cofre',    'extra_days' => 0],
+        24 => ['coins' => 250, 'tier' => 'grand',   'label' => '¡Gran Cofre Final!',        'extra_days' => 7],
     ];
 
     /** Bonus extra al alcanzar X casillas abiertas en la misma edición. */
@@ -139,9 +141,12 @@ class Advent
         $mult = $s['multiplier'] / 100;
         $doors = [];
         foreach (self::BASE_DOORS as $day => $meta) {
+            $baseCoins = (int) round($meta['coins'] * $mult);
             $doors[$day] = [
                 'day' => $day,
-                'coins' => (int) round($meta['coins'] * $mult),
+                'coins' => $baseCoins,
+                'vip_coins' => $baseCoins * 2,
+                'extra_days' => (int) ($meta['extra_days'] ?? 0),
                 'tier' => $meta['tier'],
                 'label' => $meta['label'],
             ];
@@ -149,9 +154,11 @@ class Advent
 
         $milestones = [];
         foreach (self::MILESTONES as $count => $m) {
+            $baseCoins = (int) round($m['coins'] * $mult);
             $milestones[$count] = [
                 'count' => $count,
-                'coins' => (int) round($m['coins'] * $mult),
+                'coins' => $baseCoins,
+                'vip_coins' => $baseCoins * 2,
                 'label' => $m['label'],
             ];
         }
@@ -169,6 +176,55 @@ class Advent
             'override_day' => $s['override_day'],
             'doors' => array_values($doors),
             'milestones' => array_values($milestones),
+        ];
+    }
+
+    /**
+     * Comprueba si el usuario tiene un servicio de pago activo (servidor o rango VIP)
+     * para darle ventajas en el Calendario de Adviento: 2x monedas, abrir días pasados
+     * y hasta +13 días gratis añadidos a la renovación de su servicio activo.
+     */
+    public static function paidPerks(?User $user): array
+    {
+        if (!$user) {
+            return [
+                'is_paid' => false,
+                'order_id' => null,
+                'order_name' => null,
+                'renews_at' => null,
+                'active_orders' => [],
+            ];
+        }
+
+        $orders = Order::with('plan')
+            ->where('user_id', $user->id)
+            ->where('status', 'active')
+            ->where('is_free', false)
+            ->orderByRaw('CASE WHEN renews_at IS NOT NULL THEN 0 ELSE 1 END, renews_at ASC')
+            ->get();
+
+        if ($orders->isEmpty()) {
+            return [
+                'is_paid' => false,
+                'order_id' => null,
+                'order_name' => null,
+                'renews_at' => null,
+                'active_orders' => [],
+            ];
+        }
+
+        $primary = $orders->first();
+
+        return [
+            'is_paid' => true,
+            'order_id' => $primary->id,
+            'order_name' => $primary->server_name ?: ($primary->plan?->name ?? "Servicio #{$primary->id}"),
+            'renews_at' => $primary->renews_at?->toIso8601String(),
+            'active_orders' => $orders->map(fn (Order $o) => [
+                'id' => $o->id,
+                'name' => $o->server_name ?: ($o->plan?->name ?? "Servicio #{$o->id}"),
+                'renews_at' => $o->renews_at?->format('d/m/Y'),
+            ])->values()->all(),
         ];
     }
 
