@@ -489,10 +489,10 @@ export default function Coins({ balance: initialBalance, earnedToday, dailyCap, 
                 {adventSummary && (
                     <Link
                         href={route('advent.index')}
-                        className="flex flex-col items-center justify-between gap-3 rounded-2xl border border-emerald-400/50 bg-gradient-to-r from-emerald-950/80 via-teal-950/70 to-emerald-950/80 p-4 text-center transition hover:border-emerald-300 sm:flex-row sm:px-6 sm:text-left"
+                        className="flex flex-col items-center justify-between gap-3 rounded-2xl border border-emerald-400/50 bg-gradient-to-r from-emerald-950/80 via-green-950/70 to-emerald-950/80 p-4 text-center transition hover:border-emerald-300 sm:flex-row sm:px-6 sm:text-left"
                     >
                         <div className="flex items-center gap-3">
-                            <span className="text-3xl">{adventSummary.emoji}</span>
+                            <Gift className="h-8 w-8 shrink-0 text-emerald-400" />
                             <div>
                                 <p className="font-mono text-[10px] font-bold tracking-widest text-emerald-300 uppercase">{adventSummary.badge}</p>
                                 <p className="text-base font-black text-white">
@@ -502,7 +502,7 @@ export default function Coins({ balance: initialBalance, earnedToday, dailyCap, 
                             </div>
                         </div>
                         <span className="shrink-0 rounded-xl bg-emerald-400 px-4 py-2 font-mono text-xs font-extrabold text-black">
-                            Abrir regalo de hoy →
+                            Abrir regalo de hoy
                         </span>
                     </Link>
                 )}

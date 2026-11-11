@@ -33,7 +33,7 @@ function MobileLink({ href, active, icon: Icon, admin = false, children }) {
     const on = admin ? 'border-yellow-400/40 bg-yellow-400/10 text-yellow-300' : 'border-pink-500/40 bg-white/5 text-white';
     return (
         <Link href={href} className={`flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 ${active ? on : 'border-white/5 bg-white/[0.02] text-slate-300'}`}>
-            <Icon size={14} className={admin ? 'text-yellow-400' : 'text-cyan-400'} /> <span className="leading-tight">{children}</span>
+            <Icon size={14} className={admin ? 'text-yellow-400' : 'text-pink-400'} /> <span className="leading-tight">{children}</span>
         </Link>
     );
 }
@@ -91,9 +91,9 @@ export default function Authenticated({ user: userProp, header, children }) {
                             <TopLink href={route('coins.index')} active={isCoins} icon={Coins}>
                                 Monedas{typeof coins === 'number' && <span className="ml-1 rounded bg-yellow-400/15 px-1.5 py-0.5 text-[10px] font-bold text-yellow-300">{coins}</span>}
                             </TopLink>
-                            {(adventSummary || isAdmin) && (
+                            {adventSummary && (
                                 <TopLink href={route('advent.index')} active={route().current('advent.index')} icon={Gift}>
-                                    {adventSummary?.emoji || '🎄'} Adviento
+                                    Adviento
                                 </TopLink>
                             )}
 

@@ -43,7 +43,7 @@ class AdventController extends Controller
             'claimedDays' => $claimed->keys()->map(fn ($d) => (int) $d)->values(),
             'claimedDetails' => $claimed,
             'totalEarned' => (int) $claimed->sum(fn ($c) => $c->coins + $c->bonus_coins),
-            'themes' => collect(Advent::THEMES)->map(fn ($t, $k) => ['key' => $k, 'title' => $t['title'], 'emoji' => $t['emoji'], 'badge' => $t['badge']])->values(),
+            'themes' => collect(Advent::THEMES)->map(fn ($t, $k) => ['key' => $k, 'title' => $t['title'], 'badge' => $t['badge']])->values(),
             'rewardModal' => $request->session()->get('advent_reward'),
         ]);
     }

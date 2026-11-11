@@ -29,10 +29,10 @@
 
         <!-- Ambientación de temporada / festivos según el país del visitante -->
         <script>window.__SEASON__ = @json(app(\App\Services\SeasonService::class)->forRequest(request()));</script>
-        <script src="/season/season.js?v=20" defer></script>
+        <script src="/season/season.js?v=21" defer></script>
     </head>
     <body class="font-sans antialiased bg-black text-white">
-        @include('partials.loader', ['a' => 'oklch(var(--tw-c-pink-500, 0.656 0.241 354))', 'b' => 'oklch(var(--tw-c-neon, 0.887 0.151 199))', 'logo' => $cinLogo])
+        @include('partials.loader', ['a' => 'oklch(var(--tw-c-pink-500, 0.656 0.241 354))', 'b' => 'oklch(var(--tw-c-neon, 0.828 0.189 85))', 'logo' => $cinLogo])
         @inertia
     </body>
 </html>

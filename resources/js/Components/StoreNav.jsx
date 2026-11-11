@@ -12,6 +12,7 @@ import {
     Database,
     Drama,
     Gamepad2,
+    Gift,
     Globe,
     Hammer,
     Headphones,
@@ -38,7 +39,7 @@ const GAMES = [
     { key: 'survival', label: 'Supervivencia', desc: 'Rust, ARK, Palworld, Valheim', icon: Gamepad2, tint: 'text-pink-400' },
     { key: 'shooters', label: 'Shooters', desc: 'CS2, Squad, Insurgency, L4D2', icon: Crosshair, tint: 'text-red-400' },
     { key: 'sandbox', label: 'Sandbox', desc: 'Factorio, Satisfactory, Terraria', icon: Hammer, tint: 'text-amber-400' },
-    { key: 'simulation', label: 'Simuladores', desc: 'ETS2, ATS, Assetto Corsa', icon: Car, tint: 'text-sky-400' },
+    { key: 'simulation', label: 'Simuladores', desc: 'ETS2, ATS, Assetto Corsa', icon: Car, tint: 'text-purple-400' },
     { key: 'roleplay', label: 'Roleplay y GTA', desc: 'FiveM, RedM, alt:V, MTA', icon: Drama, tint: 'text-orange-400' },
     { key: 'arcade', label: 'Clásicos', desc: 'Among Us, Teeworlds, OpenRA', icon: Joystick, tint: 'text-violet-400' },
 ];
@@ -207,7 +208,7 @@ export default function StoreNav() {
                                         </div>
                                     </div>
                                     <div className="flex flex-col border-l border-white/5 bg-white/[0.02] p-3">
-                                        <p className="px-3 pt-1 pb-2 text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase">Servicios</p>
+                                        <p className="px-3 pt-1 pb-2 text-[10px] font-bold tracking-[0.2em] text-fuchsia-400 uppercase">Servicios</p>
                                         {SERVICES.map((s) => {
                                             const Icon = s.icon;
                                             return (
@@ -217,7 +218,7 @@ export default function StoreNav() {
                                                     onClick={closeAll}
                                                     className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-[12px] transition hover:bg-white/5 hover:text-white ${isCategory(s.key) ? 'bg-white/5 text-white' : 'text-slate-300'}`}
                                                 >
-                                                    <Icon size={14} className="text-cyan-400" /> {s.label}
+                                                    <Icon size={14} className="text-fuchsia-400" /> {s.label}
                                                 </Link>
                                             );
                                         })}
@@ -243,13 +244,13 @@ export default function StoreNav() {
 
                 {/* Acciones */}
                 <div className="col-start-3 flex items-center justify-end gap-2 font-mono text-xs">
-                    {(adventSummary || auth?.user?.is_admin) && (
+                    {adventSummary && (
                         <Link
                             href={route('advent.index')}
                             className="hidden items-center gap-1.5 rounded-full border border-emerald-400/50 bg-emerald-500/15 px-3 py-1.5 whitespace-nowrap font-bold text-emerald-200 shadow-[0_0_12px_rgba(16,185,129,0.25)] transition hover:bg-emerald-400 hover:text-black md:flex"
-                            title={adventSummary?.title || 'Calendario de Adviento'}
+                            title={adventSummary.title || 'Calendario de Adviento'}
                         >
-                            <span>{adventSummary?.emoji || '🎄'}</span>
+                            <Gift size={14} />
                             <span>Adviento</span>
                         </Link>
                     )}
@@ -338,7 +339,7 @@ export default function StoreNav() {
                                 })}
                             </div>
 
-                            <p className="mt-6 mb-2 text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase">Servicios</p>
+                            <p className="mt-6 mb-2 text-[10px] font-bold tracking-[0.2em] text-fuchsia-400 uppercase">Servicios</p>
                             <div className="grid grid-cols-2 gap-2">
                                 {SERVICES.map((s) => {
                                     const Icon = s.icon;
@@ -348,10 +349,10 @@ export default function StoreNav() {
                                             href={route('store.category', s.key)}
                                             onClick={closeAll}
                                             className={`flex min-h-11 items-center gap-2 rounded-xl border px-2.5 py-2 text-[11.5px] ${
-                                                isCategory(s.key) ? 'border-cyan-500/40 bg-white/5 text-white' : 'border-white/5 bg-white/[0.02] text-slate-300'
+                                                isCategory(s.key) ? 'border-fuchsia-500/40 bg-white/5 text-white' : 'border-white/5 bg-white/[0.02] text-slate-300'
                                             }`}
                                         >
-                                            <Icon size={15} className="shrink-0 text-cyan-400" /> <span className="leading-tight">{s.label}</span>
+                                            <Icon size={15} className="shrink-0 text-fuchsia-400" /> <span className="leading-tight">{s.label}</span>
                                         </Link>
                                     );
                                 })}
@@ -364,9 +365,9 @@ export default function StoreNav() {
                                 <Link href={route('coins.index')} onClick={closeAll} className="flex items-center gap-2 rounded-lg px-2 py-2 font-bold text-yellow-300 hover:bg-white/5">
                                     <Coins size={14} /> Servidor gratis con monedas
                                 </Link>
-                                {(adventSummary || auth?.user?.is_admin) && (
+                                {adventSummary && (
                                     <Link href={route('advent.index')} onClick={closeAll} className="flex items-center gap-2 rounded-lg px-2 py-2 font-bold text-emerald-300 hover:bg-white/5">
-                                        <span>{adventSummary?.emoji || '🎄'}</span> {adventSummary?.title || 'Calendario de Adviento'}
+                                        <Gift size={14} /> {adventSummary.title || 'Calendario de Adviento'}
                                     </Link>
                                 )}
                                 <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-lg px-2 py-2 text-slate-300 hover:bg-white/5">

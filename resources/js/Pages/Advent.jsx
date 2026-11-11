@@ -1,6 +1,6 @@
 import PublicLayout from '@/Layouts/PublicLayout';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { Check, Coins, Crown, Gift, Lock, Sparkles, Star, Trophy, Wrench, X } from 'lucide-react';
+import { Check, Clock, Coins, Crown, Gift, Lock, Sparkles, Star, Trophy, Unlock, Wrench, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const ACCENT_STYLES = {
@@ -8,7 +8,7 @@ const ACCENT_STYLES = {
         badge: 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200',
         glow: 'from-emerald-500/20 via-red-500/15 to-amber-500/20',
         readyBorder: 'border-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.45)]',
-        btn: 'from-emerald-500 via-teal-500 to-cyan-500 hover:brightness-110',
+        btn: 'from-emerald-500 via-green-500 to-amber-500 hover:brightness-110',
     },
     orange: {
         badge: 'border-orange-400/50 bg-orange-500/15 text-orange-200',
@@ -16,11 +16,11 @@ const ACCENT_STYLES = {
         readyBorder: 'border-orange-400 shadow-[0_0_25px_rgba(249,115,22,0.45)]',
         btn: 'from-orange-500 via-amber-500 to-pink-500 hover:brightness-110',
     },
-    cyan: {
-        badge: 'border-cyan-400/50 bg-cyan-500/15 text-cyan-200',
-        glow: 'from-cyan-500/20 via-sky-500/15 to-yellow-500/20',
-        readyBorder: 'border-cyan-400 shadow-[0_0_25px_rgba(6,182,212,0.45)]',
-        btn: 'from-cyan-500 via-sky-500 to-blue-500 hover:brightness-110',
+    amber: {
+        badge: 'border-amber-400/50 bg-amber-500/15 text-amber-200',
+        glow: 'from-amber-500/20 via-orange-500/15 to-yellow-500/20',
+        readyBorder: 'border-amber-400 shadow-[0_0_25px_rgba(245,158,11,0.45)]',
+        btn: 'from-amber-500 via-yellow-500 to-orange-500 hover:brightness-110',
     },
     pink: {
         badge: 'border-pink-400/50 bg-pink-500/15 text-pink-200',
@@ -67,9 +67,9 @@ function AdminAdventPanel({ advent, themes }) {
                         onChange={(e) => setData('mode', e.target.value)}
                         className="w-full rounded-lg border border-slate-700 bg-black/70 px-3 py-2 text-xs text-white focus:border-pink-500"
                     >
-                        <option value="auto">🎄 Automático (1–25 Dic)</option>
-                        <option value="active">🟢 Activo ahora (manual)</option>
-                        <option value="off">⏸️ Desactivado</option>
+                        <option value="auto">Automático (1–25 Dic)</option>
+                        <option value="active">Activo ahora (manual)</option>
+                        <option value="off">Desactivado</option>
                     </select>
                 </label>
 
@@ -82,7 +82,7 @@ function AdminAdventPanel({ advent, themes }) {
                     >
                         {themes.map((t) => (
                             <option key={t.key} value={t.key}>
-                                {t.emoji} {t.title}
+                                {t.title}
                             </option>
                         ))}
                     </select>
@@ -191,23 +191,19 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
             <Head title={`${theme.title || 'Calendario de Adviento'} — Cinammon`} />
 
             <div className="relative mx-auto max-w-7xl space-y-8 px-4 py-10 sm:px-6 lg:px-8">
-                {/* Resplandor temático superior */}
                 <div className={`pointer-events-none absolute inset-x-0 -top-10 -z-10 h-80 rounded-full bg-gradient-to-r ${accent.glow} blur-[120px]`} />
 
                 {/* Cabecera principal */}
-                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#070b18]/90 p-6 sm:p-10 shadow-[0_20px_70px_rgba(0,0,0,0.6)]">
+                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#070b18]/90 p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] sm:p-10">
                     <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
                         <div className="max-w-2xl space-y-3">
                             <span className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 font-mono text-xs font-bold tracking-wider ${accent.badge}`}>
-                                {theme.badge}
+                                <Gift size={13} /> {theme.badge}
                             </span>
-                            <h1 className="text-3xl font-black tracking-tight text-white sm:text-5xl">
-                                {theme.emoji} {theme.title}
-                            </h1>
+                            <h1 className="text-3xl font-black tracking-tight text-white sm:text-5xl">{theme.title}</h1>
                             <p className="text-sm leading-relaxed text-slate-300 sm:text-base">{theme.subtitle}</p>
                         </div>
 
-                        {/* Tarjeta de estado del jugador */}
                         <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-black/50 p-5 font-mono text-xs sm:min-w-[300px]">
                             <div className="flex items-center justify-between border-b border-white/10 pb-3">
                                 <span className="text-slate-400">Día disponible hoy</span>
@@ -231,7 +227,7 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                                     <span className="flex items-center gap-1.5">
                                         <Coins size={15} className="text-yellow-300" /> Saldo: {coins} monedas
                                     </span>
-                                    <span>Canjear servidor →</span>
+                                    <span>Canjear servidor</span>
                                 </Link>
                             ) : (
                                 <a
@@ -244,16 +240,17 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                         </div>
                     </div>
 
-                    {/* Barra de progreso y Metas (Milestones) */}
+                    {/* Metas (Milestones) */}
                     <div className="mt-8 space-y-3 border-t border-white/10 pt-6">
                         <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-xs">
                             <span className="flex items-center gap-1.5 font-bold text-slate-200">
                                 <Trophy size={15} className="text-amber-400" /> Metas extra de la edición (hasta {maxReward} monedas en total)
                             </span>
-                            <span className="text-slate-400">
+                            <span className="flex items-center gap-1.5 text-slate-400">
+                                <Clock size={13} />
                                 {advent.allow_catchup
-                                    ? '✨ Puedes abrir la casilla de hoy y también las de días anteriores'
-                                    : '⏰ Abre cada día su casilla correspondiente para no perder la racha'}
+                                    ? 'Puedes abrir la casilla de hoy y también las de días anteriores'
+                                    : 'Abre cada día su casilla correspondiente para no perder la racha'}
                             </span>
                         </div>
 
@@ -281,12 +278,12 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                                             <div>
                                                 <p className="font-bold">{m.label}</p>
                                                 <p className="text-[10px] opacity-75">
-                                                    {done ? '¡Meta conseguida!' : `Te faltan ${Math.max(0, m.count - openedCount)} casillas`}
+                                                    {done ? 'Meta conseguida' : `Te faltan ${Math.max(0, m.count - openedCount)} casillas`}
                                                 </p>
                                             </div>
                                         </div>
-                                        <span className="rounded-lg bg-yellow-400/20 px-2.5 py-1 font-extrabold text-yellow-300">
-                                            +{mCoins} 🪙
+                                        <span className="inline-flex items-center gap-1 rounded-lg bg-yellow-400/20 px-2.5 py-1 font-extrabold text-yellow-300">
+                                            <Coins size={12} /> +{mCoins}
                                         </span>
                                     </div>
                                 );
@@ -341,26 +338,32 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                                 href={route('store')}
                                 className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 px-4 py-2.5 font-mono text-xs font-extrabold text-black shadow transition hover:brightness-110"
                             >
-                                <Crown size={14} /> Activar con un plan o VIP →
+                                <Crown size={14} /> Activar con un plan o VIP
                             </Link>
                         ) : null}
                     </div>
 
                     <div className="mt-4 grid gap-3 font-mono text-xs sm:grid-cols-3">
                         <div className="rounded-xl border border-white/10 bg-black/40 p-3.5">
-                            <p className="font-bold text-yellow-300">🪙 1. Doble de monedas (2x)</p>
+                            <p className="flex items-center gap-1.5 font-bold text-yellow-300">
+                                <Coins size={14} /> 1. Doble de monedas (2x)
+                            </p>
                             <p className="mt-1 font-sans text-xs text-slate-300">
                                 Todas las casillas diarias y las metas te dan el doble de monedas (hasta +3.020 monedas en total).
                             </p>
                         </div>
                         <div className="rounded-xl border border-white/10 bg-black/40 p-3.5">
-                            <p className="font-bold text-cyan-300">🔓 2. Abre casillas atrasadas</p>
+                            <p className="flex items-center gap-1.5 font-bold text-pink-300">
+                                <Unlock size={14} /> 2. Abre casillas atrasadas
+                            </p>
                             <p className="mt-1 font-sans text-xs text-slate-300">
                                 Si un día no puedes entrar, no pierdes el regalo: puedes abrir cualquier día anterior cuando quieras.
                             </p>
                         </div>
                         <div className="rounded-xl border border-white/10 bg-black/40 p-3.5">
-                            <p className="font-bold text-emerald-300">⏳ 3. Hasta +13 días gratis en tu servidor</p>
+                            <p className="flex items-center gap-1.5 font-bold text-emerald-300">
+                                <Clock size={14} /> 3. Hasta +13 días gratis en tu servidor
+                            </p>
                             <p className="mt-1 font-sans text-xs text-slate-300">
                                 Los Cofres Especiales (días 6, 12, 18 y 24) añaden días gratis directamente a la fecha de renovación de tu servidor de pago o VIP.
                             </p>
@@ -368,7 +371,6 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                     </div>
                 </div>
 
-                {/* Alertas */}
                 {flash?.success && (
                     <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/15 px-5 py-3 font-mono text-xs font-bold text-emerald-200">
                         {flash.success}
@@ -380,7 +382,6 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                     </div>
                 )}
 
-                {/* Panel de administrador (solo visible para admins) */}
                 {auth?.user?.is_admin && <AdminAdventPanel advent={advent} themes={themes} />}
 
                 {!advent.active && (
@@ -401,8 +402,7 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                         const isGrand = door.tier === 'grand';
                         const isSpecial = door.tier === 'special';
                         const displayCoins = isPaid ? door.vip_coins || door.coins * 2 : door.coins;
-
-                        const emoji = isGrand ? theme.grand_emoji : isSpecial ? theme.special_emoji : theme.box_emoji;
+                        const DoorIcon = isClaimed ? Sparkles : isGrand ? Crown : isSpecial ? Star : Gift;
 
                         return (
                             <div
@@ -421,7 +421,6 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                                               : 'border-white/10 bg-[#070b18]/75 opacity-80'
                                 }`}
                             >
-                                {/* Cabecera de la casilla */}
                                 <div className="flex items-center justify-between font-mono">
                                     <span
                                         className={`inline-flex h-8 w-8 items-center justify-center rounded-xl text-sm font-black ${
@@ -443,7 +442,7 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                                         </span>
                                     ) : isToday ? (
                                         <span className="animate-pulse rounded-full bg-pink-500 px-2.5 py-0.5 text-[10px] font-extrabold text-white">
-                                            ¡HOY!
+                                            HOY
                                         </span>
                                     ) : canCatchUp ? (
                                         <span className="rounded-full bg-amber-400/20 px-2 py-0.5 text-[10px] font-bold text-amber-200">
@@ -456,14 +455,19 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                                     )}
                                 </div>
 
-                                {/* Icono central y etiqueta */}
                                 <div className="my-4 flex flex-col items-center text-center">
                                     <div
-                                        className={`text-4xl transition duration-300 ${
-                                            canOpen ? 'animate-bounce group-hover:scale-125' : isClaimed ? 'scale-95 opacity-80' : 'opacity-70'
-                                        }`}
+                                        className={`flex h-12 w-12 items-center justify-center rounded-2xl border transition duration-300 ${
+                                            isClaimed
+                                                ? 'border-emerald-400/40 bg-emerald-500/15 text-emerald-300'
+                                                : isGrand
+                                                  ? 'border-amber-400/40 bg-amber-500/15 text-amber-300'
+                                                  : isSpecial
+                                                    ? 'border-purple-400/40 bg-purple-500/15 text-purple-300'
+                                                    : 'border-pink-400/30 bg-pink-500/10 text-pink-300'
+                                        } ${canOpen ? 'group-hover:scale-110' : ''}`}
                                     >
-                                        {isClaimed ? '✨' : emoji}
+                                        <DoorIcon size={24} />
                                     </div>
                                     <p className="mt-2 font-mono text-[11px] font-bold text-slate-200">{door.label}</p>
                                     <span
@@ -475,19 +479,18 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                                                   : 'bg-yellow-400/15 text-yellow-300'
                                         }`}
                                     >
-                                        +{displayCoins} monedas {isPaid && <span className="text-[10px] text-yellow-200">(2x 👑)</span>}
+                                        +{displayCoins} monedas {isPaid && <span className="text-[10px] text-yellow-200">(2x VIP)</span>}
                                     </span>
                                     {door.extra_days > 0 && (
                                         <span className="mt-1 inline-flex items-center gap-1 rounded-full border border-emerald-400/40 bg-emerald-500/15 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-300">
-                                            👑 +{door.extra_days} {door.extra_days === 1 ? 'día gratis' : 'días gratis'} (Pago/VIP)
+                                            <Crown size={10} /> +{door.extra_days} {door.extra_days === 1 ? 'día gratis' : 'días gratis'} (Pago/VIP)
                                         </span>
                                     )}
                                 </div>
 
-                                {/* Botón de acción */}
                                 {isClaimed ? (
-                                    <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 py-2 text-center font-mono text-[11px] font-bold text-emerald-300">
-                                        ✓ Recogido
+                                    <div className="flex items-center justify-center gap-1 rounded-xl border border-emerald-500/30 bg-emerald-500/10 py-2 text-center font-mono text-[11px] font-bold text-emerald-300">
+                                        <Check size={12} /> Recogido
                                     </div>
                                 ) : canOpen ? (
                                     <button
@@ -496,7 +499,7 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                                         onClick={() => openDoor(door.day)}
                                         className={`w-full rounded-xl bg-gradient-to-r ${accent.btn} py-2.5 font-mono text-xs font-extrabold text-white shadow-lg transition active:scale-95 disabled:opacity-50`}
                                     >
-                                        {busyDay === door.day ? 'Abriendo...' : `¡Abrir #${door.day}!`}
+                                        {busyDay === door.day ? 'Abriendo...' : `Abrir #${door.day}`}
                                     </button>
                                 ) : (
                                     <div className="rounded-xl border border-white/5 bg-black/40 py-2 text-center font-mono text-[11px] text-slate-500">
@@ -509,7 +512,6 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                 </div>
             </div>
 
-            {/* Modal de celebración al abrir una casilla */}
             {modal && (
                 <div
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
@@ -530,24 +532,24 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                             <X size={20} />
                         </button>
 
-                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-yellow-400/20 text-4xl">
-                            {theme.box_emoji || '🎁'}
+                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-yellow-400/20 text-yellow-300">
+                            <Gift size={32} />
                         </div>
 
                         <p className="mt-4 font-mono text-xs font-bold tracking-widest text-yellow-300 uppercase">
-                            ¡Casilla #{modal.day} desbloqueada!
+                            Casilla #{modal.day} desbloqueada
                         </p>
                         <h2 className="mt-1 text-3xl font-black text-white">+{modal.coins + (modal.bonus_coins || 0)} monedas</h2>
 
                         {modal.bonus_coins > 0 && (
                             <div className="mt-3 rounded-xl border border-emerald-400/40 bg-emerald-500/15 px-3 py-2 font-mono text-xs text-emerald-200">
-                                🎉 <strong>¡Meta alcanzada ({modal.milestone_label})!</strong> Incluye +{modal.bonus_coins} monedas de bonus.
+                                <strong>Meta alcanzada ({modal.milestone_label}):</strong> Incluye +{modal.bonus_coins} monedas de bonus.
                             </div>
                         )}
 
                         {modal.extra_days > 0 && (
                             <div className="mt-3 rounded-xl border border-yellow-400/50 bg-yellow-400/15 px-3 py-2 font-mono text-xs text-yellow-200">
-                                👑 <strong>¡Ventaja Cliente de Pago!</strong> Se han añadido <strong>+{modal.extra_days} día(s) gratis</strong> a la renovación de «{modal.extended_order_name}».
+                                <strong>Ventaja Cliente de Pago:</strong> Se han añadido <strong>+{modal.extra_days} día(s) gratis</strong> a la renovación de «{modal.extended_order_name}».
                             </div>
                         )}
 
@@ -560,7 +562,7 @@ export default function Advent({ advent, paidPerks = { is_paid: false }, claimed
                                 href={route('coins.index')}
                                 className="rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 px-5 py-3 font-extrabold text-black transition hover:brightness-110"
                             >
-                                Usar mis monedas en un servidor gratis →
+                                Usar mis monedas en un servidor gratis
                             </Link>
                             <button
                                 type="button"

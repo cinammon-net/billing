@@ -1,48 +1,66 @@
 import { usePage } from '@inertiajs/react';
-import { CalendarDays, Check, ChevronLeft, ChevronRight, Clock, Copy, Flame, Gift, Megaphone, Rocket, Sparkles, X } from 'lucide-react';
+import {
+    CalendarDays,
+    Check,
+    ChevronLeft,
+    ChevronRight,
+    Clock,
+    Coins,
+    Copy,
+    Crown,
+    Flame,
+    Gift,
+    Megaphone,
+    Rocket,
+    Server,
+    ShieldCheck,
+    Sparkles,
+    X,
+    Zap,
+} from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 const TYPE_STYLES = {
     offer: {
-        label: 'Oferta Flash',
+        label: 'Oferta',
         icon: Flame,
-        bar: 'border-pink-500/60 from-pink-950/95 via-fuchsia-950/95 to-pink-950/95 text-pink-50',
-        chip: 'bg-gradient-to-r from-pink-500 to-rose-500 text-white',
+        bar: 'border-pink-500/60 from-pink-950/95 via-fuchsia-950/95 to-rose-950/95 text-pink-50',
+        chip: 'bg-gradient-to-r from-pink-500 to-fuchsia-600 text-white',
         glow: 'from-pink-500/35 via-fuchsia-500/20 to-amber-500/30',
         border: 'border-pink-500 shadow-[0_0_60px_rgba(236,72,153,0.45)]',
-        cta: 'from-pink-500 via-fuchsia-500 to-amber-500 text-white shadow-[0_0_30px_rgba(236,72,153,0.55)]',
+        cta: 'from-pink-500 via-fuchsia-500 to-rose-500 text-white shadow-[0_0_30px_rgba(236,72,153,0.55)]',
     },
     new: {
-        label: '100% Gratis',
+        label: 'Servidor Gratis',
         icon: Sparkles,
-        bar: 'border-cyan-500/60 from-cyan-950/95 via-emerald-950/95 to-cyan-950/95 text-cyan-50',
-        chip: 'bg-gradient-to-r from-emerald-400 to-cyan-400 text-black',
-        glow: 'from-emerald-500/35 via-cyan-500/25 to-teal-500/30',
-        border: 'border-emerald-400 shadow-[0_0_60px_rgba(16,185,129,0.45)]',
-        cta: 'from-emerald-400 via-teal-400 to-cyan-400 text-black shadow-[0_0_30px_rgba(16,185,129,0.55)]',
+        bar: 'border-amber-500/60 from-amber-950/95 via-orange-950/90 to-pink-950/95 text-amber-50',
+        chip: 'bg-gradient-to-r from-amber-400 to-yellow-500 text-black',
+        glow: 'from-amber-500/35 via-yellow-500/25 to-pink-500/25',
+        border: 'border-amber-400 shadow-[0_0_60px_rgba(245,158,11,0.45)]',
+        cta: 'from-amber-400 via-yellow-400 to-orange-500 text-black shadow-[0_0_30px_rgba(245,158,11,0.55)]',
     },
     event: {
-        label: 'Evento Especial',
+        label: 'Evento',
         icon: CalendarDays,
-        bar: 'border-violet-500/60 from-violet-950/95 via-purple-950/95 to-violet-950/95 text-violet-50',
+        bar: 'border-violet-500/60 from-violet-950/95 via-purple-950/95 to-fuchsia-950/95 text-violet-50',
         chip: 'bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white',
-        glow: 'from-violet-500/35 via-fuchsia-500/25 to-amber-500/25',
+        glow: 'from-violet-500/35 via-fuchsia-500/25 to-pink-500/25',
         border: 'border-violet-400 shadow-[0_0_60px_rgba(167,139,250,0.45)]',
         cta: 'from-violet-500 via-fuchsia-500 to-pink-500 text-white shadow-[0_0_30px_rgba(167,139,250,0.55)]',
     },
     news: {
         label: 'Noticia',
         icon: Megaphone,
-        bar: 'border-emerald-500/60 from-emerald-950/95 via-teal-950/95 to-emerald-950/95 text-emerald-50',
-        chip: 'bg-emerald-400 text-black',
-        glow: 'from-emerald-500/30 via-teal-500/20 to-cyan-500/25',
-        border: 'border-emerald-400 shadow-[0_0_50px_rgba(16,185,129,0.4)]',
-        cta: 'from-emerald-400 to-cyan-400 text-black shadow-[0_0_25px_rgba(16,185,129,0.45)]',
+        bar: 'border-rose-500/60 from-rose-950/95 via-pink-950/95 to-purple-950/95 text-rose-50',
+        chip: 'bg-rose-500 text-white',
+        glow: 'from-rose-500/30 via-pink-500/20 to-purple-500/25',
+        border: 'border-rose-400 shadow-[0_0_50px_rgba(244,63,94,0.4)]',
+        cta: 'from-rose-500 to-pink-600 text-white shadow-[0_0_25px_rgba(244,63,94,0.45)]',
     },
 };
 
 const DISMISS_KEY = 'announcements-dismissed';
-const POPUP_KEY = 'announcements-popup-seen-v2';
+const POPUP_KEY = 'announcements-popup-seen-v3';
 
 function readIds(key) {
     try {
@@ -81,15 +99,24 @@ function isFreeServerAnnouncement(a) {
 
 function visualPills(a) {
     if (isFreeServerAnnouncement(a)) {
-        return ['⚡ Activo en 60s', '🪙 0 € con monedas', '🕹️ Juegos, Bots y Web'];
+        return [
+            { icon: Zap, text: 'Activo en 60s' },
+            { icon: Coins, text: '0 € con monedas' },
+            { icon: Server, text: 'Juegos, Bots y Web' },
+        ];
     }
     if (a?.type === 'event') {
-        return ['🎁 1 Regalo diario', '👑 2x Clientes VIP', '⏳ +13 días gratis'];
+        return [
+            { icon: Gift, text: '1 Regalo diario' },
+            { icon: Crown, text: '2x Clientes VIP' },
+            { icon: Clock, text: '+13 días gratis' },
+        ];
     }
-    if (a?.type === 'offer') {
-        return ['⚡ Descuento directo', '🛡️ Anti-DDoS Pro', '🚀 Activación al instante'];
-    }
-    return ['⚡ Alto rendimiento', '🛡️ DDoS incluido', '🚀 Panel inmediato'];
+    return [
+        { icon: Zap, text: 'Descuento directo' },
+        { icon: ShieldCheck, text: 'Anti-DDoS Pro' },
+        { icon: Rocket, text: 'Activación al instante' },
+    ];
 }
 
 export default function AnnouncementBanner() {
@@ -100,7 +127,6 @@ export default function AnnouncementBanner() {
     const [paused, setPaused] = useState(false);
     const [copied, setCopied] = useState(false);
 
-    // Estado del cartel en grande multi-anuncio
     const [popupVisible, setPopupVisible] = useState(false);
     const [popupIdx, setPopupIdx] = useState(0);
     const [popupPaused, setPopupPaused] = useState(false);
@@ -217,7 +243,7 @@ export default function AnnouncementBanner() {
                             <Icon size={12} /> {isFree ? '100% GRATIS' : style.label}
                         </span>
                         {a.highlight && (
-                            <span className="rounded bg-yellow-400/20 px-1.5 py-0.5 text-sm font-black tracking-wide text-yellow-300">
+                            <span className="rounded bg-amber-400/20 px-1.5 py-0.5 text-sm font-black tracking-wide text-amber-300">
                                 {a.highlight}
                             </span>
                         )}
@@ -230,11 +256,11 @@ export default function AnnouncementBanner() {
                                 className="inline-flex items-center gap-1 rounded border border-dashed border-white/50 bg-black/30 px-2 py-0.5 font-mono text-[11px] font-bold tracking-wider hover:bg-white/10"
                             >
                                 {copied ? <Check size={12} /> : <Copy size={12} />}
-                                {copied ? '¡Copiado!' : a.coupon_code}
+                                {copied ? 'COPIADO' : a.coupon_code}
                             </button>
                         )}
                         {left && (
-                            <span className="inline-flex items-center gap-1 font-sans text-[11px] font-bold text-yellow-200">
+                            <span className="inline-flex items-center gap-1 font-sans text-[11px] font-bold text-amber-200">
                                 <Clock className="h-3 w-3" /> {left}
                             </span>
                         )}
@@ -244,9 +270,9 @@ export default function AnnouncementBanner() {
                                 onClick={() => sendClick(a.id)}
                                 target={a.cta_url.startsWith('http') ? '_blank' : undefined}
                                 rel={a.cta_url.startsWith('http') ? 'noopener noreferrer' : undefined}
-                                className="rounded-lg bg-white px-3 py-1 font-extrabold whitespace-nowrap text-black shadow transition hover:scale-105 hover:bg-yellow-300"
+                                className="rounded-lg bg-white px-3 py-1 font-extrabold whitespace-nowrap text-black shadow transition hover:scale-105 hover:bg-amber-300"
                             >
-                                {a.cta_label || 'Entrar ahora'} →
+                                {a.cta_label || 'Entrar ahora'}
                             </a>
                         )}
                         {popups.length > 0 && (
@@ -259,7 +285,7 @@ export default function AnnouncementBanner() {
                                 }}
                                 className="hidden items-center gap-1 rounded-lg border border-white/25 bg-black/30 px-2 py-0.5 font-sans text-[11px] text-white/85 transition hover:border-white hover:text-white sm:inline-flex"
                             >
-                                <Sparkles size={12} className="text-yellow-300" /> Ver cartel
+                                <Sparkles size={12} className="text-amber-300" /> Ver cartel
                             </button>
                         )}
                     </div>
@@ -269,7 +295,7 @@ export default function AnnouncementBanner() {
                 </div>
             )}
 
-            {/* Cartel en grande multi-anuncio (Oferta + Servidor Gratis fijo) */}
+            {/* Cartel en grande multi-anuncio (sin emojis ni cyan) */}
             {popupVisible && currentPopup && (
                 <div
                     className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
@@ -282,7 +308,7 @@ export default function AnnouncementBanner() {
                         onClick={(e) => e.stopPropagation()}
                         onMouseEnter={() => setPopupPaused(true)}
                         onMouseLeave={() => setPopupPaused(false)}
-                        className={`relative w-full max-w-lg overflow-hidden rounded-3xl border-2 bg-[#060913]/95 p-6 text-center font-mono text-white sm:p-8 ${popupStyle.border}`}
+                        className={`relative w-full max-w-lg overflow-hidden rounded-3xl border-2 bg-[#080612]/95 p-6 text-center font-mono text-white sm:p-8 ${popupStyle.border}`}
                     >
                         <div className={`pointer-events-none absolute -top-24 left-1/2 h-64 w-80 -translate-x-1/2 rounded-full bg-gradient-to-r ${popupStyle.glow} blur-3xl`} />
 
@@ -300,6 +326,7 @@ export default function AnnouncementBanner() {
                                 {popups.map((p, idx) => {
                                     const active = idx === popupIdx % popups.length;
                                     const freeTab = isFreeServerAnnouncement(p);
+                                    const TabIcon = freeTab ? Gift : Flame;
                                     return (
                                         <button
                                             key={p.id}
@@ -308,12 +335,12 @@ export default function AnnouncementBanner() {
                                             className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-extrabold tracking-wider uppercase transition ${
                                                 active
                                                     ? freeTab
-                                                        ? 'border-emerald-300 bg-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.6)]'
+                                                        ? 'border-amber-300 bg-amber-400 text-black shadow-[0_0_15px_rgba(245,158,11,0.6)]'
                                                         : 'border-pink-300 bg-pink-500 text-white shadow-[0_0_15px_rgba(236,72,153,0.6)]'
                                                     : 'border-white/15 bg-white/5 text-slate-300 hover:border-white/40 hover:text-white'
                                             }`}
                                         >
-                                            <span>{freeTab ? '🎮' : '🔥'}</span>
+                                            <TabIcon size={13} />
                                             <span>{p.highlight || (freeTab ? 'GRATIS' : 'OFERTA')}</span>
                                         </button>
                                     );
@@ -328,12 +355,16 @@ export default function AnnouncementBanner() {
                             <div>
                                 <span className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-[11px] font-black tracking-widest uppercase ${popupStyle.chip}`}>
                                     <PopupIcon size={14} /> {popupIsFree ? 'SERVIDORES 100% GRATIS' : popupStyle.label}
-                                    {popupLeft && <span className="ml-1 rounded bg-black/25 px-1.5 py-0.5 text-[10px]">⏳ {popupLeft}</span>}
+                                    {popupLeft && (
+                                        <span className="ml-1 inline-flex items-center gap-1 rounded bg-black/25 px-1.5 py-0.5 text-[10px]">
+                                            <Clock size={10} /> {popupLeft}
+                                        </span>
+                                    )}
                                 </span>
                             </div>
 
                             <div className="py-1">
-                                <p className="font-sans text-6xl font-black tracking-tight text-yellow-300 drop-shadow-[0_0_25px_rgba(253,224,71,0.65)] sm:text-7xl">
+                                <p className="font-sans text-6xl font-black tracking-tight text-amber-300 drop-shadow-[0_0_25px_rgba(251,191,36,0.65)] sm:text-7xl">
                                     {currentPopup.highlight || (popupIsFree ? '0,00 €' : 'OFERTA')}
                                 </p>
                             </div>
@@ -343,11 +374,15 @@ export default function AnnouncementBanner() {
                             </h2>
 
                             <div className="flex flex-wrap items-center justify-center gap-2 pt-1 font-sans text-xs font-bold">
-                                {pills.map((pill) => (
-                                    <span key={pill} className="rounded-xl border border-white/15 bg-white/[0.07] px-3 py-1.5 text-slate-100">
-                                        {pill}
-                                    </span>
-                                ))}
+                                {pills.map((pill) => {
+                                    const PillIcon = pill.icon;
+                                    return (
+                                        <span key={pill.text} className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/[0.07] px-3 py-1.5 text-slate-100">
+                                            <PillIcon size={13} className="text-amber-300" />
+                                            {pill.text}
+                                        </span>
+                                    );
+                                })}
                             </div>
 
                             {currentPopup.message && (
@@ -367,8 +402,7 @@ export default function AnnouncementBanner() {
                                         className={`group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r py-4 font-sans text-sm font-black tracking-wider uppercase transition duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-95 sm:text-base ${popupStyle.cta}`}
                                     >
                                         <Rocket size={18} />
-                                        <span>{currentPopup.cta_label || (popupIsFree ? '¡Crear servidor gratis!' : '¡Aprovechar ahora!')}</span>
-                                        <span>→</span>
+                                        <span>{currentPopup.cta_label || (popupIsFree ? 'Crear servidor gratis' : 'Aprovechar ahora')}</span>
                                     </a>
                                 )}
                             </div>
@@ -384,14 +418,14 @@ export default function AnnouncementBanner() {
                                             onClick={() => (other.cta_url ? goToPopup(other) : setPopupIdx(popups.findIndex((p) => p.id === other.id)))}
                                             className={`group flex cursor-pointer items-center justify-between gap-3 rounded-2xl border p-3 transition hover:scale-[1.01] ${
                                                 otherFree
-                                                    ? 'border-emerald-400/40 bg-emerald-500/10 hover:border-emerald-400 hover:bg-emerald-500/20'
+                                                    ? 'border-amber-400/40 bg-amber-500/10 hover:border-amber-400 hover:bg-amber-500/20'
                                                     : 'border-pink-400/40 bg-pink-500/10 hover:border-pink-400 hover:bg-pink-500/20'
                                             }`}
                                         >
                                             <div className="flex min-w-0 items-center gap-3">
                                                 <span
                                                     className={`shrink-0 rounded-xl px-2.5 py-1.5 text-xs font-black ${
-                                                        otherFree ? 'bg-emerald-400 text-black' : 'bg-pink-500 text-white'
+                                                        otherFree ? 'bg-amber-400 text-black' : 'bg-pink-500 text-white'
                                                     }`}
                                                 >
                                                     {other.highlight || (otherFree ? '0,00 €' : 'OFERTA')}
@@ -399,12 +433,12 @@ export default function AnnouncementBanner() {
                                                 <div className="min-w-0 font-sans">
                                                     <p className="truncate text-xs font-extrabold text-white">{other.title}</p>
                                                     <p className="truncate text-[11px] text-slate-300">
-                                                        {otherFree ? '⚡ Siempre disponible · Gana monedas y crea gratis' : other.message || 'Pulsa para acceder ahora'}
+                                                        {otherFree ? 'Siempre disponible · Gana monedas y crea gratis' : other.message || 'Pulsa para acceder ahora'}
                                                     </p>
                                                 </div>
                                             </div>
                                             <span className="shrink-0 rounded-xl bg-white/15 px-3 py-1.5 font-sans text-[11px] font-extrabold text-white transition group-hover:bg-white group-hover:text-black">
-                                                {other.cta_label || 'Ir'} →
+                                                {other.cta_label || 'Ir'}
                                             </span>
                                         </div>
                                     );
