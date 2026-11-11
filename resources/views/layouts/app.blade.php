@@ -32,6 +32,7 @@
     /> --}}
 
     
+    @include('partials.favicon')
 </head>
 <body>
     <div id="app">
