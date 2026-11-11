@@ -37,9 +37,11 @@ function MobileLink({ href, active, icon: Icon, admin = false, children }) {
     );
 }
 
-export default function Authenticated({ user, header, children }) {
+export default function Authenticated({ user: userProp, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const { panelUrl, auth, coins } = usePage().props;
+    // Si la página no pasa el usuario, se usa el de la sesión
+    const user = userProp ?? auth?.user ?? {};
     const isAdmin = Boolean(auth?.user?.is_admin);
     const isAdminArea = ADMIN_LINKS.some((l) => route().current(l.route));
     const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : 'U';
