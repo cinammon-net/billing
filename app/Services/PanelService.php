@@ -85,6 +85,23 @@ class PanelService
         return $m !== null && !empty($m['active']) && !empty($m['block_access']) && in_array('store', $m['scope'] ?? [], true);
     }
 
+    /**
+     * Anuncios comerciales (ofertas, novedades, eventos) publicados en el panel para la tienda.
+     * Cacheados 60 s.
+     */
+    public function announcements(): array
+    {
+        return Cache::remember('panel:announcements:store', 60, function () {
+            try {
+                $response = $this->http()->timeout(3)->acceptJson()->get($this->baseUrl.'/api/announcements', ['place' => 'store']);
+
+                return $response->successful() && is_array($response->json('data')) ? $response->json('data') : [];
+            } catch (\Throwable $e) {
+                return [];
+            }
+        });
+    }
+
     /** Concede en el panel el rol del rango comprado, hasta la fecha de renovación del pedido. */
     public function grantRole(Order $order): bool
     {

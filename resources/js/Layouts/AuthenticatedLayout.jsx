@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import MaintenanceBanner from '@/Components/MaintenanceBanner';
+import AnnouncementBanner from '@/Components/AnnouncementBanner';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import { Link, usePage } from '@inertiajs/react';
@@ -230,6 +231,7 @@ export default function Authenticated({ user: userProp, header, children }) {
             )}
 
             <MaintenanceBanner />
+            <AnnouncementBanner />
 
             {/* Contenido principal */}
             <main className="relative z-10">{children}</main>

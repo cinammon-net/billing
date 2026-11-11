@@ -45,6 +45,8 @@ class HandleInertiaRequests extends Middleware
             'coins' => fn () => $request->user()?->coins,
             // Aviso de mantenimiento anunciado desde el panel
             'maintenance' => fn () => app(\App\Services\PanelService::class)->maintenance(),
+            // Anuncios (ofertas, novedades, eventos) publicados desde el panel para la tienda
+            'announcements' => fn () => app(\App\Services\PanelService::class)->announcements(),
             'flash' => [
                 'success' => $request->session()->get('success'),
             ],
