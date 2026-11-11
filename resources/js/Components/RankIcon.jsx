@@ -1,16 +1,16 @@
 import { useId } from 'react';
 
 export const VIP_RANKS = [
-    { key: 'chispa', name: 'Chispa', color: '#f59e0b', secondary: '#fde047', icon: 'sparkles', tier: 'I' },
-    { key: 'neon', name: 'Neón', color: '#e879f9', secondary: '#f43f5e', icon: 'zap', tier: 'II' },
-    { key: 'synthwave', name: 'Synthwave', color: '#d946ef', secondary: '#fb923c', icon: 'audio-waveform', tier: 'III' },
-    { key: 'cibercanela', name: 'Cibercanela', color: '#fb7185', secondary: '#f59e0b', icon: 'flame', tier: 'IV' },
-    { key: 'leyenda', name: 'Leyenda Cinammon', color: '#facc15', secondary: '#ec4899', icon: 'crown', tier: 'V' },
-    { key: 'arquitecto', name: 'Arquitecto de Mundos', color: '#34d399', secondary: '#a7f3d0', icon: 'blocks', tier: 'ESP' },
-    { key: 'desarrollador', name: 'Desarrollador', color: '#818cf8', secondary: '#e879f9', icon: 'code', tier: 'ESP' },
-    { key: 'creador', name: 'Creador de Contenido', color: '#f43f5e', secondary: '#c084fc', icon: 'video', tier: 'ESP' },
-    { key: 'comandante', name: 'Comandante de Clan', color: '#f97316', secondary: '#facc15', icon: 'swords', tier: 'ESP' },
-    { key: 'mecenas', name: 'Mecenas', color: '#eab308', secondary: '#f472b6', icon: 'gem', tier: 'ESP' },
+    { key: 'chispa', role: 'Chispa', name: 'Chispa', label: 'VIP Chispa', color: '#f59e0b', secondary: '#fde047', icon: 'sparkles', tier: 'I' },
+    { key: 'neon', role: 'Neón', name: 'Neón', label: 'VIP Neón', color: '#e879f9', secondary: '#f43f5e', icon: 'zap', tier: 'II' },
+    { key: 'synthwave', role: 'Synthwave', name: 'Synthwave', label: 'VIP Synthwave', color: '#d946ef', secondary: '#fb923c', icon: 'audio-waveform', tier: 'III' },
+    { key: 'cibercanela', role: 'Cibercanela', name: 'Cibercanela', label: 'VIP Cibercanela', color: '#fb7185', secondary: '#f59e0b', icon: 'flame', tier: 'IV' },
+    { key: 'leyenda', role: 'Leyenda Cinammon', name: 'Leyenda Cinammon', label: 'VIP Leyenda', color: '#facc15', secondary: '#ec4899', icon: 'crown', tier: 'V' },
+    { key: 'arquitecto', role: 'Arquitecto de Mundos', name: 'Arquitecto de Mundos', label: 'VIP Arquitecto', color: '#34d399', secondary: '#a7f3d0', icon: 'blocks', tier: 'ESP' },
+    { key: 'desarrollador', role: 'Desarrollador', name: 'Desarrollador', label: 'VIP Desarrollador', color: '#818cf8', secondary: '#e879f9', icon: 'code', tier: 'ESP' },
+    { key: 'creador', role: 'Creador de Contenido', name: 'Creador de Contenido', label: 'VIP Creador', color: '#f43f5e', secondary: '#c084fc', icon: 'video', tier: 'ESP' },
+    { key: 'comandante', role: 'Comandante de Clan', name: 'Comandante de Clan', label: 'VIP Comandante', color: '#f97316', secondary: '#facc15', icon: 'swords', tier: 'ESP' },
+    { key: 'mecenas', role: 'Mecenas', name: 'Mecenas', label: 'VIP Mecenas', color: '#eab308', secondary: '#f472b6', icon: 'gem', tier: 'ESP' },
 ];
 
 export function getRankMeta(roleOrName) {
@@ -18,7 +18,9 @@ export function getRankMeta(roleOrName) {
     return (
         VIP_RANKS.find((r) => r.name.toLowerCase() === lower || r.key === lower || r.icon === lower) || {
             key: 'leyenda',
+            role: roleOrName || 'VIP',
             name: roleOrName || 'VIP',
+            label: roleOrName || 'VIP',
             color: '#facc15',
             secondary: '#ec4899',
             icon: 'crown',
@@ -30,7 +32,7 @@ export function getRankMeta(roleOrName) {
 /**
  * Iconos vectoriales originales diseñados a medida para cada rango VIP de Cinammon.
  */
-export default function RankIcon({ role, icon, className = 'h-6 w-6' }) {
+export default function RankIcon({ role, icon, size, className = 'h-6 w-6' }) {
     const uid = useId().replace(/:/g, '');
     const meta = getRankMeta(role || icon);
     const key = icon || meta.icon;
@@ -38,7 +40,14 @@ export default function RankIcon({ role, icon, className = 'h-6 w-6' }) {
     const c2 = meta.secondary;
 
     return (
-        <svg viewBox="0 0 32 32" fill="none" className={className} aria-hidden="true">
+        <svg
+            viewBox="0 0 32 32"
+            fill="none"
+            width={size}
+            height={size}
+            className={size ? className.replace(/\bh-\S+|\bw-\S+/g, '').trim() : className}
+            aria-hidden="true"
+        >
             <defs>
                 <linearGradient id={`rg-${uid}`} x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
                     <stop offset="0%" stopColor={c2} />
