@@ -1,35 +1,407 @@
+@php
+    $rawCode = trim($__env->yieldContent('code', isset($exception) && method_exists($exception, 'getStatusCode') ? (string) $exception->getStatusCode() : '500'));
+    $statusCode = $rawCode !== '' ? $rawCode : '500';
+
+    $meta = [
+        '400' => ['title' => 'Solicitud incorrecta', 'subtitle' => 'La petición no es válida o faltan datos necesarios para procesarla.', 'icon' => 'alert'],
+        '401' => ['title' => 'Sesión necesaria', 'subtitle' => 'Necesitas iniciar sesión para acceder a esta sección.', 'icon' => 'lock'],
+        '402' => ['title' => 'Pago requerido', 'subtitle' => 'Es necesario activar un plan o completar el pago para continuar.', 'icon' => 'card'],
+        '403' => ['title' => 'Acceso denegado', 'subtitle' => 'No tienes permisos para ver o modificar esta sección.', 'icon' => 'lock'],
+        '404' => ['title' => 'Página no encontrada', 'subtitle' => 'No encontramos la ruta que buscas o ha cambiado de ubicación.', 'icon' => 'compass'],
+        '405' => ['title' => 'Método no permitido', 'subtitle' => 'La acción solicitada no está permitida en esta dirección.', 'icon' => 'alert'],
+        '419' => ['title' => 'Sesión caducada', 'subtitle' => 'Tu formulario ha caducado por seguridad. Recarga la página e inténtalo de nuevo.', 'icon' => 'clock'],
+        '422' => ['title' => 'Datos no válidos', 'subtitle' => 'Algunos de los datos enviados no pasaron la validación.', 'icon' => 'alert'],
+        '423' => ['title' => 'Recurso bloqueado', 'subtitle' => 'Este recurso está protegido o bloqueado temporalmente.', 'icon' => 'lock'],
+        '429' => ['title' => 'Demasiadas peticiones', 'subtitle' => 'Has enviado muchas solicitudes seguidas. Espera unos segundos antes de reintentar.', 'icon' => 'clock'],
+        '500' => ['title' => 'Error interno del servidor', 'subtitle' => 'Ha ocurrido un problema inesperado en el servidor. Inténtalo de nuevo en unos instantes.', 'icon' => 'server'],
+        '502' => ['title' => 'Puerta de enlace incorrecta', 'subtitle' => 'Un servicio interno tardó demasiado o devolvió una respuesta no válida.', 'icon' => 'server'],
+        '503' => ['title' => 'Servicio en mantenimiento', 'subtitle' => 'Estamos aplicando mejoras en el sistema. Volveremos a estar disponibles enseguida.', 'icon' => 'wrench'],
+        '504' => ['title' => 'Tiempo de espera agotado', 'subtitle' => 'El servidor tardó demasiado en responder. Vuelve a intentarlo en unos segundos.', 'icon' => 'clock'],
+    ];
+
+    $info = $meta[$statusCode] ?? ['title' => 'Algo salió mal', 'subtitle' => 'No pudimos completar tu solicitud en este momento.', 'icon' => 'alert'];
+
+    $rawMessage = isset($exception) ? trim((string) $exception->getMessage()) : trim($__env->yieldContent('message', ''));
+    $generic = ['Forbidden', 'Not Found', 'Unauthorized', 'Page Expired', 'Too Many Requests', 'Server Error', 'Service Unavailable', 'Payment Required', 'Bad Request', 'Method Not Allowed', 'Locked'];
+    $detail = ($rawMessage !== '' && ! in_array($rawMessage, $generic, true)) ? $rawMessage : null;
+
+    $reqPath = parse_url(request()->fullUrl(), PHP_URL_PATH) ?: '/';
+    $isReload = in_array($statusCode, ['419', '500', '502', '503', '504'], true);
+    $isAuth = $statusCode === '401';
+@endphp
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ $statusCode }} · {{ $info['title'] }} — Cinammon</title>
 
-        <title>@yield('title')</title>
+        @includeIf('partials.favicon')
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
         <style>
-            /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}a{background-color:transparent}code{font-family:monospace,monospace;font-size:1em}[hidden]{display:none}html{font-family:system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;line-height:1.5}*,:after,:before{box-sizing:border-box;border:0 solid #e2e8f0}a{color:inherit;text-decoration:inherit}code{font-family:Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace}svg,video{display:block;vertical-align:middle}video{max-width:100%;height:auto}.bg-white{--bg-opacity:1;background-color:#fff;background-color:rgba(255,255,255,var(--bg-opacity))}.bg-gray-100{--bg-opacity:1;background-color:#f7fafc;background-color:rgba(247,250,252,var(--bg-opacity))}.border-gray-200{--border-opacity:1;border-color:#edf2f7;border-color:rgba(237,242,247,var(--border-opacity))}.border-gray-400{--border-opacity:1;border-color:#cbd5e0;border-color:rgba(203,213,224,var(--border-opacity))}.border-t{border-top-width:1px}.border-r{border-right-width:1px}.flex{display:flex}.grid{display:grid}.hidden{display:none}.items-center{align-items:center}.justify-center{justify-content:center}.font-semibold{font-weight:600}.h-5{height:1.25rem}.h-8{height:2rem}.h-16{height:4rem}.text-sm{font-size:.875rem}.text-lg{font-size:1.125rem}.leading-7{line-height:1.75rem}.mx-auto{margin-left:auto;margin-right:auto}.ml-1{margin-left:.25rem}.mt-2{margin-top:.5rem}.mr-2{margin-right:.5rem}.ml-2{margin-left:.5rem}.mt-4{margin-top:1rem}.ml-4{margin-left:1rem}.mt-8{margin-top:2rem}.ml-12{margin-left:3rem}.-mt-px{margin-top:-1px}.max-w-xl{max-width:36rem}.max-w-6xl{max-width:72rem}.min-h-screen{min-height:100vh}.overflow-hidden{overflow:hidden}.p-6{padding:1.5rem}.py-4{padding-top:1rem;padding-bottom:1rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.pt-8{padding-top:2rem}.fixed{position:fixed}.relative{position:relative}.top-0{top:0}.right-0{right:0}.shadow{box-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px 0 rgba(0,0,0,.06)}.text-center{text-align:center}.text-gray-200{--text-opacity:1;color:#edf2f7;color:rgba(237,242,247,var(--text-opacity))}.text-gray-300{--text-opacity:1;color:#e2e8f0;color:rgba(226,232,240,var(--text-opacity))}.text-gray-400{--text-opacity:1;color:#cbd5e0;color:rgba(203,213,224,var(--text-opacity))}.text-gray-500{--text-opacity:1;color:#a0aec0;color:rgba(160,174,192,var(--text-opacity))}.text-gray-600{--text-opacity:1;color:#718096;color:rgba(113,128,150,var(--text-opacity))}.text-gray-700{--text-opacity:1;color:#4a5568;color:rgba(74,85,104,var(--text-opacity))}.text-gray-900{--text-opacity:1;color:#1a202c;color:rgba(26,32,44,var(--text-opacity))}.uppercase{text-transform:uppercase}.underline{text-decoration:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.tracking-wider{letter-spacing:.05em}.w-5{width:1.25rem}.w-8{width:2rem}.w-auto{width:auto}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}@-webkit-keyframes spin{0%{transform:rotate(0deg)}to{transform:rotate(1turn)}}@keyframes spin{0%{transform:rotate(0deg)}to{transform:rotate(1turn)}}@-webkit-keyframes ping{0%{transform:scale(1);opacity:1}75%,to{transform:scale(2);opacity:0}}@keyframes ping{0%{transform:scale(1);opacity:1}75%,to{transform:scale(2);opacity:0}}@-webkit-keyframes pulse{0%,to{opacity:1}50%{opacity:.5}}@keyframes pulse{0%,to{opacity:1}50%{opacity:.5}}@-webkit-keyframes bounce{0%,to{transform:translateY(-25%);-webkit-animation-timing-function:cubic-bezier(.8,0,1,1);animation-timing-function:cubic-bezier(.8,0,1,1)}50%{transform:translateY(0);-webkit-animation-timing-function:cubic-bezier(0,0,.2,1);animation-timing-function:cubic-bezier(0,0,.2,1)}}@keyframes bounce{0%,to{transform:translateY(-25%);-webkit-animation-timing-function:cubic-bezier(.8,0,1,1);animation-timing-function:cubic-bezier(.8,0,1,1)}50%{transform:translateY(0);-webkit-animation-timing-function:cubic-bezier(0,0,.2,1);animation-timing-function:cubic-bezier(0,0,.2,1)}}@media (min-width:640px){.sm\:rounded-lg{border-radius:.5rem}.sm\:block{display:block}.sm\:items-center{align-items:center}.sm\:justify-start{justify-content:flex-start}.sm\:justify-between{justify-content:space-between}.sm\:h-20{height:5rem}.sm\:ml-0{margin-left:0}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:pt-0{padding-top:0}.sm\:text-left{text-align:left}.sm\:text-right{text-align:right}}@media (min-width:768px){.md\:border-t-0{border-top-width:0}.md\:border-l{border-left-width:1px}.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (min-width:1024px){.lg\:px-8{padding-left:2rem;padding-right:2rem}}@media (prefers-color-scheme:dark){.dark\:bg-gray-800{--bg-opacity:1;background-color:#2d3748;background-color:rgba(45,55,72,var(--bg-opacity))}.dark\:bg-gray-900{--bg-opacity:1;background-color:#1a202c;background-color:rgba(26,32,44,var(--bg-opacity))}.dark\:border-gray-700{--border-opacity:1;border-color:#4a5568;border-color:rgba(74,85,104,var(--border-opacity))}.dark\:text-white{--text-opacity:1;color:#fff;color:rgba(255,255,255,var(--text-opacity))}.dark\:text-gray-400{--text-opacity:1;color:#cbd5e0;color:rgba(203,213,224,var(--text-opacity))}}
-        </style>
+            :root {
+                --err-hue: 350;
+                --err-accent: oklch(0.79 0.16 var(--err-hue));
+                --err-accent-strong: oklch(0.72 0.17 var(--err-hue));
+                --err-soft: oklch(0.79 0.16 var(--err-hue) / 0.12);
+                --err-border: oklch(0.79 0.16 var(--err-hue) / 0.34);
+                --err-glow: oklch(0.79 0.16 var(--err-hue) / 0.18);
+                --err-surface: rgba(14, 14, 18, 0.92);
+            }
 
-        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
             body {
-                font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                background-color: #08080a;
+                background-image:
+                    radial-gradient(640px circle at 50% 18%, var(--err-glow), transparent 70%),
+                    radial-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+                background-size: auto, 22px 22px;
+                color: #f4f4f5;
+                font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            .card {
+                position: relative;
+                width: 100%;
+                max-width: 540px;
+                overflow: hidden;
+                border-radius: 18px;
+                border: 1px solid var(--err-border);
+                background: var(--err-surface);
+                padding: 36px 30px 30px;
+                text-align: center;
+                box-shadow: 0 24px 70px rgba(0, 0, 0, 0.72), 0 0 42px var(--err-glow);
+                backdrop-filter: blur(12px);
+                animation: riseIn 0.35s ease-out;
+            }
+
+            .card::before {
+                content: '';
+                position: absolute;
+                inset: 0 0 auto 0;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, var(--err-accent), transparent);
+            }
+
+            .icon-ring {
+                width: 64px;
+                height: 64px;
+                margin: 0 auto 18px;
+                border-radius: 9999px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid var(--err-border);
+                background: var(--err-soft);
+                color: var(--err-accent);
+                box-shadow: 0 0 24px var(--err-glow);
+            }
+
+            .status-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 4px 12px;
+                border-radius: 9999px;
+                border: 1px solid var(--err-border);
+                background: var(--err-soft);
+                color: var(--err-accent);
+                font-family: 'Orbitron', sans-serif;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+            }
+
+            .code {
+                margin-top: 12px;
+                font-family: 'Orbitron', sans-serif;
+                font-size: clamp(50px, 10vw, 72px);
+                font-weight: 800;
+                line-height: 1;
+                letter-spacing: 0.06em;
+                color: var(--err-accent);
+                text-shadow: 0 0 28px var(--err-glow);
+            }
+
+            h1 {
+                margin-top: 10px;
+                font-family: 'Orbitron', sans-serif;
+                font-size: clamp(18px, 3.6vw, 23px);
+                font-weight: 700;
+                color: #ffffff;
+                letter-spacing: 0.02em;
+            }
+
+            .subtitle {
+                margin: 10px auto 0;
+                max-width: 430px;
+                font-size: 14px;
+                line-height: 1.55;
+                color: #a1a1aa;
+            }
+
+            .detail {
+                margin: 16px auto 0;
+                padding: 10px 14px;
+                border-radius: 10px;
+                border: 1px solid var(--err-border);
+                background: rgba(255, 255, 255, 0.025);
+                font-size: 13px;
+                line-height: 1.45;
+                color: #e4e4e7;
+                word-break: break-word;
+            }
+
+            .path-badge {
+                display: inline-block;
+                margin-top: 14px;
+                max-width: 100%;
+                padding: 4px 10px;
+                border-radius: 6px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                background: rgba(255, 255, 255, 0.03);
+                font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                font-size: 11.5px;
+                color: #a1a1aa;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .actions {
+                margin-top: 24px;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 7px;
+                padding: 10px 18px;
+                border-radius: 9px;
+                font-size: 13px;
+                font-weight: 600;
+                text-decoration: none;
+                cursor: pointer;
+                border: 1px solid transparent;
+                transition: transform 0.15s ease, filter 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+            }
+
+            .btn:hover {
+                transform: translateY(-1px);
+            }
+
+            .btn-primary {
+                background: var(--err-accent);
+                color: #09090b;
+                box-shadow: 0 6px 20px var(--err-glow);
+            }
+
+            .btn-primary:hover {
+                filter: brightness(1.07);
+            }
+
+            .btn-ghost {
+                border-color: rgba(255, 255, 255, 0.14);
+                background: rgba(255, 255, 255, 0.04);
+                color: #e4e4e7;
+            }
+
+            .btn-ghost:hover {
+                border-color: var(--err-border);
+                background: var(--err-soft);
+                color: #ffffff;
+            }
+
+            @keyframes riseIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @media (max-width: 480px) {
+                .card {
+                    padding: 28px 20px 24px;
+                }
+                .actions {
+                    flex-direction: column;
+                }
+                .btn {
+                    width: 100%;
+                }
             }
         </style>
-            @include('partials.favicon')
-    </head>
-    <body class="antialiased">
-        <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0">
-            <div class="max-w-xl mx-auto sm:px-6 lg:px-8">
-                <div class="flex items-center pt-8 sm:justify-start sm:pt-0">
-                    <div class="px-4 text-lg text-gray-500 border-r border-gray-400 tracking-wider">
-                        @yield('code')
-                    </div>
 
-                    <div class="ml-4 text-lg text-gray-500 uppercase tracking-wider">
-                        @yield('message')
-                    </div>
-                </div>
+        <script>
+            (function () {
+                var HUES = {
+                    christmas: 25,
+                    new_years_eve: 85,
+                    new_year: 85,
+                    reyes: 85,
+                    valentine: 350,
+                    carnival: 330,
+                    easter: 340,
+                    halloween: 50,
+                    muertos: 55,
+                    thanksgiving: 45,
+                    black_friday: 85,
+                    gamer_day: 145,
+                    star_wars: 25,
+                    book_day: 20,
+                    san_juan: 45,
+                    winter: 275,
+                    spring: 150,
+                    summer: 75,
+                    autumn: 48
+                };
+
+                function applyHue(h) {
+                    if (h == null || isNaN(Number(h))) return;
+                    document.documentElement.style.setProperty('--err-hue', String(h));
+                }
+
+                function applyAccent(color) {
+                    if (!color) return;
+                    var root = document.documentElement.style;
+                    root.setProperty('--err-accent', color);
+                    root.setProperty('--err-accent-strong', color);
+                    root.setProperty('--err-soft', 'color-mix(in oklab, ' + color + ' 13%, transparent)');
+                    root.setProperty('--err-border', 'color-mix(in oklab, ' + color + ' 36%, transparent)');
+                    root.setProperty('--err-glow', 'color-mix(in oklab, ' + color + ' 20%, transparent)');
+                }
+
+                function applyContext(ctx) {
+                    if (!ctx) return false;
+                    var key = (ctx.holiday && ctx.holiday.key) || (ctx.season && ctx.season.key);
+                    if (key && HUES[key] != null) {
+                        applyHue(HUES[key]);
+                        return true;
+                    }
+                    return false;
+                }
+
+                // 1) Si viene dentro del modal iframe de Inertia, heredar al instante del documento padre.
+                var applied = false;
+                try {
+                    if (window.top && window.top !== window.self) {
+                        if (window.top.__SEASON__) {
+                            applied = applyContext(window.top.__SEASON__);
+                        }
+                        if (!applied) {
+                            var parentStyles = getComputedStyle(window.top.document.documentElement);
+                            var parentAccent = parentStyles.getPropertyValue('--color-pink-400').trim() || parentStyles.getPropertyValue('--tw-c-pink-400').trim();
+                            var oklchMatch = parentAccent.match(/oklch\([^)]+\s+([\d.]+)\)/i);
+                            if (oklchMatch) {
+                                applyHue(oklchMatch[1]);
+                                applied = true;
+                            } else if (parentAccent && CSS && CSS.supports && CSS.supports('color', 'color-mix(in oklab, red 50%, transparent)')) {
+                                applyAccent(parentAccent);
+                                applied = true;
+                            }
+                        }
+                    }
+                } catch (e) {}
+
+                // 2) Cache local de sesion (compartida con season.js).
+                if (!applied) {
+                    try {
+                        var cached = JSON.parse(sessionStorage.getItem('cin-season-ctx') || 'null');
+                        if (cached && cached.v) applied = applyContext(cached.v);
+                    } catch (e) {}
+                }
+
+                // 3) Resolver directamente con el contexto del servidor en billing.
+                var serverSeason = @json(rescue(fn () => app(\App\Services\SeasonService::class)->forRequest(request()), null, false));
+                if (serverSeason) {
+                    window.__SEASON__ = serverSeason;
+                    if (!applied) applyContext(serverSeason);
+                }
+            })();
+        </script>
+
+        <script>
+            window.__SEASON_COLORS_ONLY__ = true;
+        </script>
+        <script src="/season/season.js?v=22" defer></script>
+    </head>
+    <body>
+        <main class="card" role="alert">
+            <div class="icon-ring" aria-hidden="true">
+                @switch($info['icon'])
+                    @case('lock')
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        @break
+                    @case('compass')
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                        @break
+                    @case('clock')
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        @break
+                    @case('server')
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
+                        @break
+                    @case('wrench')
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                        @break
+                    @case('card')
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                        @break
+                    @default
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                @endswitch
             </div>
-        </div>
+
+            <span class="status-pill">Cinammon Network · HTTP {{ $statusCode }}</span>
+            <div class="code">{{ $statusCode }}</div>
+            <h1>{{ $info['title'] }}</h1>
+            <p class="subtitle">{{ $info['subtitle'] }}</p>
+
+            @if ($detail)
+                <div class="detail">{{ $detail }}</div>
+            @endif
+
+            <div class="path-badge" title="{{ request()->fullUrl() }}">{{ $reqPath }}</div>
+
+            <div class="actions">
+                <button type="button" class="btn btn-ghost" onclick="if (window.top !== window.self) { window.top.history.back(); } else if (history.length > 1) { history.back(); } else { window.location.href = '/'; }">
+                    Volver atrás
+                </button>
+
+                @if ($isAuth)
+                    <a href="/login" target="_top" class="btn btn-primary">Iniciar sesión</a>
+                @elseif ($isReload)
+                    <button type="button" class="btn btn-primary" onclick="window.top ? window.top.location.reload() : window.location.reload()">Reintentar</button>
+                @else
+                    <a href="/" target="_top" class="btn btn-primary">Volver al inicio</a>
+                @endif
+            </div>
+        </main>
     </body>
 </html>
