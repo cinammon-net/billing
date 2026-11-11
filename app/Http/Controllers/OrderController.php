@@ -66,7 +66,7 @@ class OrderController extends Controller
             'billing_cycle' => $cycle,
         ]);
 
-        Invoice::create([
+        $invoice = Invoice::create([
             'user_id' => $request->user()->id,
             'order_id' => $order->id,
             'number' => sprintf('CIN-%s-%04d', now()->format('Ym'), $order->id),
@@ -74,6 +74,13 @@ class OrderController extends Controller
             'status' => 'pending',
             'due_at' => now()->addDays(7),
         ]);
+
+        \App\Mail\BillingMail::deliver($request->user()->email, "Pedido creado · factura {$invoice->number}", 'invoice-created', [
+            'user' => $request->user(),
+            'invoice' => $invoice,
+            'isRank' => $plan->isRank(),
+            'what' => $plan->isRank() ? "Rango {$plan->name}" : "{$plan->name} · {$validated['server_name']}",
+        ], "invoice-{$invoice->number}");
 
         return redirect()->route('dashboard')->with(
             'success',

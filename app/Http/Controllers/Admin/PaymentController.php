@@ -50,6 +50,12 @@ class PaymentController extends Controller
         abort_unless($invoice->status === 'awaiting', 409);
         $invoice->update(['status' => 'pending', 'admin_note' => $data['admin_note']]);
 
+        \App\Mail\BillingMail::deliver($invoice->user?->email, "Pago no confirmado · {$invoice->number}", 'payment-rejected', [
+            'user' => $invoice->user,
+            'invoice' => $invoice,
+            'reason' => $data['admin_note'],
+        ], 'rejected-'.$invoice->number.'-'.now()->timestamp);
+
         return back()->with('success', "{$invoice->number} devuelta a pendiente: el cliente verá el motivo.");
     }
 }

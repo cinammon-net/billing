@@ -134,13 +134,27 @@ class PaymentService
         }
 
         if ($order->plan->isRank()) {
-            return $this->panel->grantRole($order)
+            $result = $this->panel->grantRole($order)
                 ? "Pago recibido. Ya tienes el rango «{$order->plan->name}» en el panel hasta el {$order->renews_at?->format('d/m/Y H:i')}."
                 : "Pago recibido. El rango «{$order->plan->name}» se activará en el panel en unos minutos.";
+        } else {
+            $result = $this->panel->provision($order)
+                ? "Pago recibido. Servidor «{$order->server_name}» creado en el panel."
+                : "Pago recibido. El servidor «{$order->server_name}» se está preparando en el panel.";
         }
 
-        return $this->panel->provision($order)
-            ? "Pago recibido. Servidor «{$order->server_name}» creado en el panel."
-            : "Pago recibido. El servidor «{$order->server_name}» se está preparando en el panel.";
+        // Justificante por correo (solo la primera vez que se marca pagada: $fresh).
+        $labels = ['transfer' => 'Transferencia', 'bizum' => 'Bizum', 'crypto' => 'Criptomonedas', 'paypal' => 'PayPal', 'simulate' => 'Prueba'];
+        \App\Mail\BillingMail::deliver($order->user?->email, "Pago recibido · {$invoice->number}", 'payment-received', [
+            'user' => $order->user,
+            'invoice' => $invoice->fresh(),
+            'order' => $order,
+            'what' => $order->plan?->isRank() ? "Rango {$order->plan->name}" : "{$order->plan?->name} · {$order->server_name}",
+            'method' => $labels[$method] ?? ucfirst($method),
+            'result' => \Illuminate\Support\Str::after($result, 'Pago recibido. '),
+            'panelUrl' => rtrim((string) config('billing.panel_url'), '/'),
+        ], "paid-{$invoice->number}");
+
+        return $result;
     }
 }

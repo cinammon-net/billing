@@ -65,6 +65,16 @@ class CheckoutController extends Controller
 
         $invoice->update(['status' => 'awaiting', 'payment_method' => $data['method'], 'payer_note' => $data['payer_note'], 'admin_note' => null]);
 
+        // Aviso al equipo para que revise el ingreso.
+        $order = $invoice->order()->with('plan')->first();
+        \App\Mail\BillingMail::deliver(config('billing.admin_emails') ?: config('services.cloudflare_mail.support'),
+            "Pago por revisar · {$invoice->number}", 'payment-review', [
+                'user' => $request->user(),
+                'invoice' => $invoice,
+                'method' => $data['method'] === 'bizum' ? 'Bizum' : 'transferencia',
+                'what' => $order?->plan?->isRank() ? "Rango {$order->plan->name}" : trim(($order?->plan?->name ?? '').' · '.($order?->server_name ?? ''), ' ·'),
+            ], 'review-'.$invoice->number.'-'.now()->timestamp);
+
         return redirect()->route('dashboard')->with('success', "Aviso de pago recibido para {$invoice->number}. Activaremos tu servicio en cuanto confirmemos el ingreso.");
     }
 

@@ -26,5 +26,15 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Validation\Rules\Password::defaults(fn () => \Illuminate\Validation\Rules\Password::min(4));
 
         Event::listen(Login::class, RecordLogin::class);
+
+        // Mailer "cloudflare" (MAIL_MAILER=cloudflare): envía a través del Worker cinammon-mail.
+        \Illuminate\Support\Facades\Mail::extend('cloudflare', fn () => new \App\Mail\Transport\CloudflareTransport(
+            (string) config('services.cloudflare_mail.url'),
+            (string) config('services.cloudflare_mail.secret'),
+            'billing',
+        ));
+
+        // "He olvidado mi contraseña" en español y con la marca.
+        \Illuminate\Auth\Notifications\ResetPassword::toMailUsing(fn ($user, string $token) => \App\Mail\ResetPasswordMail::build($user, $token));
     }
 }
