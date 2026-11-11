@@ -186,6 +186,13 @@ class PlanSeeder extends Seeder
             ],
         ];
 
+        // Planes de egg con características propias (la lista genérica de su categoría no les encaja)
+        $eggFeatures = [
+            'WordPress' => ['Certificado SSL gratuito', 'WordPress en español instalado en un clic', 'PHP 8.3 y MariaDB', 'Gestor de archivos y SFTP', 'Soporte 24/7'],
+            'Vite / Apps JavaScript' => ['Certificado SSL gratuito', 'Node.js 22: Vite, React, Vue, Astro, Next', 'Despliegue desde Git', 'Gestor de archivos y SFTP', 'Soporte 24/7'],
+            'WebHost (Nginx + PHP)' => ['Certificado SSL gratuito', 'PHP 8.3 y MariaDB', 'WordPress, Joomla, Drupal y más en un clic', 'Gestor de archivos y SFTP', 'Soporte 24/7'],
+        ];
+
         foreach ($plans as $i => $plan) {
             $slug = Str::slug($plan['category'] . '-' . $plan['name']);
             $existing = Plan::where('slug', $slug)->first();
@@ -197,7 +204,7 @@ class PlanSeeder extends Seeder
                 'perks' => null,
                 ...$plan,
                 'cycle_prices' => isset($plan['role']) ? Plan::rankCyclePrices($plan['price']) : Plan::defaultCyclePrices($plan['price']),
-                'features' => $rankFeatures ?? $features[$plan['category']],
+                'features' => $rankFeatures ?? $eggFeatures[$plan['egg'] ?? ''] ?? $features[$plan['category']],
                 'addons' => $webAddons[$plan['name']] ?? null,
                 'sort' => $i,
             ];

@@ -274,5 +274,7 @@ return [
     ['category' => 'voice', 'egg' => 'Teamspeak3 Server ARM64', 'name' => 'Teamspeak3 Server ARM64', 'ram_mb' => 512, 'cpu_pct' => 50, 'storage_gb' => 5, 'price' => 0.99, 'popular' => false],
     ['category' => 'voice', 'egg' => 'TeaSpeak', 'name' => 'TeaSpeak', 'ram_mb' => 512, 'cpu_pct' => 50, 'storage_gb' => 5, 'price' => 0.99, 'popular' => false],
     ['category' => 'voice', 'egg' => 'TS3 Manager', 'name' => 'TS3 Manager', 'ram_mb' => 1024, 'cpu_pct' => 75, 'storage_gb' => 10, 'price' => 1.49, 'popular' => false],
+    ['category' => 'web', 'egg' => 'Vite / Apps JavaScript', 'name' => 'Vite / Apps JavaScript', 'ram_mb' => 1024, 'cpu_pct' => 75, 'storage_gb' => 10, 'price' => 1.49, 'popular' => false],
     ['category' => 'web', 'egg' => 'WebHost (Nginx + PHP)', 'name' => 'WebHost (Nginx + PHP)', 'ram_mb' => 1024, 'cpu_pct' => 75, 'storage_gb' => 10, 'price' => 1.49, 'popular' => false],
+    ['category' => 'web', 'egg' => 'WordPress', 'name' => 'WordPress', 'ram_mb' => 1024, 'cpu_pct' => 75, 'storage_gb' => 10, 'price' => 1.49, 'popular' => false],
 ];
