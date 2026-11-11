@@ -1,4 +1,5 @@
 import PublicLayout from '@/Layouts/PublicLayout';
+import RankIcon, { VIP_RANKS } from '@/Components/RankIcon';
 import { Head, Link } from '@inertiajs/react';
 import {
     Gift,
@@ -55,11 +56,11 @@ const CATEGORY_META = {
     bots: {
         icon: Bot,
         code: 'CLUSTER-APPS',
-        color: 'from-cyan-500/20 via-blue-500/10 to-transparent',
+        color: 'from-fuchsia-500/20 via-purple-500/10 to-transparent',
         borderHover: 'group-hover:border-neon',
         glowHover: 'group-hover:shadow-[0_0_30px_oklch(var(--tw-c-neon)_/_0.25)]',
         accentText: 'text-neon',
-        badgeBg: 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300',
+        badgeBg: 'bg-fuchsia-500/15 border-fuchsia-500/30 text-fuchsia-300',
         badge: 'NODE.JS · PYTHON · JAVA · GO',
         specs: ['Reinicio Automático 24/7', 'Logs en Tiempo Real', 'Uptime 99.98% Garantizado'],
         serversCount: '3 Planes Disponibles',
@@ -112,11 +113,11 @@ const CATEGORY_META = {
     software: {
         icon: AppWindow,
         code: 'CLUSTER-APPS',
-        color: 'from-sky-500/20 via-cyan-500/10 to-transparent',
-        borderHover: 'group-hover:border-sky-400',
-        glowHover: 'group-hover:shadow-[0_0_30px_rgba(14,165,233,0.25)]',
-        accentText: 'text-sky-400',
-        badgeBg: 'bg-sky-500/15 border-sky-500/30 text-sky-300',
+        color: 'from-indigo-500/20 via-purple-500/10 to-transparent',
+        borderHover: 'group-hover:border-indigo-400',
+        glowHover: 'group-hover:shadow-[0_0_30px_rgba(99,102,241,0.25)]',
+        accentText: 'text-indigo-400',
+        badgeBg: 'bg-indigo-500/15 border-indigo-500/30 text-indigo-300',
         badge: 'GRAFANA · GITEA · UPTIME KUMA · MINIO',
         specs: ['Aplicaciones autoalojadas', 'Acceso web y SFTP', 'Backups automáticos'],
     },
@@ -306,6 +307,21 @@ export default function StoreIndex({ categories, freeStats }) {
                                                         className="h-8 w-8 rounded-md border border-slate-700/80 bg-black/40 object-cover"
                                                         onError={(e) => { e.currentTarget.style.display = 'none'; }}
                                                     />
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {c.key === 'ranks' && (
+                                            <div className="mt-4 flex flex-wrap items-center gap-2">
+                                                {VIP_RANKS.map((r) => (
+                                                    <span
+                                                        key={r.role}
+                                                        title={r.label}
+                                                        className="flex h-8 w-8 items-center justify-center rounded-md border bg-black/50"
+                                                        style={{ borderColor: `${r.color}55`, boxShadow: `0 0 10px ${r.color}22` }}
+                                                    >
+                                                        <RankIcon role={r.role} size={20} />
+                                                    </span>
                                                 ))}
                                             </div>
                                         )}

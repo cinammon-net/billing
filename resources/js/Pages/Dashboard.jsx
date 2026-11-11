@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Modal from '@/Components/Modal';
+import RankIcon, { RankEmblem } from '@/Components/RankIcon';
 import { Head, Link, usePage, router } from '@inertiajs/react';
 import { fmtPrice, cycleUnit } from '@/lib/price';
 import { 
@@ -37,8 +38,8 @@ const STATUS_CONFIG = {
     },
     awaiting: {
         label: 'Pago en revisión',
-        badgeCls: 'border-sky-500/40 bg-sky-500/10 text-sky-300 shadow-[0_0_10px_rgba(14,165,233,0.2)]',
-        dotCls: 'bg-sky-400'
+        badgeCls: 'border-purple-500/40 bg-purple-500/10 text-purple-300 shadow-[0_0_10px_rgba(168,85,247,0.2)]',
+        dotCls: 'bg-purple-400'
     },
     pending: { 
         label: 'Pendiente de Pago', 
@@ -57,8 +58,8 @@ const STATUS_CONFIG = {
     },
     paid: { 
         label: 'Pagada', 
-        badgeCls: 'border-cyan-500/40 bg-cyan-500/10 text-cyan-300 shadow-[0_0_10px_oklch(var(--tw-c-neon)_/_0.2)]', 
-        dotCls: 'bg-cyan-400' 
+        badgeCls: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300 shadow-[0_0_10px_oklch(var(--tw-c-neon)_/_0.2)]', 
+        dotCls: 'bg-emerald-400' 
     },
     overdue: { 
         label: 'Vencida', 
@@ -249,6 +250,7 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                                                 {/* Detalle Servidor */}
                                                 <div className="space-y-2">
                                                     <div className="flex flex-wrap items-center gap-2.5">
+                                                        {o.plan?.role && <RankEmblem role={o.plan.role} size="sm" />}
                                                         <h3 className="font-mono text-base font-bold text-white tracking-wide">
                                                             {o.server_name}
                                                         </h3>
@@ -259,13 +261,18 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                                                     </div>
 
                                                     {/* IP y dirección */}
-                                                    {o.server_address ? (
+                                                    {o.plan?.role ? (
+                                                        <div className="flex items-center gap-2 font-mono text-xs" style={{ color: o.plan.perks?.color ?? '#facc15' }}>
+                                                            <RankIcon role={o.plan.role} size={14} />
+                                                            <span>Rango VIP activo en tu cuenta del panel</span>
+                                                        </div>
+                                                    ) : o.server_address ? (
                                                         <div className="flex items-center gap-2 font-mono text-xs text-neon">
                                                             <span>IP: {o.server_address}</span>
                                                             <button
                                                                 type="button"
                                                                 onClick={() => handleCopyIp(o.server_address)}
-                                                                className="rounded border border-cyan-800 bg-cyan-950/50 p-1 text-cyan-300 transition hover:bg-cyan-800 hover:text-white"
+                                                                className="rounded border border-pink-800 bg-pink-950/50 p-1 text-pink-300 transition hover:bg-pink-800 hover:text-white"
                                                                 title="Copiar IP de conexión"
                                                             >
                                                                 {copiedIp === o.server_address ? <Check size={12} /> : <Copy size={12} />}
@@ -283,9 +290,14 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                                                     {/* Specs Hardware */}
                                                     <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] text-slate-300">
                                                         <span className="rounded-md border border-neutral-800 bg-[#090d1f] px-2.5 py-1">
-                                                            <Gamepad2 className="mr-1 inline h-3.5 w-3.5 -translate-y-px" aria-hidden="true" />Plan: <span className="text-pink-300 font-semibold">{o.is_free ? `Gratis · ${o.egg}` : o.plan?.name || 'Personalizado'}</span>
+                                                            {o.plan?.role ? (
+                                                                <RankIcon role={o.plan.role} size={13} className="mr-1 inline -translate-y-px" />
+                                                            ) : (
+                                                                <Gamepad2 className="mr-1 inline h-3.5 w-3.5 -translate-y-px" aria-hidden="true" />
+                                                            )}
+                                                            Plan: <span className="text-pink-300 font-semibold">{o.is_free ? `Gratis · ${o.egg}` : o.plan?.name || 'Personalizado'}</span>
                                                         </span>
-                                                        {(o.plan || o.is_free) && (
+                                                        {!o.plan?.role && (o.plan || o.is_free) && (
                                                             <>
                                                                 <span className="rounded-md border border-neutral-800 bg-[#090d1f] px-2.5 py-1">
                                                                     <Zap className="mr-1 inline h-3.5 w-3.5 -translate-y-px" aria-hidden="true" />{fmtRam(o.ram_mb ?? o.plan.ram_mb)} RAM

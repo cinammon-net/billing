@@ -27,7 +27,7 @@ class SeasonController extends Controller
     private const FAVICON_SITES = ['net', 'panel', 'store', 'billing', 'demo', 'nodo', 'wings', 'admin'];
 
     /** Temas con colores propios (los mismos que PALETTES en season.js). */
-    private const PALETTES = ['christmas', 'new_year', 'reyes', 'valentine', 'carnival', 'easter', 'halloween', 'muertos', 'thanksgiving',
+    private const PALETTES = ['christmas', 'new_years_eve', 'new_year', 'reyes', 'valentine', 'carnival', 'easter', 'halloween', 'muertos', 'thanksgiving',
         'black_friday', 'gamer_day', 'star_wars', 'book_day', 'san_juan', 'winter', 'spring', 'summer', 'autumn'];
 
     /**
@@ -42,16 +42,21 @@ class SeasonController extends Controller
         $key = $context['holiday']
             ? (in_array($context['holiday']['key'] ?? '', self::PALETTES, true) ? $context['holiday']['key'] : null)
             : ($context['season']['key'] ?? null);
+        if ($key === 'new_years_eve') {
+            $key = 'new_year';
+        }
         $dir = public_path('season/fav/');
         $file = $key && is_file($dir.$site.'-'.$key.'.png') ? $dir.$site.'-'.$key.'.png' : $dir.$site.'.png';
 
-        return response()->file($file, [
+        $response = response()->file($file, [
             'Content-Type' => 'image/png',
-            // private: Cloudflare no lo guarda (cambia según el país del visitante)
-            'Cache-Control' => 'private, max-age=3600',
             'Vary' => 'CF-IPCountry',
             'Access-Control-Allow-Origin' => '*',
             'Cross-Origin-Resource-Policy' => 'cross-origin',
         ]);
+        // BinaryFileResponse pisa Cache-Control con public si se pasa en el array; lo fijamos aquí para que Cloudflare no mezcle países ni temporadas.
+        $response->headers->set('Cache-Control', 'private, no-cache, max-age=0, must-revalidate');
+
+        return $response;
     }
 }

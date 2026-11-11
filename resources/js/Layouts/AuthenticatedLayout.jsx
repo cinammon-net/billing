@@ -3,6 +3,7 @@ import MaintenanceBanner from '@/Components/MaintenanceBanner';
 import AnnouncementBanner from '@/Components/AnnouncementBanner';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
+import RankIcon from '@/Components/RankIcon';
 import { Link, usePage } from '@inertiajs/react';
 import { ArrowUpRight, BadgePercent, Gift, ChevronDown, Coins, CreditCard, Layers, LogOut, Menu, Receipt, Server, ShieldCheck, ShoppingCart, Tags, User, X } from 'lucide-react';
 
@@ -40,7 +41,8 @@ function MobileLink({ href, active, icon: Icon, admin = false, children }) {
 
 export default function Authenticated({ user: userProp, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-    const { panelUrl, auth, coins, adventSummary } = usePage().props;
+    const { panelUrl, auth, coins, adventSummary, vipRanks = [] } = usePage().props;
+    const primaryVip = vipRanks[0] ?? null;
     // Si la página no pasa el usuario, se usa el de la sesión
     const user = userProp ?? auth?.user ?? {};
     const isAdmin = Boolean(auth?.user?.is_admin);
@@ -58,7 +60,7 @@ export default function Authenticated({ user: userProp, header, children }) {
         <div className="relative min-h-screen bg-[#04060d] font-sans text-slate-100 antialiased selection:bg-pink-500 selection:text-white">
             {/* Fondo ambiental Cyberpunk */}
             <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-                <div className="absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-cyan-500/10 blur-[130px]" />
+                <div className="absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-fuchsia-500/10 blur-[130px]" />
                 <div className="absolute top-1/3 -right-40 h-96 w-96 rounded-full bg-pink-500/10 blur-[130px]" />
                 <div className="absolute -bottom-40 left-1/3 h-96 w-96 rounded-full bg-purple-500/10 blur-[140px]" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle,#ffffff_1px,transparent_1px)] bg-[length:24px_24px] opacity-[0.06]" />
@@ -153,6 +155,15 @@ export default function Authenticated({ user: userProp, header, children }) {
                                             <span title="Conectado" className="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#05070f] bg-emerald-400" />
                                         </span>
                                         <span className="max-w-[120px] truncate">{user.name}</span>
+                                        {primaryVip && (
+                                            <span
+                                                title={primaryVip.name}
+                                                className="inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-bold"
+                                                style={{ color: primaryVip.color, borderColor: `${primaryVip.color}66`, backgroundColor: `${primaryVip.color}1a` }}
+                                            >
+                                                <RankIcon role={primaryVip.role} size={13} />
+                                            </span>
+                                        )}
                                         <ChevronDown size={13} className="text-slate-500" />
                                     </button>
                                 </Dropdown.Trigger>

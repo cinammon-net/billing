@@ -124,6 +124,31 @@ class Plan extends Model
             ->max(fn (Order $o) => (int) ($o->plan->perks['discount'] ?? 0));
     }
 
+    /** Rangos VIP activos del usuario para mostrar sus insignias en la tienda. */
+    public static function activeRanksFor(?\App\Models\User $user): array
+    {
+        if (!$user) {
+            return [];
+        }
+
+        return Order::query()
+            ->where('user_id', $user->id)
+            ->where('status', 'active')
+            ->where(fn ($q) => $q->whereNull('renews_at')->orWhere('renews_at', '>', now()))
+            ->whereHas('plan', fn ($q) => $q->whereNotNull('role'))
+            ->with('plan:id,name,role,perks')
+            ->get()
+            ->map(fn (Order $o) => [
+                'role' => $o->plan->role,
+                'name' => $o->plan->name,
+                'color' => $o->plan->perks['color'] ?? '#facc15',
+                'icon' => $o->plan->perks['icon'] ?? null,
+            ])
+            ->unique('role')
+            ->values()
+            ->all();
+    }
+
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);

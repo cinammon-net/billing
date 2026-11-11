@@ -15,8 +15,12 @@
         @php
             // Favicon ya coloreado con la temporada/festivo del visitante (Safari no acepta cambiarlo por JS).
             $cinFavSite = in_array($cinSub, ['panel', 'demo', 'store', 'billing'], true) ? $cinSub : 'net';
+            $cinSeasonCtx = app(\App\Services\SeasonService::class)->forRequest(request());
+            $cinFavKey = $cinSeasonCtx['holiday']['key'] ?? $cinSeasonCtx['season']['key'] ?? 'default';
+            $cinFavUrl = "/api/season-favicon/{$cinFavSite}.png?s={$cinFavKey}&d=".now()->format('Ymd');
         @endphp
-        <link rel="icon" type="image/png" href="/api/season-favicon/{{ $cinFavSite }}.png?d={{ now()->format('Ymd') }}" />
+        <link rel="icon" type="image/png" href="{{ $cinFavUrl }}" />
+        <link rel="apple-touch-icon" href="{{ $cinFavUrl }}" />
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet" />

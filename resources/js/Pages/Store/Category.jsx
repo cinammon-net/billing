@@ -2,6 +2,7 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import Modal from '@/Components/Modal';
 import PrimaryButton from '@/Components/PrimaryButton';
+import RankIcon, { RankEmblem, VIP_RANKS } from '@/Components/RankIcon';
 import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
 import PublicLayout from '@/Layouts/PublicLayout';
@@ -161,6 +162,22 @@ export default function StoreCategory({ category, plans }) {
                         </ul>
                     )}
 
+                    {category.key === 'ranks' && (
+                        <ul className="mx-auto mt-6 flex max-w-3xl flex-wrap items-center justify-center gap-3" aria-label="Emblemas de Rangos VIP">
+                            {VIP_RANKS.map((r) => (
+                                <li
+                                    key={r.role}
+                                    title={r.label}
+                                    className="flex items-center gap-2 rounded-xl border bg-black/60 px-3 py-1.5 font-mono text-xs font-bold text-white"
+                                    style={{ borderColor: `${r.color}55`, boxShadow: `0 0 14px ${r.color}22` }}
+                                >
+                                    <RankIcon role={r.role} size={20} />
+                                    <span style={{ color: r.color }}>{r.label.replace(/^VIP\s+/, '')}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+
                     {/* Badge de Clúster en Vivo */}
                     <div className="mt-6 flex flex-wrap items-center justify-center gap-3 font-mono text-xs">
                         <div className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-[#070b18]/80 px-3 py-1 text-slate-300">
@@ -242,14 +259,14 @@ export default function StoreCategory({ category, plans }) {
                             style={plan.role && plan.perks?.color ? { borderColor: `${plan.perks.color}99`, boxShadow: `0 0 28px ${plan.perks.color}26` } : undefined}
                             className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border p-7 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 ${
                                 plan.popular
-                                    ? 'border-neon bg-gradient-to-b from-cyan-950/30 via-[#070b18] to-black shadow-[0_0_35px_oklch(var(--tw-c-neon)_/_0.25)] ring-1 ring-neon/40'
+                                    ? 'border-neon bg-gradient-to-b from-amber-950/30 via-[#070b18] to-black shadow-[0_0_35px_oklch(var(--tw-c-neon)_/_0.25)] ring-1 ring-neon/40'
                                     : 'border-slate-800 bg-[#070b18]/90 hover:border-pink-500/60 hover:shadow-[0_0_25px_rgba(255,0,128,0.2)]'
                             }`}
                         >
                             {/* Cinta "Popular" */}
                             {plan.popular && (
                                 <div className="absolute top-0 right-0">
-                                    <div className="flex items-center gap-1 rounded-bl-xl bg-gradient-to-r from-neon to-cyan-400 px-3.5 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[0_0_15px_oklch(var(--tw-c-neon)_/_0.6)]">
+                                    <div className="flex items-center gap-1 rounded-bl-xl bg-gradient-to-r from-neon to-amber-400 px-3.5 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[0_0_15px_oklch(var(--tw-c-neon)_/_0.6)]">
                                         <Sparkles size={11} />
                                         <span>Recomendado</span>
                                     </div>
@@ -259,7 +276,9 @@ export default function StoreCategory({ category, plans }) {
                             <div>
                                 {/* Header del Plan */}
                                 <div className="flex items-center gap-4">
-                                    {plan.icon && (
+                                    {plan.role ? (
+                                        <RankEmblem role={plan.role} size="md" />
+                                    ) : plan.icon ? (
                                         <img
                                             src={plan.icon}
                                             alt=""
@@ -269,7 +288,7 @@ export default function StoreCategory({ category, plans }) {
                                             className="h-14 w-14 shrink-0 rounded-xl border border-slate-700/80 bg-black/40 object-cover"
                                             onError={(e) => { e.currentTarget.style.display = 'none'; }}
                                         />
-                                    )}
+                                    ) : null}
                                     <div className="min-w-0">
                                         <span className="font-mono text-[10px] font-bold tracking-widest text-slate-400 uppercase">
                                             {plan.role ? '// RANGO VIP' : plan.egg ? '// SERVIDOR DE JUEGO' : '// PLAN TIER'}
@@ -405,12 +424,12 @@ export default function StoreCategory({ category, plans }) {
                                     disabled={plan.prices?.[cycle] == null}
                                     className={`w-full flex disabled:cursor-not-allowed disabled:opacity-40 items-center justify-center gap-2 rounded-xl py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                                         plan.popular
-                                            ? 'bg-gradient-to-r from-neon to-cyan-400 text-black shadow-[0_0_20px_oklch(var(--tw-c-neon)_/_0.4)] hover:brightness-110 hover:shadow-[0_0_30px_oklch(var(--tw-c-neon)_/_0.6)]'
+                                            ? 'bg-gradient-to-r from-neon to-amber-400 text-black shadow-[0_0_20px_oklch(var(--tw-c-neon)_/_0.4)] hover:brightness-110 hover:shadow-[0_0_30px_oklch(var(--tw-c-neon)_/_0.6)]'
                                             : 'border border-pink-500/40 bg-pink-500/10 text-pink-300 shadow-[0_0_15px_rgba(255,0,128,0.15)] hover:border-pink-500 hover:bg-pink-500 hover:text-white hover:shadow-[0_0_25px_rgba(255,0,128,0.4)]'
                                     }`}
                                 >
-                                    <Zap size={14} />
-                                    <span>Desplegar Servidor</span>
+                                    {plan.role ? <RankIcon role={plan.role} size={15} /> : <Zap size={14} />}
+                                    <span>{plan.role ? 'Activar Rango VIP' : 'Desplegar Servidor'}</span>
                                 </button>
                             </div>
                         </div>
@@ -490,12 +509,16 @@ export default function StoreCategory({ category, plans }) {
 
                             <div className="flex items-center justify-between border-b border-slate-800 pb-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-pink-500/40 bg-pink-500/10 text-pink-400">
-                                        <CategoryIcon size={20} />
-                                    </div>
+                                    {selected.role ? (
+                                        <RankEmblem role={selected.role} size="sm" />
+                                    ) : (
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-pink-500/40 bg-pink-500/10 text-pink-400">
+                                            <CategoryIcon size={20} />
+                                        </div>
+                                    )}
                                     <div>
                                         <span className="font-mono text-[10px] uppercase tracking-wider text-pink-400">
-                                            // NUEVA INSTANCIA WINGS
+                                            {selected.role ? '// SUSCRIPCIÓN RANGO VIP' : '// NUEVA INSTANCIA WINGS'}
                                         </span>
                                         <h3 className="text-lg font-bold text-white">
                                             {category.title} — {selected.name}
@@ -506,20 +529,37 @@ export default function StoreCategory({ category, plans }) {
 
                             {/* Resumen del Plan */}
                             <div className="mt-5 rounded-xl border border-slate-800 bg-black/60 p-4 font-mono text-xs">
-                                <div className="flex items-center justify-between text-slate-300">
-                                    <span>Recursos:</span>
-                                    <span className="font-bold text-white">
-                                        {fmtRam(selected.ram_mb)} RAM · {selected.storage_gb} GB NVMe
-                                    </span>
-                                </div>
-                                <div className="mt-2 flex items-center justify-between text-slate-300">
-                                    <span>Capacidad CPU:</span>
-                                    <span className="font-bold text-white">{selected.cpu_pct}% vCPU Ryzen</span>
-                                </div>
-                                <div className="mt-2 flex items-center justify-between text-slate-300">
-                                    <span>Nodo Datacenter:</span>
-                                    <span className="text-neon">Miami, FL US-01</span>
-                                </div>
+                                {selected.role ? (
+                                    <>
+                                        <div className="flex items-center justify-between text-slate-300">
+                                            <span>Descuento en tienda:</span>
+                                            <span className="font-bold text-white">{selected.perks?.discount ? `-${selected.perks.discount}% en servidores` : 'Insignia exclusiva'}</span>
+                                        </div>
+                                        <div className="mt-2 flex items-center justify-between text-slate-300">
+                                            <span>Extras en servidores:</span>
+                                            <span className="font-bold text-white">
+                                                +{selected.perks?.backups ?? 0} backups · +{selected.perks?.databases ?? 0} BBDD · +{selected.perks?.allocations ?? 0} puertos
+                                            </span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="flex items-center justify-between text-slate-300">
+                                            <span>Recursos:</span>
+                                            <span className="font-bold text-white">
+                                                {fmtRam(selected.ram_mb)} RAM · {selected.storage_gb} GB NVMe
+                                            </span>
+                                        </div>
+                                        <div className="mt-2 flex items-center justify-between text-slate-300">
+                                            <span>Capacidad CPU:</span>
+                                            <span className="font-bold text-white">{selected.cpu_pct}% vCPU Ryzen</span>
+                                        </div>
+                                        <div className="mt-2 flex items-center justify-between text-slate-300">
+                                            <span>Nodo Datacenter:</span>
+                                            <span className="text-neon">Miami, FL US-01</span>
+                                        </div>
+                                    </>
+                                )}
                                 <div className="mt-3 border-t border-slate-800 pt-2 flex items-center justify-between">
                                     <span className="text-slate-400">Total por {cycleUnit(billingCycles, data.billing_cycle)}:</span>
                                     <span className="text-lg font-black text-neon">
