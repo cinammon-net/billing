@@ -66,6 +66,13 @@ Route::get('/api/plans', function () {
     ]);
 })->name('api.plans');
 
+// API pública: métodos de pago activos, solo el nombre (sin IBAN, teléfono ni claves). La usa el bot de Discord.
+Route::get('/api/payment-methods', fn () => response()->json([
+    'methods' => array_map(fn ($m) => ['key' => $m['key'], 'label' => $m['label'], 'auto' => $m['auto']], \App\Services\Payments\PaymentService::methods()),
+    'currency' => config('payments.currency'),
+    'coins' => true,
+]))->middleware('throttle:60,1')->name('api.payment-methods');
+
 // Invitaciones: /r/CODIGO guarda quién invita y lleva a los servidores gratis
 Route::get('/r/{code}', [\App\Http\Controllers\CoinsController::class, 'referral'])->where('code', '[A-Za-z0-9]{4,12}')->middleware('throttle:60,1')->name('referral');
 
