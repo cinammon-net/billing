@@ -64,6 +64,56 @@ class PanelBotController extends Controller
         return response()->json(['ok' => $ok, 'message' => $message, 'coins' => (int) $user->fresh()->coins]);
     }
 
+    /**
+     * Actividad de la tienda de los últimos 7 días para el canal #compras de Discord:
+     * servidores gratuitos (al crearse el pedido) y pagos confirmados (compras y renovaciones).
+     * El correo solo lo usa el panel para saber el Discord vinculado; no se publica.
+     */
+    public function feed(Request $request): JsonResponse
+    {
+        $token = (string) config('billing.panel_token');
+        abort_if($token === '' || ! hash_equals($token, (string) $request->header('X-Billing-Token')), 401);
+        $since = now()->subDays(7);
+        $plan = fn (?Order $o) => [
+            'plan' => $o?->plan?->name,
+            'category' => $o?->category ?? $o?->plan?->category,
+            'ram_mb' => $o ? (int) ($o->ram_mb ?? $o->plan?->ram_mb) : null,
+            'cycle' => $o?->billing_cycle,
+        ];
+
+        $free = Order::with('plan:id,name,category,ram_mb', 'user:id,name,email')
+            ->where('is_free', true)->where('created_at', '>=', $since)
+            ->latest()->limit(30)->get()
+            ->map(fn (Order $o) => [
+                'key' => 'free:'.$o->id,
+                'type' => 'free',
+                'at' => $o->created_at?->toIso8601String(),
+                'user' => $o->user?->name,
+                'email' => $o->user?->email,
+                ...$plan($o),
+            ]);
+
+        $paid = Invoice::with('order.plan:id,name,category,ram_mb', 'user:id,name,email')
+            ->where('status', 'paid')->whereNotNull('paid_at')->where('paid_at', '>=', $since)
+            ->latest('paid_at')->limit(30)->get()
+            ->map(function (Invoice $i) use ($plan) {
+                $first = ! $i->order_id || ! Invoice::where('order_id', $i->order_id)->where('status', 'paid')
+                    ->where('id', '<', $i->id)->exists();
+
+                return [
+                    'key' => 'paid:'.$i->id,
+                    'type' => $first ? 'purchase' : 'renewal',
+                    'at' => $i->paid_at?->toIso8601String(),
+                    'user' => $i->user?->name,
+                    'email' => $i->user?->email,
+                    'amount' => $i->amount,
+                    ...$plan($i->order),
+                ];
+            });
+
+        return response()->json(['events' => $free->concat($paid)->sortBy('at')->values()]);
+    }
+
     private function user(Request $request): ?User
     {
         $token = (string) config('billing.panel_token');

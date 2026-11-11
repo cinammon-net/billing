@@ -76,6 +76,7 @@ Route::get('/api/payment-methods', fn () => response()->json([
 // Bot de Discord (vía panel, token compartido X-Billing-Token): monedas, racha, invitaciones y facturas
 Route::post('/api/panel/bot/account', [\App\Http\Controllers\PanelBotController::class, 'account'])->middleware('throttle:120,1');
 Route::post('/api/panel/bot/checkin', [\App\Http\Controllers\PanelBotController::class, 'checkin'])->middleware('throttle:60,1');
+Route::post('/api/panel/bot/feed', [\App\Http\Controllers\PanelBotController::class, 'feed'])->middleware('throttle:60,1');
 
 // Invitaciones: /r/CODIGO guarda quién invita y lleva a los servidores gratis
 Route::get('/r/{code}', [\App\Http\Controllers\CoinsController::class, 'referral'])->where('code', '[A-Za-z0-9]{4,12}')->middleware('throttle:60,1')->name('referral');
