@@ -24,7 +24,7 @@ class SeasonController extends Controller
     }
 
     /** Subdominios con logo propio (public/season/fav/{sitio}.png y {sitio}-{tema}.png). */
-    private const FAVICON_SITES = ['net', 'panel', 'store', 'billing', 'demo', 'nodo', 'wings', 'admin'];
+    private const FAVICON_SITES = ['net', 'panel', 'store', 'billing', 'demo', 'nodo', 'wings', 'admin', 'mail'];
 
     /** Temas con colores propios (los mismos que PALETTES en season.js). */
     private const PALETTES = ['christmas', 'new_years_eve', 'new_year', 'reyes', 'valentine', 'carnival', 'easter', 'halloween', 'muertos', 'thanksgiving',
