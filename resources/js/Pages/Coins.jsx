@@ -19,7 +19,7 @@ const MISSION_ICONS = { image: ImageIcon, id: IdCard, shield: Shield, flame: Fla
 
 function Panel({ icon: Icon, title, color = 'text-yellow-300', children, className = '' }) {
     return (
-        <section className={`rounded-2xl border border-slate-800 bg-[#070b18]/90 p-4 sm:p-5 ${className}`}>
+        <section className={`min-w-0 overflow-hidden rounded-2xl border border-slate-800 bg-[#070b18]/90 p-4 sm:p-5 ${className}`}>
             <h2 className="mb-3 flex items-center gap-2 font-black text-white">
                 <Icon size={18} className={color} /> {title}
             </h2>
@@ -231,6 +231,20 @@ function Slider({ icon: Icon, label, value, min, max, step, onChange, format }) 
     );
 }
 
+/** Icono del egg (el mismo de la tienda); si no tiene o no carga, un icono genérico del mismo tamaño. */
+function EggIcon({ src, size = 36 }) {
+    const [failed, setFailed] = useState(false);
+    const box = { width: size, height: size };
+    if (!src || failed) {
+        return (
+            <span style={box} className="flex shrink-0 items-center justify-center rounded-md border border-slate-800 bg-black/40 text-slate-500">
+                <Server size={Math.round(size * 0.45)} />
+            </span>
+        );
+    }
+    return <img src={src} alt="" loading="lazy" style={box} onError={() => setFailed(true)} className="shrink-0 rounded-md border border-slate-700/80 bg-black/40 object-cover" />;
+}
+
 /** Crear el servidor gratis: servicio → recursos → días → nombre. */
 function Builder({ builder, balance, activeCount }) {
     const { options, categories, durations, min, rates, per_user, full } = builder;
@@ -270,9 +284,9 @@ function Builder({ builder, balance, activeCount }) {
                 e.preventDefault();
                 post(route('coins.claim'), { preserveScroll: true });
             }}
-            className="grid gap-5 lg:grid-cols-2"
+            className="grid min-w-0 gap-5 lg:grid-cols-2"
         >
-            <div className="space-y-3">
+            <div className="min-w-0 space-y-3">
                 <p className="text-xs font-bold tracking-wider text-slate-400 uppercase">1 · Elige qué quieres</p>
                 <div className="flex flex-wrap gap-1.5">
                     {['all', ...usedCats].map((k) => (
@@ -301,18 +315,25 @@ function Builder({ builder, balance, activeCount }) {
                             key={o.egg}
                             type="button"
                             onClick={() => pick(o)}
-                            className={`rounded-lg border px-3 py-2 text-left transition ${data.egg === o.egg ? 'border-yellow-400/70 bg-yellow-400/10' : 'border-slate-800 bg-black/30 hover:border-slate-600'}`}
+                            className={`flex min-w-0 items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left transition ${data.egg === o.egg ? 'border-yellow-400/70 bg-yellow-400/10' : 'border-slate-800 bg-black/30 hover:border-slate-600'}`}
                         >
-                            <span className="block truncate text-sm font-bold text-white">{o.egg}</span>
-                            <span className="block truncate text-[10px] text-slate-500">{categories[o.category] ?? o.category}</span>
+                            <EggIcon src={o.icon} />
+                            <span className="min-w-0">
+                                <span className="block truncate text-sm font-bold text-white">{o.egg}</span>
+                                <span className="block truncate text-[10px] text-slate-500">{categories[o.category] ?? o.category}</span>
+                            </span>
                         </button>
                     ))}
                     {visible.length === 0 && <p className="text-xs text-slate-500 sm:col-span-2">Nada con ese nombre.</p>}
                 </div>
             </div>
 
-            <div className="space-y-4">
-                <p className="text-xs font-bold tracking-wider text-slate-400 uppercase">2 · Elige cuánto ({opt?.egg})</p>
+            <div className="min-w-0 space-y-4">
+                <p className="flex min-w-0 items-center gap-2 text-xs font-bold tracking-wider text-slate-400 uppercase">
+                    <span className="shrink-0">2 · Elige cuánto</span>
+                    {opt && <EggIcon src={opt.icon} size={20} />}
+                    <span className="truncate normal-case text-white">{opt?.egg}</span>
+                </p>
                 {opt && (
                     <>
                         <Slider icon={MemoryStick} label="RAM" value={data.ram_mb} min={min.ram_mb} max={opt.max.ram_mb} step={128} onChange={(v) => setData('ram_mb', v)} format={fmtRam} />
@@ -436,9 +457,9 @@ export default function Coins({ balance: initialBalance, earnedToday, dailyCap, 
     return (
         <AuthenticatedLayout>
             <Head title="Servidor gratis" />
-            <div className="mx-auto max-w-6xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-6xl min-w-0 space-y-6 overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8">
                 <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
+                    <div className="min-w-0">
                         <h1 className="flex items-center gap-2 text-2xl font-black text-white sm:text-3xl">
                             <Gift className="text-yellow-300" /> Tu servidor gratis
                         </h1>

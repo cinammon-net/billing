@@ -31,7 +31,7 @@ class CoinsController extends Controller
     {
     }
 
-    public function index(Request $request): Response
+    public function index(Request $request, PanelService $panel): Response
     {
         $user = $request->user();
         $s = FreeTier::settings();
@@ -68,7 +68,7 @@ class CoinsController extends Controller
             ],
             'coinsPerEuro' => $s['coins_per_euro'],
             'builder' => [
-                'options' => FreeTier::options(),
+                'options' => $this->withIcons(FreeTier::options(), $panel),
                 'categories' => collect(StoreController::CATEGORIES)->except('ranks')->map(fn ($c) => $c['title']),
                 'durations' => $s['durations'],
                 'min' => ['ram_mb' => $s['min_ram_mb'], 'cpu_pct' => $s['min_cpu_pct'], 'disk_gb' => $s['min_disk_gb']],
@@ -268,6 +268,15 @@ class CoinsController extends Controller
         $order->update(['renews_at' => $base->copy()->addDays($data['days'])]);
 
         return back()->with('success', "Renovado hasta el {$order->renews_at->format('d/m/Y H:i')}.");
+    }
+
+    /** Añade el icono de cada egg (del catálogo del panel, el mismo que usa la tienda). */
+    private function withIcons(\Illuminate\Support\Collection $options, PanelService $panel): \Illuminate\Support\Collection
+    {
+        $icons = collect($panel->eggCatalog())->filter(fn ($egg) => !empty($egg['icon']) && !empty($egg['name']))
+            ->mapWithKeys(fn ($egg) => [mb_strtolower($egg['name']) => $egg['icon']]);
+
+        return $options->map(fn ($o) => [...$o, 'icon' => $icons->get(mb_strtolower($o['egg']))]);
     }
 
     private function clampStep(int $value, int $min, int $max, int $step): int
