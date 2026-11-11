@@ -47,6 +47,7 @@ Route::get('/sso', function (\Illuminate\Http\Request $request) {
 
 // Tienda (pública)
 Route::get('/store', [StoreController::class, 'index'])->name('store');
+Route::get('/store/free', [StoreController::class, 'free'])->name('store.free');
 Route::get('/store/{category}', [StoreController::class, 'category'])->name('store.category');
 
 // Calendario de Adviento y eventos especiales (visible públicamente; abrir casilla requiere cuenta)

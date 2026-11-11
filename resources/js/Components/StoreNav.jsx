@@ -96,12 +96,13 @@ function NavLink({ href, active, children }) {
 }
 
 export default function StoreNav() {
-    const { auth, panelUrl, adventSummary } = usePage().props;
+    const { auth, panelUrl, billingUrl, adventSummary } = usePage().props;
     const [gamesOpen, setGamesOpen] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const menuRef = useRef(null);
 
+    const isFree = route().current('store.free') || isCategory('free');
     const gamesActive = GAMES.some((g) => isCategory(g.key)) || SERVICES.some((s) => isCategory(s.key));
     const closeAll = () => {
         setGamesOpen(false);
@@ -131,6 +132,8 @@ export default function StoreNav() {
     }, [mobileOpen]);
 
     const loginHref = `${panelUrl}/billing/redirect`;
+    const registerHref = billingUrl ? `${billingUrl}/register` : route('register');
+    const dashboardHref = billingUrl ? `${billingUrl}/dashboard` : route('dashboard');
 
     return (
         <header
@@ -255,11 +258,15 @@ export default function StoreNav() {
                         </Link>
                     )}
                     <Link
-                        href={route('coins.index')}
-                        className="hidden items-center gap-1.5 rounded-lg px-3 py-2 whitespace-nowrap font-bold text-yellow-300 transition hover:text-yellow-200 md:flex"
+                        href={route('store.free')}
+                        className={`hidden items-center gap-1.5 rounded-lg px-3 py-2 whitespace-nowrap font-bold transition md:flex ${
+                            isFree
+                                ? 'border border-yellow-400/50 bg-yellow-400/20 text-yellow-200 shadow-[0_0_12px_rgba(250,204,21,0.3)]'
+                                : 'text-yellow-300 hover:text-yellow-100'
+                        }`}
                         title="Consigue un servidor gratis con monedas"
                     >
-                        <Coins size={14} /> Gratis
+                        <Coins size={14} className="text-yellow-300" /> Gratis
                     </Link>
                     <a
                         href={panelUrl}
@@ -269,19 +276,19 @@ export default function StoreNav() {
                         Panel <ArrowUpRight size={13} />
                     </a>
                     {auth?.user ? (
-                        <Link
-                            href={route('dashboard')}
+                        <a
+                            href={dashboardHref}
                             className="flex items-center gap-2 rounded-xl border border-neon/50 bg-neon/10 px-4 py-2 font-bold text-neon shadow-[0_0_15px_oklch(var(--tw-c-neon)_/_0.2)] transition hover:bg-neon hover:text-black"
                         >
                             {auth?.avatar ? <img src={auth.avatar} alt="" referrerPolicy="no-referrer" className="h-[18px] w-[18px] rounded-full object-cover" /> : <Layers size={14} />}
                             <span className="hidden whitespace-nowrap sm:inline">Mis servicios</span>
-                        </Link>
+                        </a>
                     ) : (
                         <>
                             <span aria-hidden="true" className="hidden h-5 w-px bg-white/10 md:block lg:hidden xl:block" />
-                            <Link href={route('register')} className="hidden items-center gap-1 rounded-lg px-3 py-2 whitespace-nowrap text-slate-300 transition hover:text-white md:flex">
+                            <a href={registerHref} className="hidden items-center gap-1 rounded-lg px-3 py-2 whitespace-nowrap text-slate-300 transition hover:text-white md:flex">
                                 <UserPlus size={13} /> Registro
-                            </Link>
+                            </a>
                             <a
                                 href={loginHref}
                                 className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-pink-500 to-fuchsia-600 px-4 py-2 font-bold whitespace-nowrap text-white shadow-[0_0_15px_rgba(255,0,128,0.35)] transition hover:brightness-110 active:scale-95"
@@ -362,7 +369,7 @@ export default function StoreNav() {
                                 <Link href={route('store')} onClick={closeAll} className="flex items-center gap-2 rounded-lg px-2 py-2 text-slate-300 hover:bg-white/5">
                                     <LayoutGrid size={14} /> Todo el catálogo
                                 </Link>
-                                <Link href={route('coins.index')} onClick={closeAll} className="flex items-center gap-2 rounded-lg px-2 py-2 font-bold text-yellow-300 hover:bg-white/5">
+                                <Link href={route('store.free')} onClick={closeAll} className={`flex items-center gap-2 rounded-lg px-2 py-2 font-bold hover:bg-white/5 ${isFree ? 'bg-yellow-400/15 text-yellow-200' : 'text-yellow-300'}`}>
                                     <Coins size={14} /> Servidor gratis con monedas
                                 </Link>
                                 {adventSummary && (
@@ -382,18 +389,18 @@ export default function StoreNav() {
                         {/* Acciones fijas abajo */}
                         <div className="border-t border-white/10 p-5">
                             {auth?.user ? (
-                                <Link
-                                    href={route('dashboard')}
+                                <a
+                                    href={dashboardHref}
                                     onClick={closeAll}
                                     className="flex w-full items-center justify-center gap-2 rounded-xl border border-neon/50 bg-neon/10 px-4 py-3 text-xs font-bold text-neon"
                                 >
                                     {auth?.avatar ? <img src={auth.avatar} alt="" referrerPolicy="no-referrer" className="h-[18px] w-[18px] rounded-full object-cover" /> : <Layers size={14} />} Mis servicios
-                                </Link>
+                                </a>
                             ) : (
                                 <div className="grid grid-cols-2 gap-2 text-xs">
-                                    <Link href={route('register')} onClick={closeAll} className="flex items-center justify-center gap-1.5 rounded-xl border border-white/10 px-4 py-3 text-slate-200">
+                                    <a href={registerHref} onClick={closeAll} className="flex items-center justify-center gap-1.5 rounded-xl border border-white/10 px-4 py-3 text-slate-200">
                                         <UserPlus size={13} /> Crear cuenta
-                                    </Link>
+                                    </a>
                                     <a href={loginHref} className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-pink-500 to-fuchsia-600 px-4 py-3 font-bold text-white">
                                         <LogIn size={13} /> Entrar
                                     </a>

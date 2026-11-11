@@ -37,6 +37,7 @@ class HandleInertiaRequests extends Middleware
                 'avatar' => fn () => $request->user() ? app(\App\Services\PanelService::class)->avatarFor($request->user()->email) : null,
             ],
             'panelUrl' => config('billing.panel_url'),
+            'billingUrl' => config('app.url'),
             'billingCycles' => \App\Models\Plan::cycleMeta(),
             // Descuento por rango VIP activo (se aplica a los servidores)
             'vipDiscount' => fn () => \App\Models\Plan::vipDiscountFor($request->user()),

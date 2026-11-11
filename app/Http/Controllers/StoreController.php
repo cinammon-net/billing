@@ -62,6 +62,10 @@ class StoreController extends Controller
             'title' => 'Bases de Datos',
             'tagline' => 'Redis, MariaDB, PostgreSQL y MongoDB gestionados.',
         ],
+        'free' => [
+            'title' => 'Servidores Gratuitos',
+            'tagline' => 'Consigue tu servidor gratis 24/7 de juegos, bots y web con monedas de recompensa.',
+        ],
     ];
 
     /**
@@ -100,13 +104,32 @@ class StoreController extends Controller
                     'plans_count' => Plan::where('category', $key)->whereNull('coin_cost')->count(),
                     'eggs' => $this->eggsFor($key, $catalog),
                 ];
-            })->filter(fn ($category) => $category['from'] !== null)->values(),
+            })->filter(fn ($category) => $category['from'] !== null && $category['key'] !== 'free')->values(),
             'freeStats' => \App\Support\FreeTier::settings()['enabled'] ? \App\Support\FreeTier::publicStats() : null,
+        ]);
+    }
+
+    public function free(): Response
+    {
+        $settings = \App\Support\FreeTier::settings();
+        $stats = $settings['enabled'] ? \App\Support\FreeTier::publicStats() : null;
+        $options = \App\Support\FreeTier::options();
+        $catalog = $this->panel->eggCatalog();
+
+        return Inertia::render('Store/Free', [
+            'settings' => $settings,
+            'stats' => $stats,
+            'options' => $options,
+            'catalog' => $catalog,
         ]);
     }
 
     public function category(string $category): Response
     {
+        if ($category === 'free') {
+            return $this->free();
+        }
+
         abort_unless(array_key_exists($category, self::CATEGORIES), 404);
 
         $catalog = $this->panel->eggCatalog();

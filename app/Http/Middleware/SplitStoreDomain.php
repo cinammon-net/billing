@@ -33,14 +33,22 @@ class SplitStoreDomain
         if ($request->getHost() === $storeHost) {
             // En el dominio de la tienda solo se sirve la tienda; el resto va al principal.
             if (! $isStorePath && $billingHost !== '') {
-                return redirect()->away('https://' . $billingHost . $request->getRequestUri());
+                $target = 'https://' . $billingHost . $request->getRequestUri();
+                if ($request->header('X-Inertia')) {
+                    return \Inertia\Inertia::location($target);
+                }
+                return redirect()->away($target);
             }
         } elseif ($path === '/') {
             // La raíz del dominio principal pasa a ser el área de clientes.
             return redirect('/dashboard');
         } elseif ($path === '/store' || str_starts_with($path, '/store/')) {
             // En el dominio principal, la tienda redirige a su dominio propio.
-            return redirect()->away('https://' . $storeHost . $request->getRequestUri());
+            $target = 'https://' . $storeHost . $request->getRequestUri();
+            if ($request->header('X-Inertia')) {
+                return \Inertia\Inertia::location($target);
+            }
+            return redirect()->away($target);
         }
 
         return $next($request);
