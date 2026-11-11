@@ -152,6 +152,304 @@ class Seasons
     }
 
     /** Devuelve la fecha (Y-m-d) en que termina el festivo si hoy cae dentro; si no, null. */
+    /**
+     * Paleta de correo electrónico según la fiesta o estación concurrente.
+     * Colores seguros para todos los clientes (Gmail, Outlook, Apple Mail), modo oscuro cyberpunk,
+     * cero emojis y cero tonos cyan/sky/teal.
+     *
+     * @return array{
+     *     key: string,
+     *     name: string,
+     *     tag: string,
+     *     primary: string,
+     *     secondary: string,
+     *     button_bg: string,
+     *     button_text: string,
+     *     badge_bg: string,
+     *     badge_border: string,
+     *     badge_text: string,
+     *     bg_dark: string,
+     *     card_bg: string,
+     *     panel_bg: string,
+     *     border: string,
+     *     border_subtle: string,
+     *     text: string,
+     *     text_bright: string,
+     *     text_muted: string
+     * }
+     */
+    public static function emailTheme(?string $country = 'ES', ?CarbonImmutable $date = null): array
+    {
+        $themes = [
+            'black_friday' => [
+                'name' => 'Black Friday',
+                'tag' => 'BLACK FRIDAY',
+                'primary' => '#facc15',
+                'secondary' => '#f59e0b',
+                'button_bg' => '#facc15',
+                'button_text' => '#070913',
+                'badge_bg' => '#26200a',
+                'badge_border' => '#eab308',
+                'badge_text' => '#fef08a',
+            ],
+            'christmas' => [
+                'name' => 'Navidad',
+                'tag' => 'EDICION NAVIDAD',
+                'primary' => '#ef4444',
+                'secondary' => '#10b981',
+                'button_bg' => '#ef4444',
+                'button_text' => '#ffffff',
+                'badge_bg' => '#2a0e14',
+                'badge_border' => '#dc2626',
+                'badge_text' => '#fca5a5',
+            ],
+            'new_years_eve' => [
+                'name' => 'Fin de Año',
+                'tag' => 'NOCHEVIEJA',
+                'primary' => '#fbbf24',
+                'secondary' => '#c084fc',
+                'button_bg' => '#fbbf24',
+                'button_text' => '#070913',
+                'badge_bg' => '#281f08',
+                'badge_border' => '#f59e0b',
+                'badge_text' => '#fef3c7',
+            ],
+            'new_year' => [
+                'name' => 'Año Nuevo',
+                'tag' => 'AÑO NUEVO',
+                'primary' => '#fbbf24',
+                'secondary' => '#c084fc',
+                'button_bg' => '#fbbf24',
+                'button_text' => '#070913',
+                'badge_bg' => '#281f08',
+                'badge_border' => '#f59e0b',
+                'badge_text' => '#fef3c7',
+            ],
+            'reyes' => [
+                'name' => 'Día de Reyes',
+                'tag' => 'REYES MAGOS',
+                'primary' => '#fbbf24',
+                'secondary' => '#a855f7',
+                'button_bg' => '#fbbf24',
+                'button_text' => '#070913',
+                'badge_bg' => '#271e0b',
+                'badge_border' => '#eab308',
+                'badge_text' => '#fef08a',
+            ],
+            'valentine' => [
+                'name' => 'San Valentín',
+                'tag' => 'SAN VALENTIN',
+                'primary' => '#f43f5e',
+                'secondary' => '#ec4899',
+                'button_bg' => '#f43f5e',
+                'button_text' => '#ffffff',
+                'badge_bg' => '#2b0f19',
+                'badge_border' => '#e11d48',
+                'badge_text' => '#fda4af',
+            ],
+            'carnival' => [
+                'name' => 'Carnaval',
+                'tag' => 'CARNAVAL',
+                'primary' => '#a855f7',
+                'secondary' => '#f59e0b',
+                'button_bg' => '#a855f7',
+                'button_text' => '#ffffff',
+                'badge_bg' => '#220e36',
+                'badge_border' => '#9333ea',
+                'badge_text' => '#d8b4fe',
+            ],
+            'easter' => [
+                'name' => 'Semana Santa',
+                'tag' => 'SEMANA SANTA',
+                'primary' => '#fbbf24',
+                'secondary' => '#8b5cf6',
+                'button_bg' => '#fbbf24',
+                'button_text' => '#070913',
+                'badge_bg' => '#261b0c',
+                'badge_border' => '#d97706',
+                'badge_text' => '#fde68a',
+            ],
+            'book_day' => [
+                'name' => 'Día del Libro',
+                'tag' => 'SANT JORDI · DIA DEL LIBRO',
+                'primary' => '#e11d48',
+                'secondary' => '#f59e0b',
+                'button_bg' => '#e11d48',
+                'button_text' => '#ffffff',
+                'badge_bg' => '#2a0c16',
+                'badge_border' => '#be123c',
+                'badge_text' => '#fecdd3',
+            ],
+            'star_wars' => [
+                'name' => 'May the 4th',
+                'tag' => 'MAY THE 4TH',
+                'primary' => '#eab308',
+                'secondary' => '#a855f7',
+                'button_bg' => '#eab308',
+                'button_text' => '#070913',
+                'badge_bg' => '#251e08',
+                'badge_border' => '#ca8a04',
+                'badge_text' => '#fef08a',
+            ],
+            'san_juan' => [
+                'name' => 'Noche de San Juan',
+                'tag' => 'NOCHE DE SAN JUAN',
+                'primary' => '#f97316',
+                'secondary' => '#ef4444',
+                'button_bg' => '#f97316',
+                'button_text' => '#ffffff',
+                'badge_bg' => '#2c1208',
+                'badge_border' => '#ea580c',
+                'badge_text' => '#fed7aa',
+            ],
+            'gamer_day' => [
+                'name' => 'Día del Gamer',
+                'tag' => 'DIA DEL GAMER',
+                'primary' => '#a855f7',
+                'secondary' => '#ec4899',
+                'button_bg' => '#a855f7',
+                'button_text' => '#ffffff',
+                'badge_bg' => '#230e37',
+                'badge_border' => '#9333ea',
+                'badge_text' => '#d8b4fe',
+            ],
+            'halloween' => [
+                'name' => 'Halloween',
+                'tag' => 'HALLOWEEN',
+                'primary' => '#ea580c',
+                'secondary' => '#9333ea',
+                'button_bg' => '#ea580c',
+                'button_text' => '#ffffff',
+                'badge_bg' => '#2a1106',
+                'badge_border' => '#c2410c',
+                'badge_text' => '#fed7aa',
+            ],
+            'muertos' => [
+                'name' => 'Día de Muertos',
+                'tag' => 'DIA DE MUERTOS',
+                'primary' => '#f59e0b',
+                'secondary' => '#ec4899',
+                'button_bg' => '#f59e0b',
+                'button_text' => '#070913',
+                'badge_bg' => '#291807',
+                'badge_border' => '#d97706',
+                'badge_text' => '#fde68a',
+            ],
+            'thanksgiving' => [
+                'name' => 'Acción de Gracias',
+                'tag' => 'ACCION DE GRACIAS',
+                'primary' => '#d97706',
+                'secondary' => '#b45309',
+                'button_bg' => '#d97706',
+                'button_text' => '#ffffff',
+                'badge_bg' => '#271506',
+                'badge_border' => '#b45309',
+                'badge_text' => '#fde68a',
+            ],
+            'autumn' => [
+                'name' => 'Otoño',
+                'tag' => 'EDICION OTOÑO',
+                'primary' => '#f59e0b',
+                'secondary' => '#ea580c',
+                'button_bg' => '#f59e0b',
+                'button_text' => '#070913',
+                'badge_bg' => '#291708',
+                'badge_border' => '#d97706',
+                'badge_text' => '#fde68a',
+            ],
+            'winter' => [
+                'name' => 'Invierno',
+                'tag' => 'EDICION INVIERNO',
+                'primary' => '#c084fc',
+                'secondary' => '#a855f7',
+                'button_bg' => '#c084fc',
+                'button_text' => '#070913',
+                'badge_bg' => '#220f35',
+                'badge_border' => '#a855f7',
+                'badge_text' => '#e9d5ff',
+            ],
+            'spring' => [
+                'name' => 'Primavera',
+                'tag' => 'EDICION PRIMAVERA',
+                'primary' => '#ec4899',
+                'secondary' => '#10b981',
+                'button_bg' => '#ec4899',
+                'button_text' => '#ffffff',
+                'badge_bg' => '#2b0f20',
+                'badge_border' => '#db2777',
+                'badge_text' => '#fbcfe8',
+            ],
+            'summer' => [
+                'name' => 'Verano',
+                'tag' => 'EDICION VERANO',
+                'primary' => '#f59e0b',
+                'secondary' => '#f43f5e',
+                'button_bg' => '#f59e0b',
+                'button_text' => '#070913',
+                'badge_bg' => '#291708',
+                'badge_border' => '#d97706',
+                'badge_text' => '#fde68a',
+            ],
+            'cinammon' => [
+                'name' => 'Cinammon',
+                'tag' => 'CINAMMON NETWORK',
+                'primary' => '#ec4899',
+                'secondary' => '#a855f7',
+                'button_bg' => '#ec4899',
+                'button_text' => '#ffffff',
+                'badge_bg' => '#290f1f',
+                'badge_border' => '#db2777',
+                'badge_text' => '#fbcfe8',
+            ],
+        ];
+
+        $cc = self::countryFrom($country);
+        $holidays = self::activeHolidays($cc, $date);
+        $holiday = $holidays[0] ?? null;
+
+        $key = 'cinammon';
+        $customName = null;
+        $customTag = null;
+
+        if ($holiday) {
+            $hKey = $holiday['key'];
+            if (isset($themes[$hKey])) {
+                $key = $hKey;
+            } elseif (str_starts_with($hKey, 'national_')) {
+                $key = 'book_day';
+                $clean = preg_replace('/[^\p{L}\p{N}\s\.\-]/u', '', (string) $holiday['name']);
+                $customName = trim((string) $clean);
+                $customTag = mb_strtoupper($customName);
+            }
+        } else {
+            $sKey = self::season($cc, $date);
+            if ($sKey && isset($themes[$sKey])) {
+                $key = $sKey;
+            }
+        }
+
+        $chosen = $themes[$key] ?? $themes['cinammon'];
+        if ($customName) {
+            $chosen['name'] = $customName;
+        }
+        if ($customTag) {
+            $chosen['tag'] = $customTag;
+        }
+
+        return [
+            'key' => $key,
+            ...$chosen,
+            'bg_dark' => '#070913',
+            'card_bg' => '#0d111d',
+            'panel_bg' => '#12182b',
+            'border' => '#1e2640',
+            'border_subtle' => '#161e33',
+            'text' => '#cbd5e1',
+            'text_bright' => '#ffffff',
+            'text_muted' => '#94a3b8',
+        ];
+    }
+
     private static function matches(array $rule, CarbonImmutable $today): ?string
     {
         foreach ([$today->year - 1, $today->year] as $year) {
