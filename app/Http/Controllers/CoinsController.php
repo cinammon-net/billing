@@ -96,14 +96,21 @@ class CoinsController extends Controller
     /** Racha diaria: una vez al día; si te saltas un día vuelve a empezar. */
     public function checkin(Request $request): RedirectResponse
     {
-        $user = $request->user();
+        [$ok, $message] = $this->claimCheckin($request->user());
+
+        return $ok ? back()->with('success', $message) : back()->withErrors(['checkin' => $message]);
+    }
+
+    /** Recoge el premio diario (web y bot de Discord). Devuelve [hecho, mensaje]. */
+    public function claimCheckin(User $user): array
+    {
         $rewards = FreeTier::settings()['checkin'];
 
         $claimed = User::whereKey($user->id)
             ->where(fn ($q) => $q->whereNull('last_checkin')->orWhere('last_checkin', '<', now()->toDateString()))
             ->update(['last_checkin' => now()->toDateString()]);
         if ($claimed === 0) {
-            return back()->withErrors(['checkin' => 'Ya has recogido el premio de hoy. ¡Vuelve mañana!']);
+            return [false, 'Ya has recogido el premio de hoy. ¡Vuelve mañana!'];
         }
 
         $continues = $user->last_checkin?->isYesterday() ?? false;
@@ -114,7 +121,7 @@ class CoinsController extends Controller
 
         $this->coins->apply($user, (int) $rewards[$day], 'checkin', "Día {$streak} de racha");
 
-        return back()->with('success', "Racha de {$streak} día(s): +{$rewards[$day]} monedas.");
+        return [true, "Racha de {$streak} día(s): +{$rewards[$day]} monedas."];
     }
 
     public function mission(Request $request, string $mission, PanelService $panel): RedirectResponse
@@ -290,7 +297,7 @@ class CoinsController extends Controller
     }
 
     /** La racha visible: se pierde si ayer no se recogió. */
-    private function currentStreak(User $user): int
+    public function currentStreak(User $user): int
     {
         if (!$user->last_checkin) {
             return 0;
@@ -299,7 +306,7 @@ class CoinsController extends Controller
         return $user->last_checkin->isToday() || $user->last_checkin->isYesterday() ? (int) $user->streak_days : 0;
     }
 
-    private function ensureReferralCode(User $user): void
+    public function ensureReferralCode(User $user): void
     {
         if ($user->referral_code) {
             return;
