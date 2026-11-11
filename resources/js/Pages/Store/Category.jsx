@@ -215,7 +215,7 @@ export default function StoreCategory({ category, plans }) {
                         {[
                             { id: 'all', label: 'Todos' },
                             { id: 'whatsapp', label: 'WhatsApp', color: '#25D366' },
-                            { id: 'telegram', label: 'Telegram', color: '#38bdf8' },
+                            { id: 'telegram', label: 'Telegram', color: '#3b82f6' },
                             { id: 'discord', label: 'Discord & Apps' },
                         ].map((tab) => (
                             <button
