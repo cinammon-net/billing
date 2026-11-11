@@ -49,6 +49,9 @@ Route::get('/sso', function (\Illuminate\Http\Request $request) {
 Route::get('/store', [StoreController::class, 'index'])->name('store');
 Route::get('/store/{category}', [StoreController::class, 'category'])->name('store.category');
 
+// Calendario de Adviento y eventos especiales (visible públicamente; abrir casilla requiere cuenta)
+Route::get('/advent', [\App\Http\Controllers\AdventController::class, 'index'])->name('advent.index');
+
 // API pública: catálogo de planes (lo consume la landing del panel)
 Route::get('/api/plans', function () {
     return response()->json([
@@ -82,6 +85,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/coins/ads/complete', [\App\Http\Controllers\CoinsController::class, 'completeAd'])->middleware('throttle:10,1')->name('coins.ads.complete');
     Route::post('/coins/free-server', [\App\Http\Controllers\CoinsController::class, 'claim'])->middleware('throttle:5,1')->name('coins.claim');
     Route::post('/coins/free-server/{order}/renew', [\App\Http\Controllers\CoinsController::class, 'renew'])->middleware('throttle:10,1')->name('coins.renew');
+    Route::post('/advent/{day}/claim', [\App\Http\Controllers\AdventController::class, 'claim'])->whereNumber('day')->middleware('throttle:15,1')->name('advent.claim');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
@@ -109,6 +113,7 @@ Route::middleware(['auth', 'verified', 'billing.admin'])->prefix('admin')->name(
     Route::put('/free', [\App\Http\Controllers\Admin\FreeTierController::class, 'update'])->name('free.update');
     Route::post('/free/{order}/suspend', [\App\Http\Controllers\Admin\FreeTierController::class, 'suspend'])->name('free.suspend');
     Route::put('/promotions/{promotion}', [\App\Http\Controllers\Admin\PromotionController::class, 'update'])->name('promotions.update');
+    Route::put('/advent', [\App\Http\Controllers\AdventController::class, 'updateSettings'])->name('advent.update');
     Route::post('/payments/{invoice}/confirm', [\App\Http\Controllers\Admin\PaymentController::class, 'confirm'])->name('payments.confirm');
     Route::post('/payments/{invoice}/reject', [\App\Http\Controllers\Admin\PaymentController::class, 'reject'])->name('payments.reject');
 });

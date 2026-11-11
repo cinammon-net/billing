@@ -40,7 +40,7 @@ function MobileLink({ href, active, icon: Icon, admin = false, children }) {
 
 export default function Authenticated({ user: userProp, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-    const { panelUrl, auth, coins } = usePage().props;
+    const { panelUrl, auth, coins, adventSummary } = usePage().props;
     // Si la página no pasa el usuario, se usa el de la sesión
     const user = userProp ?? auth?.user ?? {};
     const isAdmin = Boolean(auth?.user?.is_admin);
@@ -91,6 +91,11 @@ export default function Authenticated({ user: userProp, header, children }) {
                             <TopLink href={route('coins.index')} active={isCoins} icon={Coins}>
                                 Monedas{typeof coins === 'number' && <span className="ml-1 rounded bg-yellow-400/15 px-1.5 py-0.5 text-[10px] font-bold text-yellow-300">{coins}</span>}
                             </TopLink>
+                            {(adventSummary || isAdmin) && (
+                                <TopLink href={route('advent.index')} active={route().current('advent.index')} icon={Gift}>
+                                    {adventSummary?.emoji || '🎄'} Adviento
+                                </TopLink>
+                            )}
 
                             {isAdmin && (
                                 <Dropdown>

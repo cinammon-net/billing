@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class CoinService
 {
     /** Motivos que cuentan como «monedas ganadas por actividad» (para activar una invitación). */
-    private const EARNED = ['ad', 'checkin', 'mission'];
+    private const EARNED = ['ad', 'checkin', 'mission', 'advent'];
 
     /** Suma (o resta, si es negativo) monedas de forma atómica. Devuelve false si no hay saldo. */
     public function apply(User $user, int $amount, string $reason, ?string $detail = null): bool

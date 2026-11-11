@@ -95,7 +95,7 @@ function NavLink({ href, active, children }) {
 }
 
 export default function StoreNav() {
-    const { auth, panelUrl } = usePage().props;
+    const { auth, panelUrl, adventSummary } = usePage().props;
     const [gamesOpen, setGamesOpen] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
@@ -243,6 +243,16 @@ export default function StoreNav() {
 
                 {/* Acciones */}
                 <div className="col-start-3 flex items-center justify-end gap-2 font-mono text-xs">
+                    {(adventSummary || auth?.user?.is_admin) && (
+                        <Link
+                            href={route('advent.index')}
+                            className="hidden items-center gap-1.5 rounded-full border border-emerald-400/50 bg-emerald-500/15 px-3 py-1.5 whitespace-nowrap font-bold text-emerald-200 shadow-[0_0_12px_rgba(16,185,129,0.25)] transition hover:bg-emerald-400 hover:text-black md:flex"
+                            title={adventSummary?.title || 'Calendario de Adviento'}
+                        >
+                            <span>{adventSummary?.emoji || '🎄'}</span>
+                            <span>Adviento</span>
+                        </Link>
+                    )}
                     <Link
                         href={route('coins.index')}
                         className="hidden items-center gap-1.5 rounded-lg px-3 py-2 whitespace-nowrap font-bold text-yellow-300 transition hover:text-yellow-200 md:flex"
@@ -354,6 +364,11 @@ export default function StoreNav() {
                                 <Link href={route('coins.index')} onClick={closeAll} className="flex items-center gap-2 rounded-lg px-2 py-2 font-bold text-yellow-300 hover:bg-white/5">
                                     <Coins size={14} /> Servidor gratis con monedas
                                 </Link>
+                                {(adventSummary || auth?.user?.is_admin) && (
+                                    <Link href={route('advent.index')} onClick={closeAll} className="flex items-center gap-2 rounded-lg px-2 py-2 font-bold text-emerald-300 hover:bg-white/5">
+                                        <span>{adventSummary?.emoji || '🎄'}</span> {adventSummary?.title || 'Calendario de Adviento'}
+                                    </Link>
+                                )}
                                 <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-lg px-2 py-2 text-slate-300 hover:bg-white/5">
                                     <LifeBuoy size={14} /> Soporte en Discord
                                 </a>

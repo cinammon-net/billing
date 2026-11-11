@@ -47,6 +47,8 @@ class HandleInertiaRequests extends Middleware
             'maintenance' => fn () => app(\App\Services\PanelService::class)->maintenance(),
             // Anuncios (ofertas, novedades, eventos) publicados desde el panel para la tienda
             'announcements' => fn () => app(\App\Services\PanelService::class)->announcements(),
+            // Resumen del Calendario de Adviento / Regalos (si está activo)
+            'adventSummary' => fn () => \App\Support\Advent::summary(),
             'flash' => [
                 'success' => $request->session()->get('success'),
             ],

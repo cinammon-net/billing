@@ -13,7 +13,7 @@ const fmtRam = (mb) => (mb >= 1024 ? `${+(mb / 1024).toFixed(2)} GB` : `${mb} MB
 const fmtEur = (n) => `${Number(n).toFixed(2).replace('.', ',')} €`;
 const REASONS = {
     ad: 'Anuncio', checkin: 'Racha diaria', mission: 'Misión', referral: 'Invitación', purchase: 'Regalo por compra',
-    free_server: 'Servidor gratis', free_renew: 'Renovación', admin: 'Ajuste', game: 'Minijuego',
+    free_server: 'Servidor gratis', free_renew: 'Renovación', admin: 'Ajuste', game: 'Minijuego', advent: 'Calendario de Adviento',
 };
 const MISSION_ICONS = { image: ImageIcon, id: IdCard, shield: Shield, flame: Flame, users: Users, cart: ShoppingCart };
 
@@ -439,7 +439,7 @@ function FreeServer({ o, durations }) {
 }
 
 export default function Coins({ balance: initialBalance, earnedToday, dailyCap, enabled, checkin, ads, missions, referral, coinsPerEuro, builder, stats, freeServers, history }) {
-    const { flash, errors } = usePage().props;
+    const { flash, errors, adventSummary } = usePage().props;
     const [balance, setBalance] = useState(initialBalance);
     const [toast, setToast] = useState(null);
     useEffect(() => setBalance(initialBalance), [initialBalance]);
@@ -485,6 +485,27 @@ export default function Coins({ balance: initialBalance, earnedToday, dailyCap, 
 
                 {flash?.success && <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3 text-sm text-emerald-200">{flash.success}</div>}
                 {anyError && <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-200">{anyError}</div>}
+
+                {adventSummary && (
+                    <Link
+                        href={route('advent.index')}
+                        className="flex flex-col items-center justify-between gap-3 rounded-2xl border border-emerald-400/50 bg-gradient-to-r from-emerald-950/80 via-teal-950/70 to-emerald-950/80 p-4 text-center transition hover:border-emerald-300 sm:flex-row sm:px-6 sm:text-left"
+                    >
+                        <div className="flex items-center gap-3">
+                            <span className="text-3xl">{adventSummary.emoji}</span>
+                            <div>
+                                <p className="font-mono text-[10px] font-bold tracking-widest text-emerald-300 uppercase">{adventSummary.badge}</p>
+                                <p className="text-base font-black text-white">
+                                    {adventSummary.title} · Casilla #{adventSummary.current_day} disponible hoy
+                                </p>
+                                <p className="text-xs text-slate-300">Abre tu regalo diario y gana hasta +1.500 monedas extra con los cofres especiales.</p>
+                            </div>
+                        </div>
+                        <span className="shrink-0 rounded-xl bg-emerald-400 px-4 py-2 font-mono text-xs font-extrabold text-black">
+                            Abrir regalo de hoy →
+                        </span>
+                    </Link>
+                )}
                 {toast && (
                     <div className="fixed right-4 bottom-20 z-50 rounded-xl border border-yellow-400/60 bg-black/90 px-4 py-3 font-bold text-yellow-300 shadow-[0_0_20px_rgba(250,204,21,0.3)]">{toast}</div>
                 )}
