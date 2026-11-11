@@ -3,13 +3,14 @@ import MaintenanceBanner from '@/Components/MaintenanceBanner';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import { Link, usePage } from '@inertiajs/react';
-import { ArrowUpRight, BadgePercent, ChevronDown, Coins, CreditCard, Layers, LogOut, Menu, Receipt, Server, ShieldCheck, ShoppingCart, Tags, User, X } from 'lucide-react';
+import { ArrowUpRight, BadgePercent, Gift, ChevronDown, Coins, CreditCard, Layers, LogOut, Menu, Receipt, Server, ShieldCheck, ShoppingCart, Tags, User, X } from 'lucide-react';
 
 const ADMIN_LINKS = [
     { route: 'admin.plans.index', label: 'Precios', icon: Tags },
     { route: 'admin.payments.index', label: 'Pagos', icon: Receipt },
     { route: 'admin.payment-methods.index', label: 'Métodos de pago', icon: CreditCard },
     { route: 'admin.promotions.index', label: 'Descuentos por festivo', icon: BadgePercent },
+    { route: 'admin.free.index', label: 'Servidores gratis', icon: Gift },
 ];
 
 function TopLink({ href, active, icon: Icon, children }) {

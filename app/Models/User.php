@@ -47,6 +47,25 @@ class User extends Authenticatable
      */
     protected $appends = ['is_admin'];
 
+    public function orders(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    protected static function booted(): void
+    {
+        // Invitaciones: si llegó con un enlace /r/CODIGO, se apunta quién le invitó.
+        static::creating(function (User $user) {
+            if ($user->referred_by || app()->runningInConsole()) {
+                return;
+            }
+            $code = (string) request()->cookie('cin_ref');
+            if ($code !== '' && ($inviter = static::where('referral_code', strtoupper($code))->first())) {
+                $user->referred_by = $inviter->id;
+            }
+        });
+    }
+
     public function getIsAdminAttribute(): bool
     {
         return in_array(strtolower((string) $this->email), config('billing.admin_emails', []), true);
@@ -57,6 +76,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_checkin' => 'date',
+            'two_factor_confirmed_at' => 'datetime',
         ];
     }
 }

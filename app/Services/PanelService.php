@@ -158,6 +158,7 @@ class PanelService
     public function provision(Order $order): bool
     {
         $order->loadMissing(['user', 'plan']);
+        $res = $order->resources();
 
         try {
             $response = $this->http()->withHeaders(['X-Billing-Token' => $this->token])
@@ -168,13 +169,13 @@ class PanelService
                     'email' => $order->user->email,
                     'user_name' => $order->user->name,
                     'server_name' => $order->server_name,
-                    'category' => $order->plan->category,
-                    'egg' => $order->plan->egg,
-                    'memory_mb' => $order->plan->ram_mb,
-                    'disk_mb' => $order->plan->storage_gb * 1024,
-                    'cpu_pct' => $order->plan->cpu_pct,
-                    // Los gratuitos (monedas) no tienen dominio propio en el panel.
-                    'paid' => (float) $order->price > 0,
+                    'category' => $res['category'],
+                    'egg' => $res['egg'],
+                    'memory_mb' => $res['ram_mb'],
+                    'disk_mb' => $res['storage_gb'] * 1024,
+                    'cpu_pct' => $res['cpu_pct'],
+                    // Los gratuitos (monedas) no tienen dominio propio y el panel les da menos prioridad.
+                    'paid' => !$order->is_free && (float) $order->price > 0,
                 ]);
 
             if (!$response->successful()) {

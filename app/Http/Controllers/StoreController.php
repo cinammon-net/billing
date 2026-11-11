@@ -101,6 +101,7 @@ class StoreController extends Controller
                     'eggs' => $this->eggsFor($key, $catalog),
                 ];
             })->filter(fn ($category) => $category['from'] !== null)->values(),
+            'freeStats' => \App\Support\FreeTier::settings()['enabled'] ? \App\Support\FreeTier::publicStats() : null,
         ]);
     }
 

@@ -283,25 +283,25 @@ export default function Dashboard({ auth, orders = [], invoices = [] }) {
                                                     {/* Specs Hardware */}
                                                     <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] text-slate-300">
                                                         <span className="rounded-md border border-neutral-800 bg-[#090d1f] px-2.5 py-1">
-                                                            <Gamepad2 className="mr-1 inline h-3.5 w-3.5 -translate-y-px" aria-hidden="true" />Plan: <span className="text-pink-300 font-semibold">{o.plan?.name || 'Personalizado'}</span>
+                                                            <Gamepad2 className="mr-1 inline h-3.5 w-3.5 -translate-y-px" aria-hidden="true" />Plan: <span className="text-pink-300 font-semibold">{o.is_free ? `Gratis · ${o.egg}` : o.plan?.name || 'Personalizado'}</span>
                                                         </span>
-                                                        {o.plan && (
+                                                        {(o.plan || o.is_free) && (
                                                             <>
                                                                 <span className="rounded-md border border-neutral-800 bg-[#090d1f] px-2.5 py-1">
-                                                                    <Zap className="mr-1 inline h-3.5 w-3.5 -translate-y-px" aria-hidden="true" />{fmtRam(o.plan.ram_mb)} RAM
+                                                                    <Zap className="mr-1 inline h-3.5 w-3.5 -translate-y-px" aria-hidden="true" />{fmtRam(o.ram_mb ?? o.plan.ram_mb)} RAM
                                                                 </span>
                                                                 <span className="rounded-md border border-neutral-800 bg-[#090d1f] px-2.5 py-1">
                                                                     <Cpu size={11} className="inline mr-1 text-neon" />
-                                                                    {o.plan.cpu_pct}% CPU
+                                                                    {o.cpu_pct ?? o.plan.cpu_pct}% CPU
                                                                 </span>
                                                                 <span className="rounded-md border border-neutral-800 bg-[#090d1f] px-2.5 py-1">
                                                                     <HardDrive size={11} className="inline mr-1 text-pink-400" />
-                                                                    {o.plan.storage_gb} GB NVMe
+                                                                    {o.storage_gb ?? o.plan.storage_gb} GB NVMe
                                                                 </span>
                                                             </>
                                                         )}
                                                         <span className="rounded-md border border-neutral-800 bg-[#090d1f] px-2.5 py-1 text-white font-bold">
-                                                            {fmtPrice(o.price)} €/{cycleUnit(billingCycles, o.billing_cycle)}
+                                                            {o.is_free ? 'Gratis con monedas' : `${fmtPrice(o.price)} €/${cycleUnit(billingCycles, o.billing_cycle)}`}
                                                         </span>
                                                     </div>
 

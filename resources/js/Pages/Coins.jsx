@@ -2,197 +2,67 @@ import InputError from '@/Components/InputError';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import { Brain, Clock, Flame, Gamepad2, Gem, Ghost, Globe, Shield, Zap, Coins as CoinsIcon, Crosshair, Gift, PlayCircle, RefreshCw, Rocket, Server, Sparkles, TrendingUp } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+    CalendarCheck, Check, Coins as CoinsIcon, Copy, Cpu, CreditCard, Flame, Gift, HardDrive, IdCard, Image as ImageIcon,
+    MemoryStick, PlayCircle, RefreshCw, Rocket, Search, Send, Server, Share2, Shield, ShoppingCart, Sparkles, Target, TrendingUp, Users,
+} from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const fmtDate = (d) => (d ? new Date(d).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—');
-const fmtRam = (mb) => (mb >= 1024 ? `${mb / 1024} GB` : `${mb} MB`);
-const REASONS = { game: 'Minijuego', ad: 'Anuncio', free_server: 'Servidor gratis', free_renew: 'Renovación', admin: 'Ajuste' };
+const fmtRam = (mb) => (mb >= 1024 ? `${+(mb / 1024).toFixed(2)} GB` : `${mb} MB`);
+const fmtEur = (n) => `${Number(n).toFixed(2).replace('.', ',')} €`;
+const REASONS = {
+    ad: 'Anuncio', checkin: 'Racha diaria', mission: 'Misión', referral: 'Invitación', purchase: 'Regalo por compra',
+    free_server: 'Servidor gratis', free_renew: 'Renovación', admin: 'Ajuste', game: 'Minijuego',
+};
+const MISSION_ICONS = { image: ImageIcon, id: IdCard, shield: Shield, flame: Flame, users: Users, cart: ShoppingCart };
 
-function useGame(game, onDone) {
-    const [token, setToken] = useState(null);
-    const [error, setError] = useState(null);
-    const start = async () => {
-        setError(null);
-        try {
-            const { data } = await axios.post(route('coins.games.start'), { game });
-            setToken(data.token);
-            return true;
-        } catch (e) {
-            setError(e.response?.data?.message ?? 'No se pudo empezar la partida.');
-            return false;
-        }
-    };
-    const finish = async (score) => {
-        if (!token) return;
-        try {
-            const { data } = await axios.post(route('coins.games.finish'), { token, score });
-            onDone(data);
-        } catch (e) {
-            setError(e.response?.data?.message ?? 'No se pudo guardar la partida.');
-        } finally {
-            setToken(null);
-        }
-    };
-    return { start, finish, error, playing: Boolean(token) };
+function Panel({ icon: Icon, title, color = 'text-yellow-300', children, className = '' }) {
+    return (
+        <section className={`rounded-2xl border border-slate-800 bg-[#070b18]/90 p-4 sm:p-5 ${className}`}>
+            <h2 className="mb-3 flex items-center gap-2 font-black text-white">
+                <Icon size={18} className={color} /> {title}
+            </h2>
+            {children}
+        </section>
+    );
 }
 
-/** Minijuego 1: pulsar los núcleos que aparecen durante 30 segundos. */
-function ReflexGame({ onDone }) {
-    const DURATION = 30;
-    const { start, finish, error, playing } = useGame('reflex', onDone);
-    const [left, setLeft] = useState(DURATION);
-    const [score, setScore] = useState(0);
-    const [pos, setPos] = useState({ x: 50, y: 50, size: 56 });
-    const scoreRef = useRef(0);
-
-    const move = (s) => setPos({ x: 8 + Math.random() * 84, y: 10 + Math.random() * 80, size: Math.max(30, 56 - s) });
-
-    const begin = async () => {
-        if (!(await start())) return;
-        scoreRef.current = 0;
-        setScore(0);
-        setLeft(DURATION);
-        move(0);
-    };
-
-    useEffect(() => {
-        if (!playing) return;
-        const t0 = Date.now();
-        const id = setInterval(() => {
-            const remaining = DURATION - Math.floor((Date.now() - t0) / 1000);
-            setLeft(Math.max(0, remaining));
-            if (remaining <= 0) {
-                clearInterval(id);
-                finish(scoreRef.current);
-            }
-        }, 250);
-        return () => clearInterval(id);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [playing]);
-
-    const hit = () => {
-        scoreRef.current += 1;
-        setScore(scoreRef.current);
-        move(scoreRef.current);
-    };
-
+/** Racha diaria: 7 casillas; el séptimo día es el premio gordo. */
+function Checkin({ checkin }) {
+    const { rewards, streak, done_today } = checkin;
+    const today = done_today ? (streak - 1) % 7 : streak % 7;
     return (
-        <div>
-            <div className="mb-3 flex items-center justify-between font-mono text-xs text-slate-300">
-                <span>Puntos: <b className="text-white">{score}</b></span>
-                <span className="flex items-center gap-1"><Clock size={12} /> {left}s</span>
+        <div className="space-y-3">
+            <div className="grid grid-cols-7 gap-1.5">
+                {rewards.map((r, i) => {
+                    const got = done_today ? i <= today : i < today;
+                    const isToday = i === today;
+                    return (
+                        <div
+                            key={i}
+                            className={`flex flex-col items-center rounded-lg border px-0.5 py-2 text-center ${got ? 'border-emerald-500/50 bg-emerald-500/10' : isToday ? 'border-yellow-400/70 bg-yellow-400/10' : 'border-slate-800 bg-black/30'}`}
+                        >
+                            <span className="font-mono text-[9px] text-slate-400">Día {i + 1}</span>
+                            {got ? <Check size={14} className="my-0.5 text-emerald-400" /> : <span className="text-sm font-black text-yellow-300">{r}</span>}
+                        </div>
+                    );
+                })}
             </div>
-            <div className="relative h-64 select-none overflow-hidden rounded-xl border border-cyan-500/30 bg-[radial-gradient(circle_at_center,oklch(var(--tw-c-neon)_/_0.08),transparent_70%)] sm:h-72">
-                {playing ? (
-                    <button
-                        type="button"
-                        onPointerDown={hit}
-                        aria-label="Núcleo"
-                        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-neon to-pink-500 shadow-[0_0_20px_oklch(var(--tw-c-neon))] transition-[left,top] duration-75"
-                        style={{ left: `${pos.x}%`, top: `${pos.y}%`, width: pos.size, height: pos.size }}
-                    />
-                ) : (
-                    <div className="flex h-full flex-col items-center justify-center gap-3 p-4 text-center">
-                        <p className="max-w-xs text-sm text-slate-300">Pulsa los núcleos tan rápido como puedas durante 30 segundos. Cada 5 aciertos = 1 moneda (máx. 15).</p>
-                        <button type="button" onClick={begin} className="inline-flex items-center gap-2 rounded-xl bg-neon px-5 py-2.5 font-bold text-black hover:brightness-110">
-                            <PlayCircle size={16} /> Jugar
-                        </button>
-                    </div>
-                )}
-            </div>
-            {error && <p className="mt-2 text-xs text-rose-400">{error}</p>}
+            <button
+                type="button"
+                disabled={done_today}
+                onClick={() => router.post(route('coins.checkin'), {}, { preserveScroll: true })}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 px-4 py-2.5 font-black text-black hover:brightness-110 disabled:cursor-not-allowed disabled:from-slate-700 disabled:to-slate-700 disabled:text-slate-300"
+            >
+                <CalendarCheck size={16} /> {done_today ? `Recogido · racha de ${streak} día(s)` : `Recoger +${rewards[today]} monedas`}
+            </button>
+            <p className="text-[11px] text-slate-500">Entra cada día: si te saltas uno, la racha vuelve al día 1.</p>
         </div>
     );
 }
 
-// Parejas del memory: iconos de línea con su color (sin emojis).
-const SYMBOLS = ['rocket', 'gamepad', 'gem', 'flame', 'zap', 'shield', 'ghost', 'globe'];
-const SYMBOL_ICON = {
-    rocket: [Rocket, 'text-cyan-300'], gamepad: [Gamepad2, 'text-pink-300'], gem: [Gem, 'text-violet-300'], flame: [Flame, 'text-orange-300'],
-    zap: [Zap, 'text-yellow-300'], shield: [Shield, 'text-emerald-300'], ghost: [Ghost, 'text-slate-200'], globe: [Globe, 'text-sky-300'],
-};
-const SymbolIcon = ({ k }) => {
-    const [Icon, color] = SYMBOL_ICON[k];
-    return <Icon className={`h-7 w-7 sm:h-8 sm:w-8 ${color}`} aria-hidden="true" />;
-};
-const shuffle = (a) => a.map((v) => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map((x) => x[1]);
-
-/** Minijuego 2: memoria de 8 parejas. */
-function MemoryGame({ onDone }) {
-    const { start, finish, error, playing } = useGame('memory', onDone);
-    const [cards, setCards] = useState([]);
-    const [open, setOpen] = useState([]);
-    const [found, setFound] = useState([]);
-    const [moves, setMoves] = useState(0);
-
-    const begin = async () => {
-        if (!(await start())) return;
-        setCards(shuffle([...SYMBOLS, ...SYMBOLS]));
-        setOpen([]);
-        setFound([]);
-        setMoves(0);
-    };
-
-    const flip = (i) => {
-        if (!playing || open.length === 2 || open.includes(i) || found.includes(cards[i])) return;
-        const next = [...open, i];
-        setOpen(next);
-        if (next.length === 2) {
-            setMoves((m) => m + 1);
-            const [a, b] = next;
-            if (cards[a] === cards[b]) {
-                const nf = [...found, cards[a]];
-                setFound(nf);
-                setOpen([]);
-                if (nf.length === SYMBOLS.length) setTimeout(() => finish(nf.length), 400);
-            } else {
-                setTimeout(() => setOpen([]), 650);
-            }
-        }
-    };
-
-    return (
-        <div>
-            <div className="mb-3 flex items-center justify-between font-mono text-xs text-slate-300">
-                <span>Parejas: <b className="text-white">{found.length}/8</b></span>
-                <span>Movimientos: {moves}</span>
-            </div>
-            {playing ? (
-                <>
-                    <div className="grid grid-cols-4 gap-2">
-                        {cards.map((c, i) => {
-                            const shown = open.includes(i) || found.includes(c);
-                            return (
-                                <button
-                                    key={i}
-                                    type="button"
-                                    onClick={() => flip(i)}
-                                    className={`flex aspect-square items-center justify-center rounded-lg border text-2xl transition sm:text-3xl ${shown ? 'border-pink-400/60 bg-pink-500/15' : 'border-slate-700 bg-slate-900 hover:border-cyan-500/60'}`}
-                                >
-                                    {shown ? <SymbolIcon k={c} /> : ''}
-                                </button>
-                            );
-                        })}
-                    </div>
-                    <button type="button" onClick={() => finish(found.length)} className="mt-3 text-xs text-slate-400 underline hover:text-white">
-                        Terminar ahora
-                    </button>
-                </>
-            ) : (
-                <div className="flex h-64 flex-col items-center justify-center gap-3 rounded-xl border border-pink-500/30 p-4 text-center sm:h-72">
-                    <p className="max-w-xs text-sm text-slate-300">Encuentra las 8 parejas. Completarlo = 12 monedas; a medias, 1 moneda cada 2 parejas.</p>
-                    <button type="button" onClick={begin} className="inline-flex items-center gap-2 rounded-xl bg-pink-500 px-5 py-2.5 font-bold text-white hover:brightness-110">
-                        <PlayCircle size={16} /> Jugar
-                    </button>
-                </div>
-            )}
-            {error && <p className="mt-2 text-xs text-rose-400">{error}</p>}
-        </div>
-    );
-}
-
-/** Anuncio con recompensa (Google Ad Manager / GPT). Solo se muestra si está configurado. */
+/** Anuncio con recompensa (Google Ad Manager / GPT). */
 function RewardedAd({ ads, onDone }) {
     const [state, setState] = useState('idle');
     const [msg, setMsg] = useState(null);
@@ -208,16 +78,14 @@ function RewardedAd({ ads, onDone }) {
             return;
         }
         setState('loading');
-        const loadGpt = () =>
-            new Promise((resolve) => {
-                if (window.googletag?.apiReady) return resolve();
-                const s = document.createElement('script');
-                s.src = 'https://securepubads.g.doubleclick.net/tag/js/gpt.js';
-                s.async = true;
-                s.onload = resolve;
-                document.head.appendChild(s);
-            });
-        await loadGpt();
+        await new Promise((resolve) => {
+            if (window.googletag?.apiReady) return resolve();
+            const s = document.createElement('script');
+            s.src = 'https://securepubads.g.doubleclick.net/tag/js/gpt.js';
+            s.async = true;
+            s.onload = resolve;
+            document.head.appendChild(s);
+        });
         const gt = (window.googletag = window.googletag || { cmd: [] });
         gt.cmd.push(() => {
             const slot = gt.defineOutOfPageSlot(ads.unit, gt.enums.OutOfPageFormat.REWARDED);
@@ -238,10 +106,10 @@ function RewardedAd({ ads, onDone }) {
             gt.pubads().addEventListener('rewardedSlotClosed', async () => {
                 gt.destroySlots([slot]);
                 setState('idle');
-                if (!granted) return setMsg('Cierra el anuncio solo al terminar para recibir monedas.');
+                if (!granted) return setMsg('Mira el anuncio hasta el final para recibir las monedas.');
                 try {
                     const { data } = await axios.post(route('coins.ads.complete'), { token });
-                    onDone({ ...data, message: `+${data.coins} monedas` });
+                    onDone(data);
                 } catch (e) {
                     setMsg(e.response?.data?.message ?? 'No se pudo validar el anuncio.');
                 }
@@ -249,7 +117,7 @@ function RewardedAd({ ads, onDone }) {
             gt.pubads().addEventListener('slotRenderEnded', (ev) => {
                 if (ev.slot === slot && ev.isEmpty) {
                     setState('idle');
-                    setMsg('No hay anuncios disponibles ahora mismo.');
+                    setMsg('No hay anuncios disponibles ahora mismo. Prueba más tarde.');
                 }
             });
             gt.enableServices();
@@ -258,27 +126,143 @@ function RewardedAd({ ads, onDone }) {
     }, [ads.unit, onDone]);
 
     return (
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-3">
             <p className="text-sm text-slate-300">
-                Mira un anuncio completo y gana <b className="text-yellow-300">{ads.reward} monedas</b>. Te quedan <b className="text-white">{left}</b> hoy.
+                Mira un anuncio corto entero y gana <b className="text-yellow-300">{ads.reward} monedas</b>.
+                {ads.enabled && <> Te quedan <b className="text-white">{left}</b> hoy.</>}
             </p>
             <button
                 type="button"
                 disabled={!ads.enabled || left === 0 || state !== 'idle'}
                 onClick={watch}
-                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-yellow-400/50 bg-yellow-400/10 px-4 py-2.5 font-bold text-yellow-300 hover:bg-yellow-400/20 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-yellow-400/50 bg-yellow-400/10 px-4 py-2.5 font-bold text-yellow-300 hover:bg-yellow-400/20 disabled:cursor-not-allowed disabled:opacity-50"
             >
-                <PlayCircle size={16} /> {!ads.enabled ? 'Próximamente' : state === 'idle' ? 'Ver anuncio' : 'Cargando…'}
+                <PlayCircle size={16} /> {!ads.enabled ? 'Muy pronto' : left === 0 ? 'Vuelve mañana' : state === 'idle' ? 'Ver anuncio' : 'Cargando…'}
             </button>
-            {msg && <p className="text-xs text-rose-400 sm:basis-full">{msg}</p>}
+            {msg && <p className="text-xs text-rose-400">{msg}</p>}
         </div>
     );
 }
 
-function ClaimForm({ plans, balance }) {
-    const { data, setData, post, processing, errors } = useForm({ plan_id: plans[0]?.id ?? '', server_name: '' });
-    const plan = plans.find((p) => p.id === Number(data.plan_id));
-    const enough = plan && balance >= plan.coin_cost;
+function Missions({ missions }) {
+    return (
+        <ul className="space-y-2">
+            {missions.map((m) => {
+                const Icon = MISSION_ICONS[m.icon] ?? Target;
+                return (
+                    <li key={m.key} className={`flex items-center gap-3 rounded-xl border p-2.5 ${m.done ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-slate-800 bg-black/30'}`}>
+                        <Icon size={16} className={m.done ? 'shrink-0 text-emerald-400' : 'shrink-0 text-slate-400'} />
+                        <span className={`min-w-0 flex-1 text-sm ${m.done ? 'text-slate-400 line-through' : 'text-slate-200'}`}>{m.label}</span>
+                        {m.done ? (
+                            <Check size={16} className="shrink-0 text-emerald-400" />
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={() => router.post(route('coins.mission', m.key), {}, { preserveScroll: true })}
+                                className="shrink-0 rounded-lg border border-yellow-400/50 px-2.5 py-1 font-mono text-xs font-bold text-yellow-300 hover:bg-yellow-400/10"
+                            >
+                                +{m.reward}
+                            </button>
+                        )}
+                    </li>
+                );
+            })}
+        </ul>
+    );
+}
+
+function Referral({ referral }) {
+    const [copied, setCopied] = useState(false);
+    const text = 'Consigue un servidor gratis en Cinammon (juegos, bots, webs y más):';
+    const enc = encodeURIComponent;
+    const copy = () => {
+        navigator.clipboard?.writeText(referral.url).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        });
+    };
+    const share = () => navigator.share?.({ title: 'Cinammon', text, url: referral.url }).catch(() => {});
+
+    return (
+        <div className="space-y-3">
+            <p className="text-sm text-slate-300">
+                Cuando tu amigo empiece a usar la tienda ganáis <b className="text-yellow-300">{referral.reward_active}</b> tú y <b className="text-yellow-300">{referral.reward_welcome}</b> él.
+                Si compra algo, te llevas <b className="text-yellow-300">{referral.reward_purchase}</b> más.
+            </p>
+            <div className="flex gap-2">
+                <input readOnly value={referral.url} onFocus={(e) => e.target.select()} className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-black/60 px-3 py-2 font-mono text-xs text-slate-200 focus:ring-0" />
+                <button type="button" onClick={copy} className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-700 px-3 py-2 text-xs font-bold text-white hover:border-yellow-400">
+                    {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />} {copied ? 'Copiado' : 'Copiar'}
+                </button>
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs font-bold">
+                <a href={`https://wa.me/?text=${enc(`${text} ${referral.url}`)}`} target="_blank" rel="noreferrer" className="rounded-lg bg-emerald-600/80 px-3 py-1.5 text-white hover:bg-emerald-600">WhatsApp</a>
+                <a href={`https://t.me/share/url?url=${enc(referral.url)}&text=${enc(text)}`} target="_blank" rel="noreferrer" className="rounded-lg bg-sky-600/80 px-3 py-1.5 text-white hover:bg-sky-600">Telegram</a>
+                <a href={`https://x.com/intent/post?text=${enc(`${text} ${referral.url}`)}`} target="_blank" rel="noreferrer" className="rounded-lg bg-slate-700 px-3 py-1.5 text-white hover:bg-slate-600">X</a>
+                {typeof navigator !== 'undefined' && navigator.share && (
+                    <button type="button" onClick={share} className="inline-flex items-center gap-1 rounded-lg bg-slate-700 px-3 py-1.5 text-white hover:bg-slate-600"><Share2 size={12} /> Más</button>
+                )}
+            </div>
+            <p className="font-mono text-[11px] text-slate-400">Invitados: {referral.invited} · activos: {referral.active}</p>
+        </div>
+    );
+}
+
+function Slider({ icon: Icon, label, value, min, max, step, onChange, format }) {
+    const disabled = max <= min;
+    return (
+        <label className="block">
+            <span className="mb-1 flex items-center justify-between text-xs text-slate-300">
+                <span className="flex items-center gap-1.5"><Icon size={13} className="text-yellow-300" /> {label}</span>
+                <b className="font-mono text-white">{format(value)}</b>
+            </span>
+            <input
+                type="range"
+                min={min}
+                max={Math.max(min, max)}
+                step={step}
+                value={value}
+                disabled={disabled}
+                onChange={(e) => onChange(Number(e.target.value))}
+                className="w-full accent-yellow-400"
+            />
+            <span className="flex justify-between font-mono text-[10px] text-slate-500"><span>{format(min)}</span><span>máx. {format(Math.max(min, max))}</span></span>
+        </label>
+    );
+}
+
+/** Crear el servidor gratis: servicio → recursos → días → nombre. */
+function Builder({ builder, balance, activeCount }) {
+    const { options, categories, durations, min, rates, per_user, full } = builder;
+    const [cat, setCat] = useState('all');
+    const [q, setQ] = useState('');
+    const { data, setData, post, processing, errors } = useForm({
+        egg: options[0]?.egg ?? '', ram_mb: min.ram_mb, cpu_pct: min.cpu_pct, disk_gb: min.disk_gb, days: durations[Math.min(1, durations.length - 1)], server_name: '',
+    });
+    const opt = options.find((o) => o.egg === data.egg);
+
+    const visible = useMemo(() => {
+        const term = q.trim().toLowerCase();
+        return options.filter((o) => (cat === 'all' || o.category === cat) && (!term || o.egg.toLowerCase().includes(term))).slice(0, 60);
+    }, [options, cat, q]);
+    const usedCats = useMemo(() => [...new Set(options.map((o) => o.category))], [options]);
+
+    const pick = (o) => {
+        setData((d) => ({
+            ...d,
+            egg: o.egg,
+            ram_mb: Math.min(Math.max(d.ram_mb, min.ram_mb), o.max.ram_mb),
+            cpu_pct: Math.min(Math.max(d.cpu_pct, min.cpu_pct), o.max.cpu_pct),
+            disk_gb: Math.min(Math.max(d.disk_gb, min.disk_gb), o.max.disk_gb),
+        }));
+    };
+
+    const daily = Math.ceil(rates.base + (data.ram_mb / 1024) * rates.ram + (data.cpu_pct / 100) * rates.cpu + data.disk_gb * rates.disk);
+    const total = daily * data.days;
+    const enough = balance >= total;
+    const limitReached = activeCount >= per_user;
+
+    if (!options.length) return <p className="text-sm text-slate-400">Ahora mismo no hay servicios gratis disponibles.</p>;
 
     return (
         <form
@@ -286,170 +270,242 @@ function ClaimForm({ plans, balance }) {
                 e.preventDefault();
                 post(route('coins.claim'), { preserveScroll: true });
             }}
-            className="space-y-4"
+            className="grid gap-5 lg:grid-cols-2"
         >
-            <div className="grid gap-3 sm:grid-cols-2">
-                {plans.map((p) => (
-                    <label
-                        key={p.id}
-                        className={`cursor-pointer rounded-xl border p-4 transition ${Number(data.plan_id) === p.id ? 'border-yellow-400/70 bg-yellow-400/10' : 'border-slate-800 bg-black/40 hover:border-slate-600'}`}
-                    >
-                        <input type="radio" name="plan" className="sr-only" checked={Number(data.plan_id) === p.id} onChange={() => setData('plan_id', p.id)} />
-                        <span className="block font-bold text-white">{p.name}</span>
-                        <span className="mt-1 block font-mono text-[11px] text-slate-400">
-                            {fmtRam(p.ram_mb)} RAM · {p.storage_gb} GB disco · {p.cpu_pct}% CPU
-                        </span>
-                        <span className="mt-2 inline-flex items-center gap-1 rounded bg-yellow-400/15 px-2 py-0.5 font-mono text-xs font-bold text-yellow-300">
-                            <CoinsIcon size={12} /> {p.coin_cost} · {p.coin_days} días
-                        </span>
-                    </label>
-                ))}
+            <div className="space-y-3">
+                <p className="text-xs font-bold tracking-wider text-slate-400 uppercase">1 · Elige qué quieres</p>
+                <div className="flex flex-wrap gap-1.5">
+                    {['all', ...usedCats].map((k) => (
+                        <button
+                            key={k}
+                            type="button"
+                            onClick={() => setCat(k)}
+                            className={`rounded-lg border px-2.5 py-1 text-[11px] font-semibold ${cat === k ? 'border-yellow-400/70 bg-yellow-400/15 text-yellow-200' : 'border-slate-800 text-slate-400 hover:text-white'}`}
+                        >
+                            {k === 'all' ? 'Todo' : categories[k] ?? k}
+                        </button>
+                    ))}
+                </div>
+                <div className="relative">
+                    <Search size={14} className="absolute top-1/2 left-3 -translate-y-1/2 text-slate-500" />
+                    <input
+                        value={q}
+                        onChange={(e) => setQ(e.target.value)}
+                        placeholder="Buscar: Minecraft, Discord, web, TeamSpeak…"
+                        className="w-full rounded-lg border border-slate-700 bg-black/60 py-2 pr-3 pl-8 text-sm text-white focus:border-yellow-400 focus:ring-0"
+                    />
+                </div>
+                <div className="grid max-h-72 grid-cols-1 gap-1.5 overflow-y-auto pr-1 sm:grid-cols-2">
+                    {visible.map((o) => (
+                        <button
+                            key={o.egg}
+                            type="button"
+                            onClick={() => pick(o)}
+                            className={`rounded-lg border px-3 py-2 text-left transition ${data.egg === o.egg ? 'border-yellow-400/70 bg-yellow-400/10' : 'border-slate-800 bg-black/30 hover:border-slate-600'}`}
+                        >
+                            <span className="block truncate text-sm font-bold text-white">{o.egg}</span>
+                            <span className="block truncate text-[10px] text-slate-500">{categories[o.category] ?? o.category}</span>
+                        </button>
+                    ))}
+                    {visible.length === 0 && <p className="text-xs text-slate-500 sm:col-span-2">Nada con ese nombre.</p>}
+                </div>
             </div>
-            <InputError message={errors.plan_id} />
-            <div>
-                <label htmlFor="server_name" className="mb-1 block text-xs font-semibold text-slate-300">Nombre del servidor</label>
-                <input
-                    id="server_name"
-                    value={data.server_name}
-                    onChange={(e) => setData('server_name', e.target.value)}
-                    maxLength={40}
-                    placeholder="mi-servidor"
-                    className="w-full rounded-lg border border-slate-700 bg-black/60 px-3 py-2 text-sm text-white focus:border-yellow-400 focus:ring-0"
-                />
-                <InputError message={errors.server_name} />
+
+            <div className="space-y-4">
+                <p className="text-xs font-bold tracking-wider text-slate-400 uppercase">2 · Elige cuánto ({opt?.egg})</p>
+                {opt && (
+                    <>
+                        <Slider icon={MemoryStick} label="RAM" value={data.ram_mb} min={min.ram_mb} max={opt.max.ram_mb} step={128} onChange={(v) => setData('ram_mb', v)} format={fmtRam} />
+                        <Slider icon={Cpu} label="CPU" value={data.cpu_pct} min={min.cpu_pct} max={opt.max.cpu_pct} step={5} onChange={(v) => setData('cpu_pct', v)} format={(v) => `${v} %`} />
+                        <Slider icon={HardDrive} label="Disco" value={data.disk_gb} min={min.disk_gb} max={opt.max.disk_gb} step={1} onChange={(v) => setData('disk_gb', v)} format={(v) => `${v} GB`} />
+                    </>
+                )}
+                <div>
+                    <p className="mb-1 text-xs text-slate-300">Duración</p>
+                    <div className="flex flex-wrap gap-1.5">
+                        {durations.map((d) => (
+                            <button
+                                key={d}
+                                type="button"
+                                onClick={() => setData('days', d)}
+                                className={`rounded-lg border px-3 py-1.5 font-mono text-xs font-bold ${data.days === d ? 'border-yellow-400/70 bg-yellow-400/15 text-yellow-200' : 'border-slate-800 text-slate-400'}`}
+                            >
+                                {d} días
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <label htmlFor="server_name" className="mb-1 block text-xs text-slate-300">Nombre del servidor</label>
+                    <input
+                        id="server_name"
+                        value={data.server_name}
+                        onChange={(e) => setData('server_name', e.target.value)}
+                        maxLength={40}
+                        placeholder="mi-servidor"
+                        className="w-full rounded-lg border border-slate-700 bg-black/60 px-3 py-2 text-sm text-white focus:border-yellow-400 focus:ring-0"
+                    />
+                    <InputError message={errors.server_name} />
+                </div>
+
+                <div className="rounded-xl border border-yellow-400/30 bg-yellow-400/5 p-3">
+                    <p className="flex items-center justify-between text-sm text-slate-300">
+                        <span>{daily} monedas/día × {data.days} días</span>
+                        <b className="flex items-center gap-1 text-lg text-yellow-300"><CoinsIcon size={16} /> {total}</b>
+                    </p>
+                    {opt && (
+                        <p className="mt-2 border-t border-yellow-400/20 pt-2 text-[11px] text-slate-400">
+                            ¿Quieres más? <b className="text-white">{opt.paid.name}</b> por {fmtEur(opt.paid.price)}/mes: {fmtRam(opt.paid.ram_mb)} · {opt.paid.cpu_pct} % CPU · {opt.paid.disk_gb} GB, sin caducar y con prioridad.{' '}
+                            <Link href={route('store.category', opt.category)} className="font-bold text-pink-400 hover:underline">Ver planes</Link>
+                        </p>
+                    )}
+                </div>
+
+                <InputError message={errors.claim} />
+                <button
+                    type="submit"
+                    disabled={processing || !enough || limitReached || full || !opt}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 px-5 py-3 font-black text-black hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    <Rocket size={16} />
+                    {full ? 'Sin plazas gratis ahora mismo' : limitReached ? 'Ya tienes tu servidor gratis' : enough ? `Crear por ${total} monedas` : `Te faltan ${total - balance} monedas`}
+                </button>
             </div>
-            <button
-                type="submit"
-                disabled={processing || !enough}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 px-5 py-3 font-black text-black hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-            >
-                <Rocket size={16} /> {enough ? `Canjear ${plan.coin_cost} monedas` : `Te faltan ${plan ? plan.coin_cost - balance : 0} monedas`}
-            </button>
         </form>
     );
 }
 
-export default function Coins({ balance: initialBalance, earnedToday: initialEarned, dailyCap, ads, freePlans, freeServers, history }) {
-    const { flash, errors, auth } = usePage().props;
+function FreeServer({ o, durations }) {
+    const [days, setDays] = useState(durations[0]);
+    return (
+        <div className="flex flex-col gap-3 rounded-xl border border-slate-800 bg-black/40 p-4 md:flex-row md:items-center md:justify-between">
+            <div className="min-w-0">
+                <p className="truncate font-bold text-white">{o.server_name}</p>
+                <p className="font-mono text-[11px] text-slate-400">
+                    {o.egg ?? 'Servidor'} · {fmtRam(o.ram_mb ?? 0)} · {o.cpu_pct}% CPU · {o.storage_gb} GB
+                </p>
+                <p className="font-mono text-[11px] text-slate-400">
+                    {o.status === 'active' ? `Caduca ${fmtDate(o.renews_at)}` : 'Caducado (detenido)'}
+                    {o.server_address && ` · ${o.server_address}`}
+                </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+                {o.status === 'active' && (
+                    <>
+                        <select value={days} onChange={(e) => setDays(Number(e.target.value))} className="rounded-lg border border-slate-700 bg-black/60 py-1.5 pr-7 pl-2 text-xs text-white focus:ring-0">
+                            {durations.map((d) => (
+                                <option key={d} value={d}>{d} días · {(o.coin_daily ?? 0) * d}</option>
+                            ))}
+                        </select>
+                        <button
+                            type="button"
+                            onClick={() => router.post(route('coins.renew', o.id), { days }, { preserveScroll: true })}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-yellow-400/50 px-3 py-2 text-xs font-bold text-yellow-300 hover:bg-yellow-400/10"
+                        >
+                            <RefreshCw size={13} /> Renovar
+                        </button>
+                    </>
+                )}
+                <Link
+                    href={route('store.category', o.category ?? 'minecraft')}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 px-3 py-2 text-xs font-bold text-white hover:brightness-110"
+                >
+                    <TrendingUp size={13} /> Pasar a plan de pago
+                </Link>
+            </div>
+        </div>
+    );
+}
+
+export default function Coins({ balance: initialBalance, earnedToday, dailyCap, enabled, checkin, ads, missions, referral, coinsPerEuro, builder, stats, freeServers, history }) {
+    const { flash, errors } = usePage().props;
     const [balance, setBalance] = useState(initialBalance);
-    const [earned, setEarned] = useState(initialEarned);
     const [toast, setToast] = useState(null);
     useEffect(() => setBalance(initialBalance), [initialBalance]);
 
     const onDone = useCallback((data) => {
         if (typeof data.balance === 'number') setBalance(data.balance);
-        if (typeof data.earnedToday === 'number') setEarned(data.earnedToday);
         setToast(data.message);
         setTimeout(() => setToast(null), 3500);
-        router.reload({ only: ['history', 'ads', 'coins'] });
+        router.reload({ only: ['history', 'ads', 'coins', 'earnedToday'] });
     }, []);
 
-    const cheapest = Math.min(...freePlans.map((p) => p.coin_cost));
-    const progress = Math.min(100, (balance / cheapest) * 100);
-    const [tab, setTab] = useState('reflex');
+    const activeCount = freeServers.filter((o) => o.status === 'active').length;
+    const anyError = errors?.checkin || errors?.mission || errors?.renew;
 
     return (
-        <AuthenticatedLayout user={auth.user}>
-            <Head title="Monedas y servidores gratis" />
+        <AuthenticatedLayout>
+            <Head title="Servidor gratis" />
             <div className="mx-auto max-w-6xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
                 <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <h1 className="flex items-center gap-2 text-2xl font-black text-white sm:text-3xl">
-                            <Gift className="text-yellow-300" /> Servidor gratis con monedas
+                            <Gift className="text-yellow-300" /> Tu servidor gratis
                         </h1>
                         <p className="mt-1 max-w-2xl text-sm text-slate-400">
-                            Gana monedas jugando (y pronto viendo anuncios) y canjéalas por un servidor gratuito con recursos limitados. Para más potencia o más servidores, pásate a un plan de pago.
+                            Juegos, bots de Discord, webs, voz, bases de datos y más. Gana monedas, elige el servicio y cuántos recursos quieres, y úsalo gratis. Cuando se te quede pequeño, pásate a un plan de pago.
                         </p>
                     </div>
-                    <div className="rounded-2xl border border-yellow-400/40 bg-yellow-400/10 px-5 py-3 text-right">
+                    <div className="rounded-2xl border border-yellow-400/40 bg-yellow-400/10 px-5 py-3 sm:text-right">
                         <p className="font-mono text-[10px] tracking-widest text-yellow-300/80 uppercase">Tus monedas</p>
-                        <p className="flex items-center justify-end gap-2 text-3xl font-black text-yellow-300">
-                            <CoinsIcon /> {balance}
-                        </p>
-                        <p className="font-mono text-[11px] text-slate-400">Hoy: {earned}/{dailyCap}</p>
+                        <p className="flex items-center gap-2 text-3xl font-black text-yellow-300 sm:justify-end"><CoinsIcon /> {balance}</p>
+                        <p className="font-mono text-[11px] text-slate-400">Anuncios hoy: {earnedToday}/{dailyCap}</p>
                     </div>
                 </header>
 
-                {flash?.success && <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3 text-sm text-emerald-200">{flash.success}</div>}
-                {errors?.renew && <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-200">{errors.renew}</div>}
-                {toast && (
-                    <div className="fixed right-4 bottom-16 z-50 rounded-xl border border-yellow-400/60 bg-black/90 px-4 py-3 font-bold text-yellow-300 shadow-[0_0_20px_rgba(250,204,21,0.3)]">
-                        {toast}
-                    </div>
+                {/* Contador público: que se vea que hay gente usándolo */}
+                {stats.active >= 3 && (
+                <div className="grid grid-cols-3 gap-2 rounded-2xl border border-slate-800 bg-black/40 p-3 text-center">
+                    <div><p className="text-xl font-black text-white sm:text-2xl">{stats.active}</p><p className="text-[10px] text-slate-400 sm:text-xs">servidores gratis activos</p></div>
+                    <div><p className="text-xl font-black text-white sm:text-2xl">{stats.people}</p><p className="text-[10px] text-slate-400 sm:text-xs">personas lo han probado</p></div>
+                    <div><p className="text-xl font-black text-white sm:text-2xl">{stats.services}</p><p className="text-[10px] text-slate-400 sm:text-xs">servicios para elegir</p></div>
+                </div>
                 )}
 
-                <div className="h-2 overflow-hidden rounded-full bg-slate-800" title="Progreso hacia tu servidor gratis">
-                    <div className="h-full bg-gradient-to-r from-yellow-400 to-pink-500 transition-all" style={{ width: `${progress}%` }} />
+                {flash?.success && <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3 text-sm text-emerald-200">{flash.success}</div>}
+                {anyError && <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-200">{anyError}</div>}
+                {toast && (
+                    <div className="fixed right-4 bottom-20 z-50 rounded-xl border border-yellow-400/60 bg-black/90 px-4 py-3 font-bold text-yellow-300 shadow-[0_0_20px_rgba(250,204,21,0.3)]">{toast}</div>
+                )}
+
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <Panel icon={Flame} title="Racha diaria" color="text-orange-400"><Checkin checkin={checkin} /></Panel>
+                    <Panel icon={PlayCircle} title="Anuncios con premio"><RewardedAd ads={ads} onDone={onDone} /></Panel>
+                    <Panel icon={Target} title="Misiones" color="text-emerald-400"><Missions missions={missions} /></Panel>
+                    <Panel icon={Send} title="Invita a tus amigos" color="text-sky-400" className="md:col-span-2"><Referral referral={referral} /></Panel>
+                    <Panel icon={CreditCard} title="Comprar también da monedas" color="text-pink-400">
+                        <p className="text-sm text-slate-300">Por cada euro que pagas en la tienda te regalamos <b className="text-yellow-300">{coinsPerEuro} monedas</b>.</p>
+                        <Link href={route('store')} className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 px-4 py-2.5 text-sm font-bold text-white hover:brightness-110">
+                            <ShoppingCart size={15} /> Ver la tienda
+                        </Link>
+                    </Panel>
                 </div>
 
-                <div className="grid gap-6 lg:grid-cols-5">
-                    <section className="space-y-4 rounded-2xl border border-slate-800 bg-[#070b18]/90 p-5 lg:col-span-3">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                            <h2 className="flex items-center gap-2 font-black text-white"><Sparkles size={18} className="text-neon" /> Gana monedas</h2>
-                            <div className="flex gap-1 rounded-xl border border-slate-800 p-1 text-xs">
-                                <button type="button" onClick={() => setTab('reflex')} className={`flex items-center gap-1 rounded-lg px-3 py-1.5 ${tab === 'reflex' ? 'bg-cyan-500/20 text-cyan-200' : 'text-slate-400'}`}>
-                                    <Crosshair size={13} /> Núcleos
-                                </button>
-                                <button type="button" onClick={() => setTab('memory')} className={`flex items-center gap-1 rounded-lg px-3 py-1.5 ${tab === 'memory' ? 'bg-pink-500/20 text-pink-200' : 'text-slate-400'}`}>
-                                    <Brain size={13} /> Memoria
-                                </button>
-                            </div>
-                        </div>
-                        {tab === 'reflex' ? <ReflexGame onDone={onDone} /> : <MemoryGame onDone={onDone} />}
-                        <div className="border-t border-slate-800 pt-4">
-                            <RewardedAd ads={ads} onDone={onDone} />
-                        </div>
-                    </section>
-
-                    <section className="space-y-4 rounded-2xl border border-yellow-400/30 bg-[#0b0a05]/80 p-5 lg:col-span-2">
-                        <h2 className="flex items-center gap-2 font-black text-white"><Server size={18} className="text-yellow-300" /> Canjear servidor gratis</h2>
-                        <ul className="space-y-1 font-mono text-[11px] text-slate-400">
-                            <li>· 1 servidor gratuito activo por cuenta.</li>
-                            <li>· Dura {freePlans[0]?.coin_days ?? 7} días; renuévalo con monedas antes de que caduque.</li>
-                            <li>· Si caduca se detiene y se borra a los 7 días.</li>
-                            <li>· Sin ampliaciones: para más recursos compra un plan.</li>
-                        </ul>
-                        <ClaimForm plans={freePlans} balance={balance} />
-                    </section>
-                </div>
+                <Panel icon={Server} title="Crea tu servidor gratis">
+                    {!enabled ? (
+                        <p className="text-sm text-slate-400">Los servidores gratis están en pausa ahora mismo. Vuelve pronto.</p>
+                    ) : (
+                        <>
+                            <ul className="mb-4 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-slate-400">
+                                <li>· {builder.per_user} servidor gratis activo por cuenta</li>
+                                <li>· Renuévalo con monedas antes de que caduque</li>
+                                <li>· Los clientes de pago tienen prioridad</li>
+                            </ul>
+                            <Builder builder={builder} balance={balance} activeCount={activeCount} />
+                        </>
+                    )}
+                </Panel>
 
                 {freeServers.length > 0 && (
-                    <section className="space-y-3 rounded-2xl border border-slate-800 bg-[#070b18]/90 p-5">
-                        <h2 className="font-black text-white">Tus servidores gratuitos</h2>
-                        {freeServers.map((o) => (
-                            <div key={o.id} className="flex flex-col gap-3 rounded-xl border border-slate-800 bg-black/40 p-4 sm:flex-row sm:items-center sm:justify-between">
-                                <div className="min-w-0">
-                                    <p className="truncate font-bold text-white">{o.server_name}</p>
-                                    <p className="font-mono text-[11px] text-slate-400">
-                                        {o.plan?.name} · {o.status === 'active' ? `caduca ${fmtDate(o.renews_at)}` : 'caducado (detenido)'}
-                                        {o.server_address && ` · ${o.server_address}`}
-                                    </p>
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {o.status === 'active' && (
-                                        <button
-                                            type="button"
-                                            onClick={() => router.post(route('coins.renew', o.id), {}, { preserveScroll: true })}
-                                            className="inline-flex items-center gap-1.5 rounded-lg border border-yellow-400/50 px-3 py-2 text-xs font-bold text-yellow-300 hover:bg-yellow-400/10"
-                                        >
-                                            <RefreshCw size={13} /> Renovar ({o.plan?.coin_renew_cost})
-                                        </button>
-                                    )}
-                                    <Link
-                                        href={route('store.category', o.plan?.category ?? 'minecraft')}
-                                        className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 px-3 py-2 text-xs font-bold text-white hover:brightness-110"
-                                    >
-                                        <TrendingUp size={13} /> Ampliar (de pago)
-                                    </Link>
-                                </div>
-                            </div>
-                        ))}
-                    </section>
+                    <Panel icon={Sparkles} title="Tus servidores gratis">
+                        <div className="space-y-2">
+                            {freeServers.map((o) => <FreeServer key={o.id} o={o} durations={builder.durations} />)}
+                        </div>
+                    </Panel>
                 )}
 
                 {history.length > 0 && (
-                    <section className="rounded-2xl border border-slate-800 bg-[#070b18]/90 p-5">
-                        <h2 className="mb-3 font-black text-white">Movimientos</h2>
+                    <Panel icon={CoinsIcon} title="Movimientos">
                         <ul className="divide-y divide-slate-800 font-mono text-xs">
                             {history.map((h, i) => (
                                 <li key={i} className="flex items-center justify-between gap-3 py-2">
@@ -463,7 +519,7 @@ export default function Coins({ balance: initialBalance, earnedToday: initialEar
                                 </li>
                             ))}
                         </ul>
-                    </section>
+                    </Panel>
                 )}
             </div>
         </AuthenticatedLayout>

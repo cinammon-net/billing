@@ -62,16 +62,22 @@ Route::get('/api/plans', function () {
     ]);
 })->name('api.plans');
 
+// Invitaciones: /r/CODIGO guarda quién invita y lleva a los servidores gratis
+Route::get('/r/{code}', [\App\Http\Controllers\CoinsController::class, 'referral'])->where('code', '[A-Za-z0-9]{4,12}')->middleware('throttle:60,1')->name('referral');
+
+// Contador público de servidores gratis (lo muestran la tienda y la portada del panel)
+Route::get('/api/free-stats', fn () => response()->json(\App\Support\FreeTier::publicStats()))->middleware('throttle:120,1')->name('api.free-stats');
+
 // Ambientación de temporada + promoción vigente por país (la consume el panel)
 Route::get('/api/season', [\App\Http\Controllers\SeasonController::class, 'show'])->middleware('throttle:120,1')->name('api.season');
 Route::get('/api/season-favicon/{site}.png', [\App\Http\Controllers\SeasonController::class, 'favicon'])->middleware('throttle:240,1')->where('site', '[a-z]+')->name('api.season.favicon');
 
 // Área de clientes
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Monedas: minijuegos, anuncios con recompensa y servidores gratuitos
+    // Monedas: anuncios con recompensa, racha diaria, misiones e invitaciones → servidor gratis
     Route::get('/coins', [\App\Http\Controllers\CoinsController::class, 'index'])->name('coins.index');
-    Route::post('/coins/games/start', [\App\Http\Controllers\CoinsController::class, 'startGame'])->middleware('throttle:30,1')->name('coins.games.start');
-    Route::post('/coins/games/finish', [\App\Http\Controllers\CoinsController::class, 'finishGame'])->middleware('throttle:30,1')->name('coins.games.finish');
+    Route::post('/coins/checkin', [\App\Http\Controllers\CoinsController::class, 'checkin'])->middleware('throttle:10,1')->name('coins.checkin');
+    Route::post('/coins/missions/{mission}', [\App\Http\Controllers\CoinsController::class, 'mission'])->middleware('throttle:20,1')->name('coins.mission');
     Route::post('/coins/ads/start', [\App\Http\Controllers\CoinsController::class, 'startAd'])->middleware('throttle:10,1')->name('coins.ads.start');
     Route::post('/coins/ads/complete', [\App\Http\Controllers\CoinsController::class, 'completeAd'])->middleware('throttle:10,1')->name('coins.ads.complete');
     Route::post('/coins/free-server', [\App\Http\Controllers\CoinsController::class, 'claim'])->middleware('throttle:5,1')->name('coins.claim');
@@ -99,6 +105,9 @@ Route::middleware(['auth', 'verified', 'billing.admin'])->prefix('admin')->name(
     Route::put('/payment-methods/{method}', [\App\Http\Controllers\Admin\PaymentSettingsController::class, 'update'])->name('payment-methods.update');
     Route::get('/payments', [\App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('payments.index');
     Route::get('/promotions', [\App\Http\Controllers\Admin\PromotionController::class, 'index'])->name('promotions.index');
+    Route::get('/free', [\App\Http\Controllers\Admin\FreeTierController::class, 'index'])->name('free.index');
+    Route::put('/free', [\App\Http\Controllers\Admin\FreeTierController::class, 'update'])->name('free.update');
+    Route::post('/free/{order}/suspend', [\App\Http\Controllers\Admin\FreeTierController::class, 'suspend'])->name('free.suspend');
     Route::put('/promotions/{promotion}', [\App\Http\Controllers\Admin\PromotionController::class, 'update'])->name('promotions.update');
     Route::post('/payments/{invoice}/confirm', [\App\Http\Controllers\Admin\PaymentController::class, 'confirm'])->name('payments.confirm');
     Route::post('/payments/{invoice}/reject', [\App\Http\Controllers\Admin\PaymentController::class, 'reject'])->name('payments.reject');

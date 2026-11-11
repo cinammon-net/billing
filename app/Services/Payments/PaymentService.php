@@ -124,6 +124,15 @@ class PaymentService
         $order->update(['status' => 'active', 'renews_at' => $order->nextRenewal()]);
         Log::info("Pago recibido: factura {$invoice->number} por {$method}", ['reference' => $reference]);
 
+        // Comprar da monedas de regalo (y premia a quien le invitó en su primera compra).
+        try {
+            if ($buyer = $order->user) {
+                app(\App\Services\CoinService::class)->rewardPurchase($buyer, (float) $invoice->amount, $order->plan?->name ?? $order->server_name);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Monedas por compra: '.$e->getMessage(), ['invoice' => $invoice->id]);
+        }
+
         if ($order->plan->isRank()) {
             return $this->panel->grantRole($order)
                 ? "Pago recibido. Ya tienes el rango «{$order->plan->name}» en el panel hasta el {$order->renews_at?->format('d/m/Y H:i')}."

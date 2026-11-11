@@ -16,12 +16,13 @@ class ExpireFreeServers extends Command
     {
         $expired = Order::where('status', 'active')
             ->whereNotNull('renews_at')->where('renews_at', '<', now())
-            ->whereHas('plan', fn ($q) => $q->whereNotNull('coin_cost'))
+            ->where('is_free', true)
             ->get();
 
         foreach ($expired as $order) {
             $panel->cancel($order);
             $order->update(['status' => 'suspended']);
+            \App\Support\FreeTier::flush();
             $this->info("Suspendido servidor gratuito #{$order->id} «{$order->server_name}»");
         }
 

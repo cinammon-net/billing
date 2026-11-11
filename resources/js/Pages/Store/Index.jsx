@@ -1,6 +1,7 @@
 import PublicLayout from '@/Layouts/PublicLayout';
 import { Head, Link } from '@inertiajs/react';
 import {
+    Gift,
     Box,
     Gamepad2,
     Bot,
@@ -163,7 +164,7 @@ const FEATURES = [
     },
 ];
 
-export default function StoreIndex({ categories }) {
+export default function StoreIndex({ categories, freeStats }) {
     return (
         <PublicLayout>
             <Head title="Tienda de Servidores Cloud" />
@@ -191,6 +192,23 @@ export default function StoreIndex({ categories }) {
                         Infraestructura cloud de alto rendimiento para comunidades exigentes. Despliegue en 60 segundos,
                         protección Anti-DDoS Game de 2.5 Tbps y panel de control <strong className="text-pink-400">Cinammon 2.0</strong> en tiempo real.
                     </p>
+
+                    {/* Servidores gratis: contador público y acceso */}
+                    {freeStats && (
+                        <Link
+                            href={route('coins.index')}
+                            className="mx-auto mt-8 flex max-w-xl flex-col items-center gap-2 rounded-2xl border border-yellow-400/40 bg-yellow-400/10 px-5 py-3 text-left transition hover:border-yellow-400/80 sm:flex-row sm:gap-4"
+                        >
+                            <Gift size={28} className="shrink-0 text-yellow-300" />
+                            <span className="min-w-0 flex-1 text-center sm:text-left">
+                                <span className="block font-black text-white">
+                                    {freeStats.active >= 3 ? `Prueba gratis: ${freeStats.active} servidores gratis activos ahora` : 'Consigue tu servidor gratis'}
+                                </span>
+                                <span className="block text-xs text-slate-300">Juegos, bots, webs y más. Gana monedas y elige tus recursos.</span>
+                            </span>
+                            <span className="inline-flex shrink-0 items-center gap-1 text-sm font-bold text-yellow-300">Empezar <ArrowRight size={14} /></span>
+                        </Link>
+                    )}
 
                     {/* Quick Stats Grid */}
                     <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-4">
