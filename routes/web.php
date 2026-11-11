@@ -77,6 +77,7 @@ Route::get('/api/payment-methods', fn () => response()->json([
 Route::post('/api/panel/bot/account', [\App\Http\Controllers\PanelBotController::class, 'account'])->middleware('throttle:120,1');
 Route::post('/api/panel/bot/checkin', [\App\Http\Controllers\PanelBotController::class, 'checkin'])->middleware('throttle:60,1');
 Route::post('/api/panel/bot/birthday', [\App\Http\Controllers\PanelBotController::class, 'birthday'])->middleware('throttle:60,1');
+Route::post('/api/panel/bot/referral', [\App\Http\Controllers\PanelBotController::class, 'referral'])->middleware('throttle:60,1');
 Route::post('/api/panel/bot/feed', [\App\Http\Controllers\PanelBotController::class, 'feed'])->middleware('throttle:60,1');
 
 // Invitaciones: /r/CODIGO guarda quién invita y lleva a los servidores gratis

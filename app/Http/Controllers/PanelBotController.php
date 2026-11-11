@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\User;
+use App\Services\CoinService;
+use App\Support\FreeTier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -30,6 +32,11 @@ class PanelBotController extends Controller
                 'url' => route('referral', $user->referral_code),
                 'invited' => User::where('referred_by', $user->id)->count(),
                 'active' => User::where('referred_by', $user->id)->where('referral_stage', '>', 0)->count(),
+                'rewards' => [
+                    'active' => (int) FreeTier::settings()['referral_active'],
+                    'purchase' => (int) FreeTier::settings()['referral_purchase'],
+                    'welcome' => (int) FreeTier::settings()['referral_welcome'],
+                ],
             ],
             'invoices' => Invoice::where('user_id', $user->id)->latest()->limit(8)->get()->map(fn (Invoice $i) => [
                 'id' => $i->id,
@@ -63,6 +70,44 @@ class PanelBotController extends Controller
         $data = $request->validate(['year' => 'required|integer|min:2024|max:2100', 'vip' => 'boolean']);
 
         return response()->json(['gifts' => \App\Support\BirthdayGift::grant($user, (int) $data['year'], (bool) ($data['vip'] ?? false))]);
+    }
+
+    /**
+     * Invitación de Discord → referido de la tienda. El bot sabe quién trajo a alguien al Discord;
+     * cuando esa persona vincula su cuenta, se apunta como referido de quien la invitó, con las
+     * mismas reglas y premios que el enlace /r/CODIGO.
+     *
+     * Solo cuenta si la cuenta de la tienda se creó después de entrar al Discord (si ya era
+     * cliente, no la trajo esa invitación) y si aún no tenía a nadie como referidor.
+     */
+    public function referral(Request $request, CoinService $coins): JsonResponse
+    {
+        $user = $this->user($request);
+        if (! $user) {
+            return response()->json(['error' => 'not_found'], 404);
+        }
+        $data = $request->validate(['inviter_email' => 'required|email', 'joined_at' => 'required|date']);
+        $inviter = User::whereRaw('LOWER(email) = ?', [strtolower(trim($data['inviter_email']))])->first();
+        if (! $inviter) {
+            return response()->json(['error' => 'inviter_not_found'], 404);
+        }
+        if ($inviter->id === $user->id) {
+            return response()->json(['status' => 'self']);
+        }
+        if ($user->referred_by) {
+            return response()->json(['status' => $user->referred_by === $inviter->id ? 'already' : 'other']);
+        }
+        if ($user->created_at && $user->created_at->lt(\Illuminate\Support\Carbon::parse($data['joined_at'])->subDay())) {
+            return response()->json(['status' => 'existing_customer']);
+        }
+        if (User::whereKey($user->id)->whereNull('referred_by')->update(['referred_by' => $inviter->id]) === 0) {
+            return response()->json(['status' => 'other']);
+        }
+        $user->referred_by = $inviter->id;
+        // Si ya había ganado monedas suficientes, se activa ya (premios de invitación)
+        $coins->maybeActivateReferral($user);
+
+        return response()->json(['status' => 'linked', 'inviter' => $inviter->name]);
     }
 
     public function checkin(Request $request, CoinsController $coins): JsonResponse
