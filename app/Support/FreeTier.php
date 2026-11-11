@@ -139,13 +139,26 @@ class FreeTier
     /** Contador público (se cachea 5 min). */
     public static function publicStats(): array
     {
-        return Cache::remember('free:stats', 300, function () {
-            return [
-                'active' => Order::where('is_free', true)->where('status', 'active')->count(),
-                'total' => Order::where('is_free', true)->count(),
-                'people' => Order::where('is_free', true)->distinct('user_id')->count('user_id'),
-                'services' => self::options()->count(),
-            ];
-        });
+        $s = self::settings();
+
+        return Cache::remember('free:stats', 300, fn () => self::freeCounts()) + [
+            // Lo que se gana invitando (lo muestra el bot de Discord en #invitaciones)
+            'referral' => [
+                'active' => (int) $s['referral_active'],
+                'welcome' => (int) $s['referral_welcome'],
+                'purchase' => (int) $s['referral_purchase'],
+                'threshold' => (int) $s['referral_active_threshold'],
+            ],
+        ];
+    }
+
+    private static function freeCounts(): array
+    {
+        return [
+            'active' => Order::where('is_free', true)->where('status', 'active')->count(),
+            'total' => Order::where('is_free', true)->count(),
+            'people' => Order::where('is_free', true)->distinct('user_id')->count('user_id'),
+            'services' => self::options()->count(),
+        ];
     }
 }
