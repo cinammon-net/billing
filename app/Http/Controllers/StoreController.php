@@ -48,7 +48,7 @@ class StoreController extends Controller
         ],
         'bots' => [
             'title' => 'Hosting de Bots',
-            'tagline' => 'Bots de Discord, Twitch y TeamSpeak siempre online.',
+            'tagline' => 'Bots de WhatsApp, Telegram, Discord, Twitch y apps siempre online 24/7.',
         ],
         'web' => [
             'title' => 'Hosting Web',
@@ -76,7 +76,7 @@ class StoreController extends Controller
         'simulation' => ['names' => ['Assetto Corsa', 'Euro Truck Simulator 2 Dedicated server', 'American Truck Simulator Dedicated Server', 'Stormworks: Build and Rescue']],
         'roleplay' => ['names' => ['FiveM', 'RedM', 'alt:V', 'Multi Theft Auto', 'SA-MP']],
         'voice' => ['panel' => 'voice'],
-        'bots' => ['panel' => 'bots'],
+        'bots' => ['names' => ['Bot de WhatsApp', 'Bot de Telegram', 'node.js generic', 'python generic', 'Red', 'Sinusbot', 'JMusicBot'], 'panel' => 'bots'],
         'web' => ['panel' => 'web'],
         'databases' => ['panel' => 'database'],
     ];

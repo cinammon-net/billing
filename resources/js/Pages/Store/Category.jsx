@@ -84,14 +84,28 @@ export default function StoreCategory({ category, plans }) {
     // Buscador y orden: hay categorías con decenas de planes (uno por juego).
     const [query, setQuery] = useState('');
     const [sort, setSort] = useState('recommended');
+    const [botFilter, setBotFilter] = useState('all');
+
     const visiblePlans = useMemo(() => {
+        let list = [...plans];
+        if (category.key === 'bots' && botFilter !== 'all') {
+            if (botFilter === 'whatsapp') {
+                list = list.filter((p) => `${p.name} ${p.egg ?? ''}`.toLowerCase().includes('whatsapp'));
+            } else if (botFilter === 'telegram') {
+                list = list.filter((p) => `${p.name} ${p.egg ?? ''}`.toLowerCase().includes('telegram'));
+            } else if (botFilter === 'discord') {
+                list = list.filter((p) => !`${p.name} ${p.egg ?? ''}`.toLowerCase().includes('whatsapp') && !`${p.name} ${p.egg ?? ''}`.toLowerCase().includes('telegram'));
+            }
+        }
         const q = query.trim().toLowerCase();
-        const list = q ? plans.filter((p) => `${p.name} ${p.egg ?? ''}`.toLowerCase().includes(q)) : [...plans];
+        if (q) {
+            list = list.filter((p) => `${p.name} ${p.egg ?? ''}`.toLowerCase().includes(q));
+        }
         if (sort === 'price') list.sort((a, b) => (a.prices?.[cycle] ?? Infinity) - (b.prices?.[cycle] ?? Infinity));
         if (sort === 'ram') list.sort((a, b) => b.ram_mb - a.ram_mb);
         if (sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
         return list;
-    }, [plans, query, sort, cycle]);
+    }, [plans, query, sort, cycle, category.key, botFilter]);
 
     const openOrder = (plan) => {
         setSelected(plan);
@@ -195,6 +209,32 @@ export default function StoreCategory({ category, plans }) {
                     </div>
                 </header>
 
+                {/* BOT PLATFORM FILTER (CATEGORY: BOTS) */}
+                {category.key === 'bots' && (
+                    <div className="mx-auto mt-8 flex max-w-lg items-center justify-center gap-1.5 rounded-2xl border border-slate-800 bg-[#070b18]/90 p-1.5 font-mono text-xs shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+                        {[
+                            { id: 'all', label: 'Todos' },
+                            { id: 'whatsapp', label: 'WhatsApp', color: '#25D366' },
+                            { id: 'telegram', label: 'Telegram', color: '#38bdf8' },
+                            { id: 'discord', label: 'Discord & Apps' },
+                        ].map((tab) => (
+                            <button
+                                key={tab.id}
+                                type="button"
+                                onClick={() => setBotFilter(tab.id)}
+                                className={`flex-1 rounded-xl py-2 px-3 text-center font-bold transition ${
+                                    botFilter === tab.id
+                                        ? 'bg-gradient-to-r from-pink-500/20 to-purple-500/20 text-white border border-pink-500/40 shadow-[0_0_15px_rgba(255,0,128,0.25)]'
+                                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                }`}
+                                style={botFilter === tab.id && tab.color ? { borderColor: `${tab.color}77`, color: tab.color, boxShadow: `0 0 16px ${tab.color}33` } : undefined}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
+
                 {/* SELECTOR DE PERÍODO DE FACTURACIÓN */}
                 {availableCycles.length > 1 && (
                     <div className="mx-auto mt-10 flex max-w-6xl flex-wrap items-center justify-center gap-2 font-mono text-xs">
@@ -288,10 +328,29 @@ export default function StoreCategory({ category, plans }) {
                                             className="h-14 w-14 shrink-0 rounded-xl border border-slate-700/80 bg-black/40 object-cover"
                                             onError={(e) => { e.currentTarget.style.display = 'none'; }}
                                         />
+                                    ) : (plan.name?.toLowerCase().includes('whatsapp') || plan.egg?.toLowerCase().includes('whatsapp')) ? (
+                                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-emerald-500/40 bg-emerald-950/40 text-emerald-400 shadow-[0_0_16px_rgba(37,211,102,0.25)]">
+                                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                                            </svg>
+                                        </div>
+                                    ) : (plan.name?.toLowerCase().includes('telegram') || plan.egg?.toLowerCase().includes('telegram')) ? (
+                                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-blue-500/40 bg-blue-950/40 text-blue-400 shadow-[0_0_16px_rgba(34,158,217,0.25)]">
+                                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <line x1="22" y1="2" x2="11" y2="13" />
+                                                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                            </svg>
+                                        </div>
                                     ) : null}
                                     <div className="min-w-0">
                                         <span className="font-mono text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                                            {plan.role ? '// RANGO VIP' : plan.egg ? '// SERVIDOR DE JUEGO' : '// PLAN TIER'}
+                                            {plan.role
+                                                ? '// RANGO VIP'
+                                                : category.key === 'bots'
+                                                    ? (plan.name?.toLowerCase().includes('whatsapp') ? '// BOT DE WHATSAPP' : plan.name?.toLowerCase().includes('telegram') ? '// BOT DE TELEGRAM' : '// HOSTING DE BOTS')
+                                                    : plan.egg
+                                                        ? '// SERVIDOR DE JUEGO'
+                                                        : '// PLAN TIER'}
                                         </span>
                                         <h2 className="text-2xl font-black text-white group-hover:text-pink-300 transition-colors">
                                             {plan.name}

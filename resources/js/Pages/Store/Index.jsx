@@ -61,9 +61,9 @@ const CATEGORY_META = {
         glowHover: 'group-hover:shadow-[0_0_30px_oklch(var(--tw-c-neon)_/_0.25)]',
         accentText: 'text-neon',
         badgeBg: 'bg-fuchsia-500/15 border-fuchsia-500/30 text-fuchsia-300',
-        badge: 'NODE.JS · PYTHON · JAVA · GO',
-        specs: ['Reinicio Automático 24/7', 'Logs en Tiempo Real', 'Uptime 99.98% Garantizado'],
-        serversCount: '3 Planes Disponibles',
+        badge: 'WHATSAPP · TELEGRAM · DISCORD',
+        specs: ['Baileys, aiogram, Node.js y Python', 'Reinicio Automático 24/7', 'Sesión QR Persistente'],
+        serversCount: 'Planes WhatsApp & Telegram',
     },
     databases: {
         icon: Database,

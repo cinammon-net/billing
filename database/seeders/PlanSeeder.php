@@ -83,10 +83,18 @@ class PlanSeeder extends Seeder
             ['category' => 'voice', 'name' => 'Community', 'ram_mb' => 2048, 'cpu_pct' => 75,  'storage_gb' => 10, 'price' => 2.49, 'popular' => true],
             ['category' => 'voice', 'name' => 'Network',   'ram_mb' => 4096, 'cpu_pct' => 100, 'storage_gb' => 20, 'price' => 3.99, 'popular' => false],
 
-            // ── Bots ──────────────────────────────────────────────────
-            ['category' => 'bots', 'name' => 'Nano',  'ram_mb' => 512,  'cpu_pct' => 50,  'storage_gb' => 2,  'price' => 1.49, 'popular' => false],
-            ['category' => 'bots', 'name' => 'Micro', 'ram_mb' => 1024, 'cpu_pct' => 75,  'storage_gb' => 5,  'price' => 2.49, 'popular' => true],
-            ['category' => 'bots', 'name' => 'Max',   'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 10, 'price' => 3.99, 'popular' => false],
+            // ── Bots (WhatsApp, Telegram, Discord y Apps) ───────────
+            ['category' => 'bots', 'egg' => 'Bot de WhatsApp', 'name' => 'WhatsApp Starter',  'ram_mb' => 1024, 'cpu_pct' => 75,  'storage_gb' => 10, 'price' => 2.49, 'popular' => false, 'features' => ['Node.js 22 LTS & Python 3.12', 'Baileys & WPPConnect optimizado', 'Sesión QR multi-dispositivo persistente', 'Reinicio automático 24/7', 'Protección Anti-DDoS']],
+            ['category' => 'bots', 'egg' => 'Bot de WhatsApp', 'name' => 'WhatsApp Pro',      'ram_mb' => 2048, 'cpu_pct' => 125, 'storage_gb' => 15, 'price' => 3.99, 'popular' => true,  'features' => ['Chromium / Puppeteer (whatsapp-web.js)', 'Envío multimedia y difusión masiva', '2 GB RAM para cero caídas', 'Reinicio automático 24/7', 'Soporte prioritario']],
+            ['category' => 'bots', 'egg' => 'Bot de WhatsApp', 'name' => 'WhatsApp Business', 'ram_mb' => 4096, 'cpu_pct' => 200, 'storage_gb' => 30, 'price' => 6.99, 'popular' => false, 'features' => ['4 GB RAM y 2 vCPU dedicadas', 'Ideal para CRM, IA (OpenAI) y flujos masivos', '30 GB SSD para audios y fotos', 'Múltiples sesiones simultáneas', 'Soporte prioritario 24/7']],
+
+            ['category' => 'bots', 'egg' => 'Bot de Telegram', 'name' => 'Telegram Starter',  'ram_mb' => 512,  'cpu_pct' => 50,  'storage_gb' => 5,  'price' => 1.29, 'popular' => false, 'features' => ['Telethon, aiogram, Telegraf y grammY', 'Polling continuo 24/7 sin límites', 'Python 3.12 y Node.js 22', 'Reinicio automático en caídas', 'Protección Anti-DDoS']],
+            ['category' => 'bots', 'egg' => 'Bot de Telegram', 'name' => 'Telegram Pro',      'ram_mb' => 1024, 'cpu_pct' => 75,  'storage_gb' => 10, 'price' => 2.29, 'popular' => false, 'features' => ['Para canales y grupos masivos', 'Bases de datos SQLite integradas', 'Soporte para Webhooks y endpoints HTTPS', 'Logs y consola en tiempo real', 'Soporte 24/7']],
+            ['category' => 'bots', 'egg' => 'Bot de Telegram', 'name' => 'Telegram Multi-Bot','ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 20, 'price' => 3.49, 'popular' => false, 'features' => ['Ejecuta múltiples bots a la vez', 'Descarga y reenvío de archivos pesados', '20 GB NVMe ultra-rápido', 'Reinicio automático 24/7', 'Soporte 24/7']],
+
+            ['category' => 'bots', 'name' => 'Bot Nano',  'ram_mb' => 512,  'cpu_pct' => 50,  'storage_gb' => 2,  'price' => 1.49, 'popular' => false, 'features' => ['Discord, Twitch y apps ligeras', 'Node.js, Python, Bun y Go', 'Reinicio automático 24/7', 'Logs en tiempo real', 'Protección DDoS']],
+            ['category' => 'bots', 'name' => 'Bot Micro', 'ram_mb' => 1024, 'cpu_pct' => 75,  'storage_gb' => 5,  'price' => 2.49, 'popular' => false, 'features' => ['Discord bots de comunidad', 'Node.js, Python, Bun y Go', 'Reinicio automático 24/7', 'Logs en tiempo real', 'Protección DDoS']],
+            ['category' => 'bots', 'name' => 'Bot Max',   'ram_mb' => 2048, 'cpu_pct' => 100, 'storage_gb' => 10, 'price' => 3.99, 'popular' => false, 'features' => ['Bots complejos, música y audio', 'Node.js, Python, Bun y Go', 'Reinicio automático 24/7', 'Logs en tiempo real', 'Protección DDoS']],
 
             // ── Bases de datos ────────────────────────────────────────
             ['category' => 'databases', 'name' => 'Basic', 'ram_mb' => 1024, 'cpu_pct' => 50,  'storage_gb' => 5,  'price' => 1.99, 'popular' => false],
@@ -145,7 +153,7 @@ class PlanSeeder extends Seeder
             'simulation'=> ['El juego viene instalado y listo', 'Baja latencia para carreras', 'Backups automáticos', 'Protección DDoS', 'Soporte 24/7'],
             'roleplay'  => ['FiveM, RedM, alt:V, MTA y SA-MP', 'txAdmin y recursos personalizados', 'Instalación instantánea', 'Protección DDoS', 'Soporte 24/7'],
             'voice'     => ['TeamSpeak 3, TeaSpeak y Lavalink', 'Siempre online', 'Baja latencia de voz', 'Protección DDoS', 'Soporte 24/7'],
-            'bots'      => ['Discord, Twitch y TS3', 'Reinicio automático', 'Logs en tiempo real', 'Protección DDoS', 'Soporte 24/7'],
+            'bots'      => ['WhatsApp, Telegram y Discord', 'Node.js 22 LTS y Python 3.12', 'Reinicio automático 24/7', 'Logs y consola en tiempo real', 'Protección Anti-DDoS'],
             'databases' => ['Redis, MariaDB, PostgreSQL y MongoDB', 'Backups automáticos', 'Acceso remoto seguro', 'Soporte 24/7'],
             'arcade'    => ['Clásicos multijugador listos en segundos', 'Ligeros y económicos', 'Instalación instantánea', 'Protección DDoS', 'Soporte 24/7'],
             'software'  => ['Aplicaciones autoalojadas (Grafana, Gitea, Uptime Kuma…)', 'Acceso por web y SFTP', 'Backups automáticos', 'Soporte 24/7'],
@@ -204,7 +212,7 @@ class PlanSeeder extends Seeder
                 'perks' => null,
                 ...$plan,
                 'cycle_prices' => isset($plan['role']) ? Plan::rankCyclePrices($plan['price']) : Plan::defaultCyclePrices($plan['price']),
-                'features' => $rankFeatures ?? $eggFeatures[$plan['egg'] ?? ''] ?? $features[$plan['category']],
+                'features' => $plan['features'] ?? $rankFeatures ?? $eggFeatures[$plan['egg'] ?? ''] ?? $features[$plan['category']],
                 'addons' => $webAddons[$plan['name']] ?? null,
                 'sort' => $i,
             ];
