@@ -1,5 +1,7 @@
 import './bootstrap';
 import '../css/app.css';
+import './lib/cinammon-fx.css';
+import './lib/cinammon-fx.js'; // ojo para ver contraseñas y animaciones en todas las páginas
 
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';

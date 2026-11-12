@@ -66,6 +66,10 @@ export default function Authenticated({ user: userProp, header, children }) {
                 <div className="absolute inset-0 bg-[radial-gradient(circle,#ffffff_1px,transparent_1px)] bg-[length:24px_24px] opacity-[0.06]" />
             </div>
 
+            {/* Avisos y anuncios siempre encima de la barra, como en la web principal */}
+            <MaintenanceBanner />
+            <AnnouncementBanner />
+
             {/* Navbar */}
             <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#05070f]/90 shadow-[0_10px_30px_rgba(0,0,0,0.45)] backdrop-blur-xl">
                 <div aria-hidden="true" className="h-px bg-gradient-to-r from-transparent via-pink-500/70 to-transparent" />
@@ -245,9 +249,6 @@ export default function Authenticated({ user: userProp, header, children }) {
                     <div className="mx-auto max-w-7xl">{header}</div>
                 </header>
             )}
-
-            <MaintenanceBanner />
-            <AnnouncementBanner />
 
             {/* Contenido principal */}
             <main className="relative z-10">{children}</main>

@@ -19,10 +19,11 @@ export default function PublicLayout({ children }) {
                 <div className="absolute inset-0 bg-[radial-gradient(circle,#ffffff_1px,transparent_1px)] bg-[length:24px_24px] opacity-[0.06]" />
             </div>
 
-            <StoreNav />
-
+            {/* Avisos y anuncios siempre encima de la barra, como en la web principal */}
             <MaintenanceBanner />
             <AnnouncementBanner />
+
+            <StoreNav />
 
             <PromoStrip />
 
