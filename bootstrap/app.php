@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        // XSRF-TOKEN solo para la tienda, no para todo .cinammon.net (chocaba con la del panel: error 419)
+        $middleware->web(replace: [\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class => \App\Http\Middleware\HostOnlyCsrfCookie::class]);
+
         // Las pasarelas no envían token CSRF: se valida la firma en el controlador.
         $middleware->validateCsrfTokens(except: ['webhooks/*', 'api/panel/bot/*', 'api/panel/mails', 'api/panel/mails/*']);
 
