@@ -171,6 +171,74 @@ class PanelBotController extends Controller
         return response()->json(['events' => $free->concat($paid)->sortBy('at')->values()]);
     }
 
+    /** Precio de un plan para el bot: todos los períodos con el descuento que le toca a esa persona. */
+    public function quote(Request $request, \App\Services\SeasonService $seasons): JsonResponse
+    {
+        $user = $this->user($request);
+        if (! $user) {
+            return response()->json(['error' => 'no_store_account'], 404);
+        }
+        $plan = \App\Models\Plan::whereNull('coin_cost')->find((int) $request->input('plan_id'));
+        if (! $plan) {
+            return response()->json(['error' => 'plan_not_found'], 404);
+        }
+        $season = $seasons->context(\App\Support\Seasons::countryFrom(null));
+        $cycles = [];
+        $months = ['daily' => 1 / 30, 'weekly' => 0.25, 'monthly' => 1, 'quarterly' => 3, 'semiannual' => 6, 'yearly' => 12];
+        foreach (\App\Models\Plan::CYCLES as $key => $meta) {
+            $q = \App\Support\StoreOrder::quote($user, $plan, $key, $season);
+            if ($q !== null && $key !== 'hourly') {
+                $cycles[] = ['key' => $key, 'label' => $meta['label'], 'months' => $months[$key] ?? 1] + $q;
+            }
+        }
+
+        return response()->json([
+            'plan' => [
+                'id' => $plan->id, 'name' => $plan->name, 'category' => $plan->category, 'rank' => $plan->isRank(),
+                'ram_mb' => $plan->ram_mb, 'cpu_pct' => $plan->cpu_pct, 'storage_gb' => $plan->storage_gb, 'monthly' => (float) $plan->price,
+            ],
+            'cycles' => $cycles,
+            'store_blocked' => app(\App\Services\PanelService::class)->storeBlocked(),
+        ]);
+    }
+
+    /** Crea el pedido desde Discord y devuelve el enlace de pago (el mismo checkout de la web). */
+    public function order(Request $request, \App\Services\SeasonService $seasons): JsonResponse
+    {
+        $user = $this->user($request);
+        if (! $user) {
+            return response()->json(['error' => 'no_store_account'], 404);
+        }
+        if (app(\App\Services\PanelService::class)->storeBlocked()) {
+            return response()->json(['error' => 'store_blocked', 'message' => 'La tienda está en mantenimiento ahora mismo. Prueba cuando termine.'], 423);
+        }
+        $data = $request->validate([
+            'plan_id' => ['required', 'integer'],
+            'cycle' => ['required', \Illuminate\Validation\Rule::in(array_keys(\App\Models\Plan::CYCLES))],
+            'name' => ['nullable', 'string', 'max:60'],
+        ]);
+        $plan = \App\Models\Plan::whereNull('coin_cost')->find($data['plan_id']);
+        if (! $plan) {
+            return response()->json(['error' => 'plan_not_found'], 404);
+        }
+        $name = $plan->isRank() ? 'Rango '.$plan->name : trim((string) ($data['name'] ?? ''));
+        if ($name === '') {
+            return response()->json(['error' => 'name_required', 'message' => 'Pon un nombre para tu servidor.'], 422);
+        }
+        $quote = \App\Support\StoreOrder::quote($user, $plan, $data['cycle'], $seasons->context(\App\Support\Seasons::countryFrom(null)));
+        if ($quote === null) {
+            return response()->json(['error' => 'cycle_unavailable', 'message' => 'Este plan no está disponible con ese período.'], 422);
+        }
+        $invoice = \App\Support\StoreOrder::place($user, $plan, $data['cycle'], $name, $quote);
+
+        return response()->json([
+            'number' => $invoice->number,
+            'amount' => (float) $invoice->amount,
+            'name' => $name,
+            'checkout_url' => route('checkout.show', $invoice),
+        ]);
+    }
+
     private function user(Request $request): ?User
     {
         $token = (string) config('billing.panel_token');

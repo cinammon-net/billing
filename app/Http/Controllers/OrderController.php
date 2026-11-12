@@ -34,9 +34,7 @@ class OrderController extends Controller
             return redirect()->route('coins.index');
         }
         $cycle = $validated['billing_cycle'] ?? 'monthly';
-        $price = $plan->priceFor($cycle);
-
-        if ($price === null) {
+        if ($plan->priceFor($cycle) === null) {
             return back()->withErrors(['billing_cycle' => 'Este plan no está disponible con ese período de facturación.']);
         }
 
@@ -47,47 +45,8 @@ class OrderController extends Controller
             return back()->withErrors(['server_name' => 'Pon un nombre para tu servidor.']);
         }
 
-        // Descuento: el mayor entre la promoción del festivo (país del visitante) y el VIP (solo servidores).
-        $discount = \App\Services\SeasonService::bestDiscount(
-            $seasons->forRequest($request)['discount'],
-            $plan->isRank() ? 0 : Plan::vipDiscountFor($request->user()),
-            $plan->isRank(),
-        );
-        // Regalo de cumpleaños: un solo uso, solo si mejora el descuento que ya tenía.
-        $birthday = \App\Support\BirthdayGift::discountFor($request->user());
-        $usedBirthday = $birthday > $discount;
-        $discount = max($discount, $birthday);
-        if ($discount > 0) {
-            $price = round($price * (100 - $discount) / 100, Plan::CYCLES[$cycle]['decimals']);
-        }
-        if ($usedBirthday) {
-            \App\Support\BirthdayGift::consume($request->user());
-        }
-
-        $order = Order::create([
-            'user_id' => $request->user()->id,
-            'plan_id' => $plan->id,
-            'server_name' => $validated['server_name'],
-            'status' => 'pending',
-            'price' => $price,
-            'billing_cycle' => $cycle,
-        ]);
-
-        $invoice = Invoice::create([
-            'user_id' => $request->user()->id,
-            'order_id' => $order->id,
-            'number' => sprintf('CIN-%s-%04d', now()->format('Ym'), $order->id),
-            'amount' => $price,
-            'status' => 'pending',
-            'due_at' => now()->addDays(7),
-        ]);
-
-        \App\Mail\BillingMail::deliver($request->user()->email, "Pedido creado · factura {$invoice->number}", 'invoice-created', [
-            'user' => $request->user(),
-            'invoice' => $invoice,
-            'isRank' => $plan->isRank(),
-            'what' => $plan->isRank() ? "Rango {$plan->name}" : "{$plan->name} · {$validated['server_name']}",
-        ], "invoice-{$invoice->number}");
+        $quote = \App\Support\StoreOrder::quote($request->user(), $plan, $cycle, $seasons->forRequest($request));
+        $invoice = \App\Support\StoreOrder::place($request->user(), $plan, $cycle, $validated['server_name'], $quote);
 
         // Del billete se pasa directo al pago: nada de buscar la factura en el dashboard.
         return redirect()->route('checkout.show', $invoice)->with(
