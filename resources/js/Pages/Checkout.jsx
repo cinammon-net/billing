@@ -63,6 +63,27 @@ export default function Checkout({ invoice, methods, currency, canSimulate, retu
                     <ArrowLeft size={14} /> Volver a mis servicios
                 </Link>
 
+                {/* Continuación de la secuencia de lanzamiento: billete → pago → despliegue */}
+                <ol className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider" aria-label="Progreso de la compra">
+                    {[
+                        { label: 'Billete', state: 'done' },
+                        { label: invoice.status === 'awaiting' ? 'Pago en revisión' : 'Pago', state: 'active' },
+                        { label: 'Despliegue', state: 'todo' },
+                    ].map((s, i, all) => (
+                        <li key={s.label} className="flex flex-1 items-center gap-2">
+                            <span
+                                className={`flex items-center gap-1.5 rounded-full border px-3 py-1 ${
+                                    s.state === 'done' ? 'border-pink-500/50 text-pink-300' : s.state === 'active' ? 'border-neon bg-neon/10 text-neon' : 'border-slate-800 text-slate-500'
+                                }`}
+                                aria-current={s.state === 'active' ? 'step' : undefined}
+                            >
+                                {s.state === 'done' ? <Check size={12} /> : <span>{i + 1}.</span>} {s.label}
+                            </span>
+                            {i < all.length - 1 && <span className={`h-px flex-1 ${s.state === 'done' ? 'bg-pink-500/60' : 'bg-slate-800'}`} />}
+                        </li>
+                    ))}
+                </ol>
+
                 <div className="rounded-2xl border border-slate-800 bg-[#070b18]/90 p-6">
                     <p className="font-mono text-[10px] font-bold tracking-widest text-slate-500 uppercase">// Factura {invoice.number}</p>
                     <div className="mt-2 flex flex-wrap items-end justify-between gap-3">

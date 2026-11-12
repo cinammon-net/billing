@@ -1,14 +1,12 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
+import LaunchSequence from '@/Components/LaunchSequence';
 import Modal from '@/Components/Modal';
 import PrimaryButton from '@/Components/PrimaryButton';
 import RankIcon, { RankEmblem, VIP_RANKS } from '@/Components/RankIcon';
 import SecondaryButton from '@/Components/SecondaryButton';
-import TextInput from '@/Components/TextInput';
 import PublicLayout from '@/Layouts/PublicLayout';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { fmtPrice, cycleUnit } from '@/lib/price';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
     Cake,
     Box,
@@ -36,8 +34,6 @@ import {
     Drama,
     Crown,
     Layers,
-    LogIn,
-    UserPlus,
     Clock,
     Activity
 } from 'lucide-react';
@@ -77,12 +73,6 @@ export default function StoreCategory({ category, plans }) {
     const availableCycles = billingCycles.filter((c) => plans.some((plan) => plan.prices?.[c.key] != null));
     const [cycle, setCycle] = useState(availableCycles.some((c) => c.key === 'monthly') ? 'monthly' : availableCycles[0]?.key ?? 'monthly');
     const unit = cycleUnit(billingCycles, cycle);
-    const { data, setData, post, processing, errors, reset } = useForm({
-        plan_id: null,
-        server_name: '',
-        billing_cycle: 'monthly',
-    });
-
     const CategoryIcon = CATEGORY_ICONS[category.key] || Server;
 
     // Buscador y orden: hay categorías con decenas de planes (uno por juego).
@@ -111,25 +101,27 @@ export default function StoreCategory({ category, plans }) {
         return list;
     }, [plans, query, sort, cycle, category.key, botFilter]);
 
+    // Billete que se retoma tras iniciar sesión (/checkout/resume vuelve aquí con ?plan=&cycle=&name=)
+    const [resume, setResume] = useState(null);
+    useEffect(() => {
+        const q = new URLSearchParams(window.location.search);
+        const id = Number(q.get('plan'));
+        const plan = id && plans.find((p) => p.id === id);
+        if (plan) {
+            setResume({ cycle: q.get('cycle') || cycle, name: q.get('name') || '' });
+            setSelected(plan);
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
     const openOrder = (plan) => {
+        setResume(null);
         setSelected(plan);
-        setData({
-            plan_id: plan.id,
-            server_name: '',
-            billing_cycle: cycle,
-        });
     };
 
     const close = () => {
         setSelected(null);
-        reset();
-    };
-
-    const submit = (e) => {
-        e.preventDefault();
-        post(route('orders.store'), {
-            onSuccess: close,
-        });
+        setResume(null);
     };
 
     return (
@@ -574,148 +566,25 @@ export default function StoreCategory({ category, plans }) {
                 </Modal>
 
                 {/* MODAL DE CONTRATACIÓN CYBERPUNK */}
-                <Modal show={selected !== null} onClose={close} maxWidth="md">
-                    {selected && (
-                        <div className="relative overflow-hidden bg-[#070b18] p-6 sm:p-8 font-sans text-white border border-pink-500/30">
-                            {/* Brillo ambiental */}
-                            <div className="pointer-events-none absolute -top-12 -right-12 h-36 w-36 rounded-full bg-neon/10 blur-3xl" />
-
-                            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-                                <div className="flex items-center gap-3">
-                                    {selected.role ? (
-                                        <RankEmblem role={selected.role} size="sm" />
-                                    ) : (
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-pink-500/40 bg-pink-500/10 text-pink-400">
-                                            <CategoryIcon size={20} />
-                                        </div>
-                                    )}
-                                    <div>
-                                        <span className="font-mono text-[10px] uppercase tracking-wider text-pink-400">
-                                            {selected.role ? '// SUSCRIPCIÓN RANGO VIP' : '// NUEVA INSTANCIA WINGS'}
-                                        </span>
-                                        <h3 className="text-lg font-bold text-white">
-                                            {category.title} — {selected.name}
-                                        </h3>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Resumen del Plan */}
-                            <div className="mt-5 rounded-xl border border-slate-800 bg-black/60 p-4 font-mono text-xs">
-                                {selected.role ? (
-                                    <>
-                                        <div className="flex items-center justify-between text-slate-300">
-                                            <span>Descuento en tienda:</span>
-                                            <span className="font-bold text-white">{selected.perks?.discount ? `-${selected.perks.discount}% en servidores` : 'Insignia exclusiva'}</span>
-                                        </div>
-                                        <div className="mt-2 flex items-center justify-between text-slate-300">
-                                            <span>Extras en servidores:</span>
-                                            <span className="font-bold text-white">
-                                                +{selected.perks?.backups ?? 0} backups · +{selected.perks?.databases ?? 0} BBDD · +{selected.perks?.allocations ?? 0} puertos
-                                            </span>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className="flex items-center justify-between text-slate-300">
-                                            <span>Recursos:</span>
-                                            <span className="font-bold text-white">
-                                                {fmtRam(selected.ram_mb)} RAM · {selected.storage_gb} GB NVMe
-                                            </span>
-                                        </div>
-                                        <div className="mt-2 flex items-center justify-between text-slate-300">
-                                            <span>Capacidad CPU:</span>
-                                            <span className="font-bold text-white">{selected.cpu_pct}% vCPU Ryzen</span>
-                                        </div>
-                                        <div className="mt-2 flex items-center justify-between text-slate-300">
-                                            <span>Nodo Datacenter:</span>
-                                            <span className="text-neon">Miami, FL US-01</span>
-                                        </div>
-                                    </>
-                                )}
-                                <div className="mt-3 border-t border-slate-800 pt-2 flex items-center justify-between">
-                                    <span className="text-slate-400">Total por {cycleUnit(billingCycles, data.billing_cycle)}:</span>
-                                    <span className="text-lg font-black text-neon">
-                                        {fmtPrice((selected.prices?.[data.billing_cycle] ?? selected.price) * (100 - discountFor(selected).pct) / 100)} €
-                                    </span>
-                                </div>
-                            </div>
-
-                            {auth?.user ? (
-                                <form onSubmit={submit} className="mt-6 space-y-5">
-                                    {selected.role ? (
-                                        <div className="rounded-lg border border-fuchsia-500/40 bg-fuchsia-500/10 p-3 font-mono text-xs text-fuchsia-200">
-                                            El rango se activa en tu cuenta del panel en cuanto pagues la factura y dura el período elegido.
-                                            <InputError message={errors.plan_id} className="mt-1" />
-                                            <InputError message={errors.billing_cycle} className="mt-1" />
-                                        </div>
-                                    ) : (
-                                    <div>
-                                        <InputLabel
-                                            htmlFor="server_name"
-                                            value="// NOMBRE IDENTIFICADOR DEL SERVIDOR"
-                                            className="font-mono text-xs text-pink-400"
-                                        />
-                                        <TextInput
-                                            id="server_name"
-                                            className="mt-2 block w-full border-pink-500/40 bg-black/80 font-mono text-sm text-white placeholder-slate-600 focus:border-neon focus:ring-neon"
-                                            value={data.server_name}
-                                            onChange={(e) => setData('server_name', e.target.value)}
-                                            placeholder="ej. survival-smp-v2"
-                                            isFocused
-                                            required
-                                        />
-                                        <p className="mt-1.5 font-mono text-[10px] text-slate-400">
-                                            Puedes cambiar este nombre en cualquier momento desde el Panel.
-                                        </p>
-                                        <InputError message={errors.server_name} className="mt-1" />
-                                        <InputError message={errors.plan_id} className="mt-1" />
-                                        <InputError message={errors.billing_cycle} className="mt-1" />
-                                    </div>
-                                    )}
-
-                                    <div className="flex items-center justify-end gap-3 border-t border-slate-800 pt-5">
-                                        <SecondaryButton
-                                            type="button"
-                                            onClick={close}
-                                            className="border-slate-700 bg-neutral-900 text-slate-300 hover:border-slate-500"
-                                        >
-                                            Cancelar
-                                        </SecondaryButton>
-                                        <PrimaryButton
-                                            disabled={processing}
-                                            className="border border-neon bg-gradient-to-r from-pink-500 to-fuchsia-600 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-[0_0_20px_rgba(255,0,128,0.4)] hover:brightness-110"
-                                        >
-                                            {processing ? 'Desplegando...' : 'Confirmar y Desplegar'}
-                                        </PrimaryButton>
-                                    </div>
-                                </form>
-                            ) : (
-                                <div className="mt-6 space-y-4">
-                                    <div className="rounded-xl border border-pink-500/30 bg-pink-500/10 p-4 text-xs leading-relaxed text-pink-200">
-                                        Para aprovisionar tu contenedor Wings necesitas una cuenta en Cinammon.
-                                        Podrás acceder al panel de control, gestionar los archivos de tu servidor y ver tu consola en tiempo real.
-                                    </div>
-
-                                    <div className="flex flex-col sm:flex-row justify-end gap-3 pt-2">
-                                        <Link href={route('register')} className="w-full sm:w-auto">
-                                            <SecondaryButton className="w-full justify-center border-slate-700 bg-neutral-900 text-slate-300">
-                                                <UserPlus size={14} className="mr-1.5" />
-                                                Crear Cuenta
-                                            </SecondaryButton>
-                                        </Link>
-                                        <Link href={route('login')} className="w-full sm:w-auto">
-                                            <PrimaryButton className="w-full justify-center">
-                                                <LogIn size={14} className="mr-1.5" />
-                                                Iniciar Sesión
-                                            </PrimaryButton>
-                                        </Link>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </Modal>
+                {selected && (
+                    <LaunchSequence
+                        plan={selected}
+                        category={category}
+                        CategoryIcon={CategoryIcon}
+                        cycles={billingCycles}
+                        initialCycle={resume?.cycle ?? cycle}
+                        initialName={resume?.name ?? ''}
+                        startAtTicket={!!resume}
+                        user={auth?.user}
+                        discounts={{
+                            promo,
+                            promoLabel: season?.holiday?.name ?? 'Oferta',
+                            vip: vipDiscount,
+                            birthday: birthdayDiscount?.percent ?? 0,
+                        }}
+                        onClose={close}
+                    />
+                )}
             </div>
         </PublicLayout>
     );

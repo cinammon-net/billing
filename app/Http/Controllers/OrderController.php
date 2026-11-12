@@ -89,12 +89,37 @@ class OrderController extends Controller
             'what' => $plan->isRank() ? "Rango {$plan->name}" : "{$plan->name} · {$validated['server_name']}",
         ], "invoice-{$invoice->number}");
 
-        return redirect()->route('dashboard')->with(
+        // Del billete se pasa directo al pago: nada de buscar la factura en el dashboard.
+        return redirect()->route('checkout.show', $invoice)->with(
             'success',
             $plan->isRank()
-                ? "Pedido del rango «{$plan->name}» creado. Paga la factura para activarlo en el panel."
-                : "Pedido «{$validated['server_name']}» creado. Paga la factura para activar tu servidor."
+                ? "Billete reservado: rango «{$plan->name}». Elige cómo pagar y se activa en el panel."
+                : "Billete reservado: «{$validated['server_name']}». Elige cómo pagar y lo desplegamos."
         );
+    }
+
+    /**
+     * Vuelve al plan que se estaba eligiendo antes de iniciar sesión o registrarse
+     * (la ruta exige sesión, así que Laravel la guarda como destino "intended").
+     */
+    public function resume(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'plan' => ['required', 'integer', 'exists:plans,id'],
+            'cycle' => ['nullable', Rule::in(array_keys(Plan::CYCLES))],
+            'name' => ['nullable', 'string', 'max:60'],
+        ]);
+        $plan = Plan::findOrFail($data['plan']);
+        if ($plan->coin_cost !== null) {
+            return redirect()->route('coins.index');
+        }
+
+        return redirect()->route('store.category', array_filter([
+            'category' => $plan->category,
+            'plan' => $plan->id,
+            'cycle' => $data['cycle'] ?? null,
+            'name' => $data['name'] ?? null,
+        ]));
     }
 
     public function cancel(Request $request, Order $order): RedirectResponse

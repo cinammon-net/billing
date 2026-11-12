@@ -46,6 +46,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Si venía de elegir un plan (store.resume), vuelve a él tras registrarse.
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 }

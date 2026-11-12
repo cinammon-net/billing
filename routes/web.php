@@ -103,6 +103,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/advent/{day}/claim', [\App\Http\Controllers\AdventController::class, 'claim'])->whereNumber('day')->middleware('throttle:15,1')->name('advent.claim');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('/checkout/resume', [OrderController::class, 'resume'])->name('store.resume');
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     // Pago de facturas: el cliente elige método en la página de checkout
     Route::get('/invoices/{invoice}/pay', [\App\Http\Controllers\CheckoutController::class, 'show'])->name('checkout.show');
