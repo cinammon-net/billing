@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Mail;
  */
 class BillingMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable, SerializesModels, Concerns\Archived;
 
     public function __construct(public string $subjectLine, public string $template, public array $data = [], public ?string $key = null)
     {

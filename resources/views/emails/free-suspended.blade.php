@@ -1,4 +1,4 @@
-<x-mail::message>
+<x-mail::message kicker="Servidor gratis">
 # Tu servidor gratuito se ha suspendido
 
 Hola, {{ $user->name }}. El servidor gratuito **{{ $order->server_name }}** ha caducado sin renovarse y se ha suspendido.

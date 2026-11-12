@@ -1,4 +1,4 @@
-<x-mail::message>
+<x-mail::message kicker="Pedido">
 # Tu pedido está creado
 
 Hola, {{ $user->name }}. Hemos registrado tu pedido **{{ $what }}**.

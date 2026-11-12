@@ -1,4 +1,4 @@
-<x-mail::message>
+<x-mail::message kicker="Pago confirmado">
 # Pago recibido
 
 Hola, {{ $user->name }}. Hemos recibido el pago de la factura **{{ $invoice->number }}**.

@@ -79,6 +79,8 @@ Route::post('/api/panel/bot/checkin', [\App\Http\Controllers\PanelBotController:
 Route::post('/api/panel/bot/birthday', [\App\Http\Controllers\PanelBotController::class, 'birthday'])->middleware('throttle:60,1');
 Route::post('/api/panel/bot/referral', [\App\Http\Controllers\PanelBotController::class, 'referral'])->middleware('throttle:60,1');
 Route::post('/api/panel/bot/feed', [\App\Http\Controllers\PanelBotController::class, 'feed'])->middleware('throttle:60,1');
+Route::post('/api/panel/mails', [\App\Http\Controllers\PanelMailController::class, 'index'])->middleware('throttle:120,1')->name('api.panel.mails');
+Route::post('/api/panel/mails/show', [\App\Http\Controllers\PanelMailController::class, 'show'])->middleware('throttle:120,1')->name('api.panel.mails.show');
 Route::post('/api/panel/bot/quote', [\App\Http\Controllers\PanelBotController::class, 'quote'])->middleware('throttle:120,1');
 Route::post('/api/panel/bot/order', [\App\Http\Controllers\PanelBotController::class, 'order'])->middleware('throttle:20,1');
 

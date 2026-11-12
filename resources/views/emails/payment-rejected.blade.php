@@ -1,4 +1,4 @@
-<x-mail::message>
+<x-mail::message kicker="Pago">
 # No hemos podido confirmar tu pago
 
 Hola, {{ $user->name }}. Hemos revisado el aviso de pago de la factura **{{ $invoice->number }}** ({{ \App\Mail\BillingMail::money($invoice->amount) }}) y no hemos podido confirmarlo.

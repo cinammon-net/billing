@@ -1,4 +1,4 @@
-<x-mail::message>
+<x-mail::message kicker="Equipo · Pagos">
 # Pago pendiente de revisar
 
 **{{ $user->name }}** ({{ $user->email }}) dice haber pagado la factura **{{ $invoice->number }}** por {{ $method }}.

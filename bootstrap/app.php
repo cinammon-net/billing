@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         // Las pasarelas no envían token CSRF: se valida la firma en el controlador.
-        $middleware->validateCsrfTokens(except: ['webhooks/*', 'api/panel/bot/*']);
+        $middleware->validateCsrfTokens(except: ['webhooks/*', 'api/panel/bot/*', 'api/panel/mails', 'api/panel/mails/*']);
 
         $middleware->alias([
             'billing.admin' => \App\Http\Middleware\EnsureBillingAdmin::class,
